@@ -18,6 +18,10 @@ class Admin extends Model
         'privilege'
     ];
 
+    protected $hidden = [
+        'password'
+    ];
+
     protected $casts = [
         'privilege' => 'array'
     ];
