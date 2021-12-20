@@ -29,4 +29,6 @@ class Admin extends Model
     ];
 
     public $timestamps = false;
+
+    public static $privilege_list = ['manage_users', 'manage_admins', 'manage_orders'];
 }

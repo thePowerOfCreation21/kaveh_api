@@ -15,7 +15,7 @@ class AdminController extends Controller
             'password' => 'required|min:6',
             'is_primary' => 'boolean',
             'privilege' => 'array',
-            'privilege.*' => 'distinct|in:manage_users,manage_admins,manage_orders'
+            'privilege.*' => 'distinct|in:'.implode(",", Admin::$privilege_list)
         ]);
 
         if (Admin::where('user_name', $request->input('user_name'))->exists())
