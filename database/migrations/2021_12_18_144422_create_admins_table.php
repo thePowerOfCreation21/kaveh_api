@@ -18,7 +18,7 @@ class CreateAdminsTable extends Migration
             $table->string('user_name', 25)->unique();
             $table->string('password', 150);
             $table->boolean('is_primary')->default(false);
-            $table->string('privilege');
+            $table->string('privileges');
         });
     }
 

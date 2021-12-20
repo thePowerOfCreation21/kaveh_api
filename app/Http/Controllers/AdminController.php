@@ -14,8 +14,8 @@ class AdminController extends Controller
             'user_name' => 'required',
             'password' => 'required|min:6',
             'is_primary' => 'boolean',
-            'privilege' => 'array',
-            'privilege.*' => 'distinct|in:'.implode(",", Admin::$privilege_list)
+            'privileges' => 'array',
+            'privileges.*' => 'distinct|in:'.implode(",", Admin::$privileges_list)
         ]);
 
         if (Admin::where('user_name', $request->input('user_name'))->exists())
@@ -31,7 +31,7 @@ class AdminController extends Controller
             'password' => Hash::make($request->input('password'))
         ];
         (! empty($request->input('is_primary'))) && $admin_data['is_primary'] = $request->input('is_primary');
-        (! empty($request->input('privilege'))) ? $admin_data['privilege'] = $request->input('privilege') : $admin_data['privilege'] = [];
+        (! empty($request->input('privileges'))) ? $admin_data['privileges'] = $request->input('privileges') : $admin_data['privileges'] = [];
 
         Admin::create($admin_data);
 

@@ -17,7 +17,7 @@ class Admin extends Model
     protected $fillable = [
         'user_name',
         'password',
-        'privilege'
+        'privileges'
     ];
 
     protected $hidden = [
@@ -25,10 +25,10 @@ class Admin extends Model
     ];
 
     protected $casts = [
-        'privilege' => 'array'
+        'privileges' => 'array'
     ];
 
     public $timestamps = false;
 
-    public static $privilege_list = ['manage_users', 'manage_admins', 'manage_orders'];
+    public static $privileges_list = ['manage_users', 'manage_admins', 'manage_orders'];
 }
