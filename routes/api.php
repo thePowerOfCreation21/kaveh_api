@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group([
+    'prefix' => 'admin'
+], function(){
+    Route::post('login', [AdminController::class, 'login']);
+
+    Route::group([
+        'middleware' => ['auth:sanctum', 'AllowedUserClass:App\Models\Admin']
+    ], function(){
+        Route::post('register', [AdminController::class, 'register']);
+    });
 });
