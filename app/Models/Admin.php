@@ -17,6 +17,7 @@ class Admin extends Model
     protected $fillable = [
         'user_name',
         'password',
+        'is_primary',
         'privileges',
         'created_at',
         'updated_at'
@@ -27,6 +28,7 @@ class Admin extends Model
     ];
 
     protected $casts = [
+        'is_primary' => 'boolean',
         'privileges' => 'array',
         'created_at' => 'object',
         'updated_at' => 'object'
