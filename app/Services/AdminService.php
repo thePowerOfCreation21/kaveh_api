@@ -22,6 +22,7 @@ class AdminService
         }
 
         $admin_data = [
+            'is_primary' => false,
             'user_name' => $request->input('user_name'),
             'password' => Hash::make($request->input('password')),
             'created_at' => $current_time,
