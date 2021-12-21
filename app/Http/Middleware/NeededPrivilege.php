@@ -18,6 +18,10 @@ class NeededPrivilege
     {
         $needed_privileges = explode('&', $needed_privilege);
         $user = $request->user();
+        if ($user->is_primary)
+        {
+            return $next($request);
+        }
         foreach ($needed_privileges as $needed_privilege)
         {
             if (! in_array($needed_privilege, $user->privileges))
