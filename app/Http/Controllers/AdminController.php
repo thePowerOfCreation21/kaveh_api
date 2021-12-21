@@ -15,7 +15,7 @@ class AdminController extends Controller
             'password' => 'required|min:6',
             'is_primary' => 'boolean',
             'privileges' => 'array',
-            'privileges.*' => 'distinct|in:'.implode(",", Admin::$privileges_list)
+            'privileges.*' => 'distinct|in:'.implode(",", (isset($request->user()->privileges) && ! $request->user()->is_primary) ? $request->user()->privileges : Admin::$privileges_list)
         ]);
 
         return AdminService::register($request);
