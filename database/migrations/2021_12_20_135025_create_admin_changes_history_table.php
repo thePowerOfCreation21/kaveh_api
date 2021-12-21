@@ -18,7 +18,7 @@ class CreateAdminChangesHistoryTable extends Migration
             $table->string('doer_id', 25);
             $table->string('subject_id', 25);
             $table->string('action', 50);
-            $table->string('date');
+            $table->string('date', 2000);
         });
     }
 
