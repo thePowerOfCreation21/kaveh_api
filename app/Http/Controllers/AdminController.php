@@ -11,7 +11,7 @@ class AdminController extends Controller
     public function register (Request $request)
     {
         $request->validate([
-            'user_name' => 'required',
+            'user_name' => 'required|max:25',
             'password' => 'required|min:6',
             'is_primary' => 'boolean',
             'privileges' => 'array',
@@ -51,5 +51,16 @@ class AdminController extends Controller
             ], 404);
         }
         return response()->json($admin);
+    }
+
+    public function update (Request $request, $id)
+    {
+        $request->validate([
+            'user_name' => 'string|max:25',
+            'password' => 'string',
+            'is_primary' => 'boolean'
+        ]);
+
+        return AdminService::update($request, $id);
     }
 }

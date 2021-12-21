@@ -26,5 +26,6 @@ Route::group([
         Route::post('register', [AdminController::class, 'register']);
         Route::get('/', [AdminController::class, 'get_all']);
         Route::get('/{id}', [AdminController::class, 'get_by_id']);
+        Route::put('/{id}', [AdminController::class, 'update']);
     });
 });
