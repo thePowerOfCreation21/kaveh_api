@@ -24,5 +24,6 @@ Route::group([
         'middleware' => ['auth:sanctum', 'AllowedUserClass:App\Models\Admin', 'NeededPrivilege:manage_admins']
     ], function(){
         Route::post('register', [AdminController::class, 'register']);
+        Route::get('/', [AdminController::class, 'get_all']);
     });
 });

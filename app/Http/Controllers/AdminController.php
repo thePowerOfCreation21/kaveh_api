@@ -30,4 +30,14 @@ class AdminController extends Controller
 
         return AdminService::login($request);
     }
+
+    public function get_all (Request $request)
+    {
+        $request->validate([
+            'skip' => 'numeric',
+            'limit' => 'numeric|max:50'
+        ]);
+
+        return AdminService::get_all($request);
+    }
 }

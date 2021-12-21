@@ -70,4 +70,14 @@ class AdminService
             'message' => 'user_name or password is wrong'
         ]);
     }
+
+    public static function get_all (Request $request)
+    {
+        $skip = (! empty($request->input('skip'))) ? $request->input('skip') : 0;
+        $limit = (! empty($request->input('limit'))) ? $request->input('limit') : 50;
+        return (object) [
+            'count' => Admin::count(),
+            'admins' => Admin::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
+        ];
+    }
 }
