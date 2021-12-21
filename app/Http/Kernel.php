@@ -55,6 +55,7 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
+        'ShouldBePrimary' => \App\Http\Middleware\ShouldBePrimary::class,
         'AllowedUserClass' => \App\Http\Middleware\AllowedUserClass::class,
         'RequiredPrivilege' => \App\Http\Middleware\RequiredPrivilege::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
