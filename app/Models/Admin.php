@@ -17,7 +17,9 @@ class Admin extends Model
     protected $fillable = [
         'user_name',
         'password',
-        'privileges'
+        'privileges',
+        'created_at',
+        'updated_at'
     ];
 
     protected $hidden = [
@@ -25,7 +27,9 @@ class Admin extends Model
     ];
 
     protected $casts = [
-        'privileges' => 'array'
+        'privileges' => 'array',
+        'created_at' => 'object',
+        'updated_at' => 'object'
     ];
 
     public $timestamps = false;
