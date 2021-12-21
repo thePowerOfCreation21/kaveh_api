@@ -67,3 +67,18 @@ function UploadIt($file, $array_allowed_format=['png','jpg','jpeg'], $direction=
     }
     return $file_direction;
 }
+
+function time_to_custom_date ($time = 'current_time')
+{
+    if (! is_numeric($time))
+    {
+        $time = time();
+    }
+
+    return [
+        'timestamp' => $time,
+        'date' => jdate("Y/m/j",$time),
+        'date_time' => jdate("Y/m/j H:i:s",$time),
+        'string' => jdate("l j F Y",$time)
+    ];
+}
