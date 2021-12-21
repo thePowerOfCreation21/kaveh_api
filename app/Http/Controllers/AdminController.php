@@ -40,4 +40,16 @@ class AdminController extends Controller
 
         return AdminService::get_all($request);
     }
+
+    public function get_by_id ($id)
+    {
+        $admin = Admin::where('id', $id)->first();
+        if (empty($admin))
+        {
+            return response()->json([
+                'message' => 'admin not found'
+            ], 404);
+        }
+        return response()->json($admin);
+    }
 }
