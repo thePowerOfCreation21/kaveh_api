@@ -29,7 +29,7 @@ class AdminService
             'updated_at' => $current_time
         ];
         (! empty($request->input('is_primary'))) && $admin_data['is_primary'] = $request->input('is_primary');
-        if (! (empty($request->user()) && ! $request->user()->is_primary) && $admin_data['is_primary'])
+        if ((! empty($request->user()) && ! $request->user()->is_primary) && $admin_data['is_primary'])
         {
             return response()->json([
                 'code' => 5,
