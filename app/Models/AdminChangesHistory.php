@@ -19,6 +19,10 @@ class AdminChangesHistory extends Model
         'date'
     ];
 
+    protected $casts = [
+        'date' => 'object'
+    ];
+
     public $timestamps = false;
 
     public function doer ()
