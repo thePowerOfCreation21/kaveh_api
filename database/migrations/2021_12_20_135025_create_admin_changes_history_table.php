@@ -15,7 +15,7 @@ class CreateAdminChangesHistoryTable extends Migration
     {
         Schema::create('admin_changes_history', function (Blueprint $table) {
             $table->id();
-            $table->string('doer_id', 25);
+            $table->string('doer_id', 25)->nullable(true);
             $table->string('subject_id', 25);
             $table->string('action', 50);
             $table->string('date', 2000);
