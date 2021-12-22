@@ -10,16 +10,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminService
 {
-    public static function get_all (Request $request)
-    {
-        $skip = (! empty($request->input('skip'))) ? $request->input('skip') : 0;
-        $limit = (! empty($request->input('limit'))) ? $request->input('limit') : 50;
-        return (object) [
-            'count' => Admin::count(),
-            'admins' => Admin::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
-        ];
-    }
-
     public static function update (Request $request, $id)
     {
         $time = time_to_custom_date();

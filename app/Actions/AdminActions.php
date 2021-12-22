@@ -84,4 +84,20 @@ class AdminActions
         ], 400)->send();
         die();
     }
+
+    public static function get_all (Request $request)
+    {
+        $request->validate([
+            'skip' => 'numeric',
+            'limit' => 'numeric|max:50'
+        ]);
+
+        $skip = (! empty($request->input('skip'))) ? $request->input('skip') : 0;
+        $limit = (! empty($request->input('limit'))) ? $request->input('limit') : 50;
+
+        return (object) [
+            'count' => Admin::count(),
+            'admins' => Admin::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
+        ];
+    }
 }
