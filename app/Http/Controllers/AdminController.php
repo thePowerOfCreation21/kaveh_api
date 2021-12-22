@@ -20,12 +20,9 @@ class AdminController extends Controller
 
     public function login (Request $request)
     {
-        $request->validate([
-            'user_name' => 'required',
-            'password' => 'required'
+        return response()->json([
+            'token' => AdminActions::login($request)->plainTextToken
         ]);
-
-        return AdminService::login($request);
     }
 
     public function get_all (Request $request)

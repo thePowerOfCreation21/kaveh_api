@@ -60,4 +60,28 @@ class AdminActions
 
         return $admin;
     }
+
+    public static function login (Request $request)
+    {
+        $request->validate([
+            'user_name' => 'required',
+            'password' => 'required'
+        ]);
+
+        $admin = Admin::where('user_name', $request->input('user_name'))->first();
+
+        if (! empty($admin))
+        {
+            if (Hash::check($request->input('password'), $admin->password))
+            {
+                return $admin->createToken('auth_token');
+            }
+        }
+
+        response()->json([
+            'code' => 3,
+            'message' => 'user_name or password is wrong'
+        ], 400)->send();
+        die();
+    }
 }

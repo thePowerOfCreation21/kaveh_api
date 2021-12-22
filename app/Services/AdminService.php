@@ -10,26 +10,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminService
 {
-    public static function login (Request $request)
-    {
-        $admin = Admin::where('user_name', $request->input('user_name'))->first();
-
-        if (! empty($admin))
-        {
-            if (Hash::check($request->input('password'), $admin->password))
-            {
-                return response()->json([
-                    'token' => $admin->createToken('auth_token')->plainTextToken
-                ]);
-            }
-        }
-
-        return response()->json([
-            'code' => 3,
-            'message' => 'user_name or password is wrong'
-        ]);
-    }
-
     public static function get_all (Request $request)
     {
         $skip = (! empty($request->input('skip'))) ? $request->input('skip') : 0;
