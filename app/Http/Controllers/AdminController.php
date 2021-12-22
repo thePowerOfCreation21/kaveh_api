@@ -37,11 +37,7 @@ class AdminController extends Controller
 
     public function update (Request $request, $id)
     {
-        $request->validate([
-            'user_name' => 'string|max:25',
-            'password' => 'string',
-            'is_primary' => 'boolean'
-        ]);
+
 
         return AdminService::update($request, $id);
     }

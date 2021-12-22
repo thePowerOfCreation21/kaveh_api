@@ -135,4 +135,60 @@ class AdminActions
         }
         return $admin;
     }
+
+    /**
+     * update admin by id (returns 404 http response if id is wrong then dies)
+     *
+     * @param Request $request
+     * @param string $id
+     * @return Admin
+     */
+    public static function update (Request $request, string $id): Admin
+    {
+        $request->validate([
+            'user_name' => 'string|max:25',
+            'password' => 'string',
+            'is_primary' => 'boolean'
+        ]);
+
+        $time = time_to_custom_date();
+        $admin = Admin::where('id', $id)->first();
+
+        if (empty($admin))
+        {
+            response()->json([
+                'message' => 'could not find admin with this id'
+            ], 404)->send();
+            die();
+        }
+
+        $update_data = [
+            'updated_at' => $time
+        ];
+
+        (! empty($request->input('password'))) && $update_data['password'] = Hash::make($request->input('password'));
+        ($request->input('is_primary') !== null) && $update_data['is_primary'] = $request->input('is_primary');
+        if (! empty($request->input('user_name')))
+        {
+            $update_data['user_name'] = $request->input('user_name');
+        }
+        else if (Admin::where('id', '!=', $id)->where('user_name', $request->input('user_name'))->exists())
+        {
+            response()->json([
+                'code' => 6,
+                'message' => 'this user_name is already taken'
+            ], 400)->send();
+            die();
+        }
+
+        $admin->update($update_data);
+        AdminChangesHistory::create([
+            'doer_id' => $request->user()->id,
+            'subject_id' => $admin->id,
+            'action' => 'update',
+            'date' => $time
+        ]);
+
+        return $admin;
+    }
 }
