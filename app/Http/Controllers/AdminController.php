@@ -5,20 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Admin;
 use App\Services\AdminService;
+use App\Actions\AdminActions;
 
 class AdminController extends Controller
 {
     public function register (Request $request)
     {
-        $request->validate([
-            'user_name' => 'required|max:25',
-            'password' => 'required|min:6',
-            'is_primary' => 'boolean',
-            'privileges' => 'array',
-            'privileges.*' => 'distinct|in:'.implode(",", (isset($request->user()->privileges) && ! $request->user()->is_primary) ? $request->user()->privileges : Admin::$privileges_list)
-        ]);
+        AdminActions::register($request);
 
-        return AdminService::register($request);
+        return response()->json([
+            'message' => 'admin registered successfully'
+        ]);
     }
 
     public function login (Request $request)
