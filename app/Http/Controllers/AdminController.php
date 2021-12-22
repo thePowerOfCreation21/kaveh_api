@@ -37,8 +37,10 @@ class AdminController extends Controller
 
     public function update (Request $request, $id)
     {
+        AdminActions::update($request, $id);
 
-
-        return AdminService::update($request, $id);
+        return response()->json([
+            'message' => 'admin updated successfully'
+        ]);
     }
 }
