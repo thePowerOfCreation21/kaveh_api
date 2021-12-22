@@ -10,7 +10,11 @@ use function App\Helpers\time_to_custom_date;
 
 class AdminActions
 {
-    public static function register (Request $request)
+    /**
+     * @param Request $request
+     * @return Admin
+     */
+    public static function register (Request $request): Admin
     {
         $request->validate([
             'user_name' => 'required|max:25',
@@ -61,6 +65,12 @@ class AdminActions
         return $admin;
     }
 
+    /**
+     * this function returns token object if login is successful
+     *
+     * @param Request $request
+     * @return object $admin->createToken('auth_token')
+     */
     public static function login (Request $request)
     {
         $request->validate([
@@ -85,6 +95,12 @@ class AdminActions
         die();
     }
 
+    /**
+     * get all admins with pagination (can take 50 admins at max)
+     *
+     * @param Request $request
+     * @return object
+     */
     public static function get_all (Request $request)
     {
         $request->validate([
@@ -99,5 +115,24 @@ class AdminActions
             'count' => Admin::count(),
             'admins' => Admin::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
         ];
+    }
+
+    /**
+     * get admin by id (returns 404 http response if id is wrong then dies)
+     *
+     * @param string $id
+     * @return Admin
+     */
+    public static function get_by_id (string $id): Admin
+    {
+        $admin = Admin::where('id', $id)->first();
+        if (empty($admin))
+        {
+            response()->json([
+                'message' => 'admin not found'
+            ], 404)->send();
+            die();
+        }
+        return $admin;
     }
 }
