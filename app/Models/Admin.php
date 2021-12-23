@@ -24,7 +24,9 @@ class Admin extends Model
     ];
 
     protected $hidden = [
-        'password'
+        'password',
+        'created_at',
+        'updated_at'
     ];
 
     protected $casts = [
