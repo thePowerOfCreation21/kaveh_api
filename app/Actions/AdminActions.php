@@ -24,7 +24,7 @@ class AdminActions
             'privileges.*' => 'distinct|in:'.implode(",", (isset($request->user()->privileges) && ! $request->user()->is_primary) ? $request->user()->privileges : Admin::$privileges_list)
         ]);
 
-        $current_time = time_to_custom_date();
+        $current_time = time();
 
         if (Admin::where('user_name', $request->input('user_name'))->exists())
         {
@@ -151,7 +151,7 @@ class AdminActions
             'is_primary' => 'boolean'
         ]);
 
-        $time = time_to_custom_date();
+        $time = time();
         $admin = Admin::where('id', $id)->first();
 
         if (empty($admin))
