@@ -28,5 +28,6 @@ Route::group([
         Route::delete('/{id}', [AdminController::class, 'delete']);
         Route::put('/{id}', [AdminController::class, 'update']);
         Route::post('/{id}/privileges', [AdminController::class, 'add_privileges']);
+        Route::delete('/{id}/privileges', [AdminController::class, 'delete_privileges']);
     });
 });

@@ -59,4 +59,13 @@ class AdminController extends Controller
             'message' => 'privilege(s) added successfully'
         ]);
     }
+
+    public function delete_privileges (Request $request, string $id)
+    {
+        AdminActions::delete_privileges($request, $id);
+
+        return response()->json([
+            'message' => 'privilege(s) removed successfully'
+        ]);
+    }
 }

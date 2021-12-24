@@ -237,4 +237,37 @@ class AdminActions
 
         return $admin;
     }
+
+    /**
+     * remove privilege(s) from admin by simply sending array of privilege(s) in form of request
+     *
+     * @param Request $request
+     * @param string $id
+     * @return Admin
+     */
+    public static function delete_privileges (Request $request, string $id): Admin
+    {
+        $admin = self::get_by_id($id);
+
+        $request->validate([
+            'privileges' => 'required|array',
+            'privileges.*' => 'distinct|in:'.implode(',', array_merge(Admin::$privileges_list, $admin->privileges))
+        ]);
+
+        $admin_privileges = [];
+
+        foreach ($admin->privileges as $key => $privilege)
+        {
+            if (! in_array($privilege, $request->input('privileges')))
+            {
+                $admin_privileges[] = $privilege;
+            }
+        }
+
+        $admin->update([
+            'privileges' => $admin_privileges
+        ]);
+
+        return $admin;
+    }
 }
