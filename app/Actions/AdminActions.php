@@ -19,9 +19,8 @@ class AdminActions
         $request->validate([
             'user_name' => 'required|max:25',
             'password' => 'required|min:6',
-            'is_primary' => 'boolean',
             'privileges' => 'array',
-            'privileges.*' => 'distinct|in:'.implode(",", (isset($request->user()->privileges) && ! $request->user()->is_primary) ? $request->user()->privileges : Admin::$privileges_list)
+            'privileges.*' => 'distinct|in:'.implode(",", Admin::$privileges_list)
         ]);
 
         $current_time = time();
@@ -36,23 +35,12 @@ class AdminActions
         }
 
         $admin_data = [
-            'is_primary' => false,
             'user_name' => $request->input('user_name'),
             'password' => Hash::make($request->input('password')),
             'created_at' => $current_time,
             'updated_at' => $current_time
         ];
-        (! empty($request->input('is_primary'))) && $admin_data['is_primary'] = $request->input('is_primary');
         (! empty($request->input('privileges'))) ? $admin_data['privileges'] = $request->input('privileges') : $admin_data['privileges'] = [];
-
-        if ((! empty($request->user()) && ! $request->user()->is_primary) && $admin_data['is_primary'])
-        {
-            response()->json([
-                'code' => 5,
-                'message' => 'only primary admins can register primary accounts'
-            ], 400)->send();
-            die();
-        }
 
         $admin = Admin::create($admin_data);
         AdminChangesHistory::create([
@@ -148,7 +136,6 @@ class AdminActions
         $request->validate([
             'user_name' => 'string|max:25',
             'password' => 'string',
-            'is_primary' => 'boolean'
         ]);
 
         $time = time();
@@ -162,12 +149,21 @@ class AdminActions
             die();
         }
 
+        if (isset($request->user()->id) && $request->user()->id == $id)
+        {
+            response()->json([
+                'code' => 11,
+                'message' => 'you can not edit your account'
+            ], 403)->send();
+            die();
+        }
+
         $update_data = [
             'updated_at' => $time
         ];
 
         (! empty($request->input('password'))) && $update_data['password'] = Hash::make($request->input('password'));
-        ($request->input('is_primary') !== null) && $update_data['is_primary'] = $request->input('is_primary');
+
         if (! empty($request->input('user_name')))
         {
             $update_data['user_name'] = $request->input('user_name');
