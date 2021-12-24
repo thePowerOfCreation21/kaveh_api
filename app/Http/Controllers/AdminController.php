@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Admin;
-use App\Services\AdminService;
 use App\Actions\AdminActions;
 
 class AdminController extends Controller
@@ -35,12 +33,21 @@ class AdminController extends Controller
         return AdminActions::get_by_id($id);
     }
 
-    public function update (Request $request, $id)
+    public function update (Request $request, string $id)
     {
         AdminActions::update($request, $id);
 
         return response()->json([
             'message' => 'admin updated successfully'
+        ]);
+    }
+
+    public function delete (string $id)
+    {
+        AdminActions::delete($id);
+
+        return response()->json([
+            'message' => 'admin deleted successfully'
         ]);
     }
 }

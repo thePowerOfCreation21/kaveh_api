@@ -126,6 +126,7 @@ class AdminActions
 
     /**
      * update admin by id (returns 404 http response if id is wrong then dies)
+     * no one can edit primary admins (returns 403 http response if admin is primary)
      *
      * @param Request $request
      * @param string $id
@@ -139,15 +140,7 @@ class AdminActions
         ]);
 
         $time = time();
-        $admin = Admin::where('id', $id)->first();
-
-        if (empty($admin))
-        {
-            response()->json([
-                'message' => 'could not find admin with this id'
-            ], 404)->send();
-            die();
-        }
+        $admin = self::get_by_id($id);
 
         if ($admin->is_primary)
         {
@@ -184,6 +177,32 @@ class AdminActions
             'action' => 'update',
             'date' => $time
         ]);
+
+        return $admin;
+    }
+
+    /**
+     * delete admin by id (returns 404 http response if id is wrong then dies)
+     * no one can delete primary admins (returns 403 http response if admin is primary)
+     *
+     * @param Request $request
+     * @param string $id
+     * @return Admin
+     */
+    public static function delete (string $id): Admin
+    {
+        $admin = self::get_by_id($id);
+
+        if ($admin->is_primary)
+        {
+            response()->json([
+                'code' => 11,
+                'message' => 'you can not delete primary accounts'
+            ], 403)->send();
+            die();
+        }
+
+        $admin->delete();
 
         return $admin;
     }
