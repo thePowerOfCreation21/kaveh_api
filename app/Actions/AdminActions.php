@@ -206,4 +206,35 @@ class AdminActions
 
         return $admin;
     }
+
+    /**
+     * add privilege(s) to admin by simply sending array of privilege(s) in form of request
+     *
+     * @param Request $request
+     * @param string $id
+     * @return Admin
+     */
+    public static function add_privileges (Request $request, string $id): Admin
+    {
+        $request->validate([
+            'privileges' => 'required|array',
+            'privileges.*' => 'distinct|in:'.implode(',', Admin::$privileges_list)
+        ]);
+
+        $admin = self::get_by_id($id);
+
+        foreach ($request->input('privileges') as $privilege)
+        {
+            if (! in_array($privilege, $admin->privileges))
+            {
+                $admin->privileges = array_merge($admin->privileges, [$privilege]);
+            }
+        }
+
+        $admin->update([
+            'privileges' => $admin->privileges
+        ]);
+
+        return $admin;
+    }
 }

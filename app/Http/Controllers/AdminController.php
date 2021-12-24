@@ -50,4 +50,13 @@ class AdminController extends Controller
             'message' => 'admin deleted successfully'
         ]);
     }
+
+    public function add_privileges (Request $request, string $id)
+    {
+        AdminActions::add_privileges($request, $id);
+
+        return response()->json([
+            'message' => 'privilege(s) added successfully'
+        ]);
+    }
 }
