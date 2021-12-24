@@ -149,11 +149,11 @@ class AdminActions
             die();
         }
 
-        if (isset($request->user()->id) && $request->user()->id == $id)
+        if ($admin->is_primary)
         {
             response()->json([
                 'code' => 11,
-                'message' => 'you can not edit your account'
+                'message' => 'you can not edit primary accounts'
             ], 403)->send();
             die();
         }
