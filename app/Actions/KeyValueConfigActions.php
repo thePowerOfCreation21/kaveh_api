@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-class AboutUsActions
+class KeyValueConfigActions
 {
 
 }
