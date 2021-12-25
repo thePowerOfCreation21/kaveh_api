@@ -15,4 +15,6 @@ class KeyValueConfig extends Model
         'key',
         'value'
     ];
+
+    public $timestamps = false;
 }
