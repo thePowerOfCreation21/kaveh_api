@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AboutUsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,20 @@ Route::group([
                 Route::put('/{id}', [AdminController::class, 'update']);
                 Route::post('/{id}/privileges', [AdminController::class, 'add_privileges']);
                 Route::delete('/{id}/privileges', [AdminController::class, 'delete_privileges']);
+            });
+
+        });
+
+        Route::group([
+            'middleware' => ['RequiredPrivilege:manage_guest_side']
+        ], function(){
+
+            Route::group([
+                'prefix' => 'about_us'
+            ], function(){
+
+                Route::put('/', [AboutUsController::class, 'update']);
+
             });
 
         });
