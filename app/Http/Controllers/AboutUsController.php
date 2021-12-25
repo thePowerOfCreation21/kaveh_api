@@ -19,4 +19,9 @@ class AboutUsController extends Controller
             'message' => 'content of the about us updated successfully'
         ]);
     }
+
+    public function get ()
+    {
+        return response()->json(KeyValueConfigActions::get('about_us'));
+    }
 }

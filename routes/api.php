@@ -17,6 +17,8 @@ use App\Http\Controllers\AboutUsController;
 
 Route::post('admin/login', [AdminController::class, 'login']);
 
+Route::get('/about_us', [AboutUsController::class, 'get']);
+
 Route::group([
     'middleware' => ['auth:sanctum']
 ], function(){
