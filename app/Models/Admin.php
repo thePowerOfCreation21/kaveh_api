@@ -38,5 +38,5 @@ class Admin extends Model
 
     public $timestamps = false;
 
-    public static $privileges_list = ['manage_users', 'manage_orders'];
+    public static $privileges_list = ['manage_users', 'manage_guest_side', 'manage_orders'];
 }
