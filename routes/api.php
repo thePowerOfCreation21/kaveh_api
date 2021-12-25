@@ -14,20 +14,34 @@ use App\Http\Controllers\AdminController;
 |
 */
 
+Route::post('admin/login', [AdminController::class, 'login']);
+
 Route::group([
-    'prefix' => 'admin'
+    'middleware' => ['auth:sanctum']
 ], function(){
-    Route::post('login', [AdminController::class, 'login']);
 
     Route::group([
-        'middleware' => ['auth:sanctum', 'AllowedUserClass:App\Models\Admin', 'ShouldBePrimary']
+        'middleware' => ['AllowedUserClass:App\Models\Admin']
     ], function(){
-        Route::post('register', [AdminController::class, 'register']);
-        Route::get('/', [AdminController::class, 'get_all']);
-        Route::get('/{id}', [AdminController::class, 'get_by_id']);
-        Route::delete('/{id}', [AdminController::class, 'delete']);
-        Route::put('/{id}', [AdminController::class, 'update']);
-        Route::post('/{id}/privileges', [AdminController::class, 'add_privileges']);
-        Route::delete('/{id}/privileges', [AdminController::class, 'delete_privileges']);
+
+        Route::group([
+            'middleware' => ['ShouldBePrimary']
+        ], function(){
+
+            Route::group([
+                'prefix' => 'admin'
+            ], function(){
+                Route::post('register', [AdminController::class, 'register']);
+                Route::get('/', [AdminController::class, 'get_all']);
+                Route::get('/{id}', [AdminController::class, 'get_by_id']);
+                Route::delete('/{id}', [AdminController::class, 'delete']);
+                Route::put('/{id}', [AdminController::class, 'update']);
+                Route::post('/{id}/privileges', [AdminController::class, 'add_privileges']);
+                Route::delete('/{id}/privileges', [AdminController::class, 'delete_privileges']);
+            });
+
+        });
+
     });
+
 });
