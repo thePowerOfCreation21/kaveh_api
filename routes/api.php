@@ -34,6 +34,7 @@ Route::group([
             Route::group([
                 'prefix' => 'admin'
             ], function(){
+
                 Route::post('register', [AdminController::class, 'register']);
                 Route::get('/', [AdminController::class, 'get_all']);
                 Route::get('/{id}', [AdminController::class, 'get_by_id']);
@@ -41,6 +42,7 @@ Route::group([
                 Route::put('/{id}', [AdminController::class, 'update']);
                 Route::post('/{id}/privileges', [AdminController::class, 'add_privileges']);
                 Route::delete('/{id}/privileges', [AdminController::class, 'delete_privileges']);
+
             });
 
         });
