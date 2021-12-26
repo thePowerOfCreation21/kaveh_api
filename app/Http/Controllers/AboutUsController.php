@@ -22,6 +22,8 @@ class AboutUsController extends Controller
 
     public function get ()
     {
-        return response()->json(KeyValueConfigActions::get('about_us'));
+        return response()->json(
+            (string) KeyValueConfigActions::get('about_us')
+        );
     }
 }
