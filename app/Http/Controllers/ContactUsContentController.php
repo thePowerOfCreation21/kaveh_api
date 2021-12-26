@@ -22,4 +22,11 @@ class ContactUsContentController extends Controller
             'message' => 'content of the contact us updated successfully'
         ]);
     }
+
+    public function get ()
+    {
+        return response()->json(
+            ContactUsContentActions::get()
+        );
+    }
 }

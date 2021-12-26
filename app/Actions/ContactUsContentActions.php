@@ -22,7 +22,7 @@ class ContactUsContentActions
     }
 
     /**
-     * removes redundant fields from object & fills undefined field by null
+     * removes redundant field(s) from object & fills undefined field(s) by null
      *
      * @param object $object
      * @return object

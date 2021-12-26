@@ -21,6 +21,8 @@ Route::post('admin/login', [AdminController::class, 'login']);
 
 Route::get('/about_us', [AboutUsController::class, 'get']);
 
+Route::get('/contact_us_content', [ContactUsContentController::class, 'get']);
+
 Route::group([
     'prefix' => '/gallery_image'
 ], function(){
