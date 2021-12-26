@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AboutUsController;
+use App\Http\Controllers\GalleryImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,11 +52,13 @@ Route::group([
             'middleware' => ['RequiredPrivilege:manage_guest_side']
         ], function(){
 
+            Route::put('/about_us', [AboutUsController::class, 'update']);
+
             Route::group([
-                'prefix' => 'about_us'
+                'prefix' => 'gallery_image'
             ], function(){
 
-                Route::put('/', [AboutUsController::class, 'update']);
+                Route::post('/', [GalleryImageController::class, 'store']);
 
             });
 
