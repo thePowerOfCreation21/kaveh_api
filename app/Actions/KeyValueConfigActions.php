@@ -10,10 +10,10 @@ class KeyValueConfigActions
      * add new or update existing key value config
      *
      * @param string $key
-     * @param string $value
+     * @param mixed $value
      * @return KeyValueConfig
      */
-    public static function set (string $key, string $value): KeyValueConfig
+    public static function set (string $key, $value): KeyValueConfig
     {
         KeyValueConfig::where('key', $key)->delete();
         return KeyValueConfig::create([

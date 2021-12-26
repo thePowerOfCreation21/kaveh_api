@@ -16,5 +16,9 @@ class KeyValueConfig extends Model
         'value'
     ];
 
+    protected $casts = [
+        'value' => 'object'
+    ];
+
     public $timestamps = false;
 }
