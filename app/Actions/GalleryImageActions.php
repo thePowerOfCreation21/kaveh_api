@@ -28,11 +28,40 @@ class GalleryImageActions
         ]);
     }
 
+    /**
+     * get all images of gallery images (has pagination)
+     *
+     * @param int $skip
+     * @param int $limit
+     * @return object
+     */
     public static function get_all (int $skip = 0, int $limit = 50)
     {
         return (object) [
             'count' => GalleryImage::count(),
             'images' => GalleryImage::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
         ];
+    }
+
+    /**
+     * get image by id (returns 404 http response if id is wrong then dies)
+     *
+     * @param string $id
+     * @return GalleryImage
+     */
+    public static function get_by_id (string $id): GalleryImage
+    {
+        $gallery_image = GalleryImage::where('id', $id)->first();
+
+        if (empty($gallery_image))
+        {
+            response()->json([
+                'code' => 13,
+                'message' => 'could not find image with this id'
+            ], 404)->send();
+            die();
+        }
+
+        return $gallery_image;
     }
 }

@@ -25,6 +25,7 @@ Route::group([
 ], function(){
 
     Route::get('/', [GalleryImageController::class, 'get_all']);
+    Route::get('/{id}', [GalleryImageController::class, 'get_by_id']);
 
 });
 
