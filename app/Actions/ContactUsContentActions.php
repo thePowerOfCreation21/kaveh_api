@@ -33,7 +33,12 @@ class ContactUsContentActions
 
         foreach (ContactUsContent::$fields AS $field => $validation_roles)
         {
-            $contact_us_content->$field = $object->$field ?? null;
+            if (in_array($field, ContactUsContent::$ignore_this_fields))
+            {
+                continue;
+            }
+
+            $contact_us_content->$field = $object->$field ?? (ContactUsContent::$default_values[$field] ?? null);
         }
 
         return $contact_us_content;
@@ -52,6 +57,11 @@ class ContactUsContentActions
 
         foreach (ContactUsContent::$fields AS $field => $validation_roles)
         {
+            if (in_array($field, ContactUsContent::$ignore_this_fields))
+            {
+                continue;
+            }
+
             $contact_us_content->$field = !empty($new_contact_us_content->$field) ? $new_contact_us_content->$field : $contact_us_content->$field;
         }
 
