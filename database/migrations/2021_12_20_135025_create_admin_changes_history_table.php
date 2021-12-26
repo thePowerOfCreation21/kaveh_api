@@ -18,7 +18,7 @@ class CreateAdminChangesHistoryTable extends Migration
             $table->string('doer_id', 25)->nullable(true);
             $table->string('subject_id', 25);
             $table->string('action', 50);
-            $table->bigInteger('date')->unsigned();
+            $table->string('date');
         });
     }
 

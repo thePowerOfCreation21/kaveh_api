@@ -23,7 +23,7 @@ class AdminActions
             'privileges.*' => 'distinct|in:'.implode(",", Admin::$privileges_list)
         ]);
 
-        $current_time = time();
+        $current_time = date("Y-m-d H:i:s");
 
         if (Admin::where('user_name', $request->input('user_name'))->exists())
         {
@@ -139,7 +139,7 @@ class AdminActions
             'password' => 'string',
         ]);
 
-        $time = time();
+        $time = date('Y-m-d H:i:s');
         $admin = self::get_by_id($id);
 
         if ($admin->is_primary)

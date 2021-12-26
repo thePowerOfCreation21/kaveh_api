@@ -19,8 +19,8 @@ class CreateAdminsTable extends Migration
             $table->string('password', 150);
             $table->boolean('is_primary')->default(false);
             $table->string('privileges');
-            $table->bigInteger('created_at')->unsigned();
-            $table->bigInteger('updated_at')->unsigned();
+            $table->string('created_at');
+            $table->string('updated_at');
         });
     }
 
