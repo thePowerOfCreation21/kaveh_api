@@ -20,4 +20,19 @@ class GalleryImageController extends Controller
             'message' => 'image successfully added to gallery image(s)'
         ]);
     }
+
+    public function get_all (Request $request)
+    {
+        $request->validate([
+            'skip' => 'numeric',
+            'limit' => 'numeric|max:50'
+        ]);
+
+        return response()->json(
+            GalleryImageActions::get_all(
+                (! empty($request->input('skip'))) ? $request->input('skip') : 0,
+                (! empty($request->input('limit'))) ? $request->input('limit') : 50
+            )
+        );
+    }
 }

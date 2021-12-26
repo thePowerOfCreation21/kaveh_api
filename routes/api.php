@@ -21,6 +21,14 @@ Route::post('admin/login', [AdminController::class, 'login']);
 Route::get('/about_us', [AboutUsController::class, 'get']);
 
 Route::group([
+    'prefix' => '/gallery_image'
+], function(){
+
+    Route::get('/', [GalleryImageController::class, 'get_all']);
+
+});
+
+Route::group([
     'middleware' => ['auth:sanctum']
 ], function(){
 

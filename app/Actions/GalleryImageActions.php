@@ -27,4 +27,12 @@ class GalleryImageActions
             'image' => $image
         ]);
     }
+
+    public static function get_all (int $skip = 0, int $limit = 50)
+    {
+        return (object) [
+            'count' => GalleryImage::count(),
+            'images' => GalleryImage::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
+        ];
+    }
 }
