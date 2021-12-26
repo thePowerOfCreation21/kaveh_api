@@ -40,6 +40,8 @@ Route::group([
         'middleware' => ['AllowedUserClass:App\Models\Admin']
     ], function(){
 
+        Route::get('/admin/info', [AdminController::class, 'get_info']);
+
         Route::group([
             'middleware' => ['ShouldBePrimary']
         ], function(){

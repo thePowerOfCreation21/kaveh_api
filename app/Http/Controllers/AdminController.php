@@ -68,4 +68,9 @@ class AdminController extends Controller
             'message' => 'privilege(s) removed successfully'
         ]);
     }
+
+    public function get_info (Request $request)
+    {
+        return response()->json($request->user());
+    }
 }
