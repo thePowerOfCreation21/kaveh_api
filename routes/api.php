@@ -68,6 +68,7 @@ Route::group([
             ], function(){
 
                 Route::post('/', [GalleryImageController::class, 'store']);
+                Route::delete('/{id}', [GalleryImageController::class, 'delete']);
                 Route::put('/{id}', [GalleryImageController::class, 'update']);
 
             });

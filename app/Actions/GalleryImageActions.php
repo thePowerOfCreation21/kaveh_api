@@ -65,7 +65,14 @@ class GalleryImageActions
         return $gallery_image;
     }
 
-    public static function update (string $image, string $id)
+    /**
+     * change image by id
+     *
+     * @param string $image
+     * @param string $id
+     * @return GalleryImage
+     */
+    public static function update (string $image, string $id): GalleryImage
     {
         $gallery_image = self::get_by_id($id);
 
@@ -78,8 +85,21 @@ class GalleryImageActions
             die();
         }
 
-        return $gallery_image->update([
+        $gallery_image->update([
             'image' => $image
         ]);
+
+        return $gallery_image;
+    }
+
+    /**
+     * delete image by id
+     *
+     * @param string $id
+     * @return int
+     */
+    public static function delete (string $id): int
+    {
+        return GalleryImage::where('id', $id)->delete();
     }
 }

@@ -56,4 +56,13 @@ class GalleryImageController extends Controller
             'message' => 'image updated successfully'
         ]);
     }
+
+    public function delete (string $id)
+    {
+        GalleryImageActions::delete($id);
+
+        return response()->json([
+            'message' => 'image deleted successfully'
+        ]);
+    }
 }
