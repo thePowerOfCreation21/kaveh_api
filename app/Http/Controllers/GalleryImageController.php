@@ -40,4 +40,20 @@ class GalleryImageController extends Controller
     {
         return response()->json(GalleryImageActions::get_by_id($id));
     }
+
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048'
+        ]);
+
+        GalleryImageActions::update(
+            UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/'),
+            $id
+        );
+
+        return response()->json([
+            'message' => 'image updated successfully'
+        ]);
+    }
 }

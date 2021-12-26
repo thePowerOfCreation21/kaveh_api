@@ -64,4 +64,22 @@ class GalleryImageActions
 
         return $gallery_image;
     }
+
+    public static function update (string $image, string $id)
+    {
+        $gallery_image = self::get_by_id($id);
+
+        if (empty($image))
+        {
+            response()->json([
+                'code' => 12,
+                'message' => 'can not update image by empty string in db'
+            ], 400)->send();
+            die();
+        }
+
+        return $gallery_image->update([
+            'image' => $image
+        ]);
+    }
 }

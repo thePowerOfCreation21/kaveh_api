@@ -68,6 +68,7 @@ Route::group([
             ], function(){
 
                 Route::post('/', [GalleryImageController::class, 'store']);
+                Route::put('/{id}', [GalleryImageController::class, 'update']);
 
             });
 
