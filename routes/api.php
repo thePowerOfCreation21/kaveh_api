@@ -83,6 +83,14 @@ Route::group([
 
             });
 
+            Route::group([
+                'prefix' => '/contact_us_message'
+            ], function (){
+
+                Route::get('/', [ContactUsMessageController::class, 'get_all']);
+
+            });
+
         });
 
     });

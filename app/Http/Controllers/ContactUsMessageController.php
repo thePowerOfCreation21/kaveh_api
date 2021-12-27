@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ContactUsMessage;
+use App\Actions\ContactUsMessageActions;
 
 class ContactUsMessageController extends Controller
 {
@@ -20,5 +21,20 @@ class ContactUsMessageController extends Controller
         return response()->json([
             'message' => 'message sent successfully'
         ]);
+    }
+
+    public function get_all (Request $request)
+    {
+        $request->validate([
+            'skip' => 'numeric',
+            'limit' => 'numeric|max:50'
+        ]);
+
+        return response()->json(
+            ContactUsMessageActions::get_all(
+                (! empty($request->input('skip'))) ? $request->input('skip') : 0,
+                (! empty($request->input('limit'))) ? $request->input('limit') : 50
+            )
+        );
     }
 }
