@@ -88,6 +88,7 @@ Route::group([
             ], function (){
 
                 Route::get('/', [ContactUsMessageController::class, 'get_all']);
+                Route::delete('/{id}', [ContactUsMessageController::class, 'delete_by_id']);
 
             });
 

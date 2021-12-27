@@ -37,4 +37,13 @@ class ContactUsMessageController extends Controller
             )
         );
     }
+
+    public function delete_by_id (string $id)
+    {
+        ContactUsMessage::where('id', $id)->delete();
+
+        return response()->json([
+            'message' => 'message deleted successfully'
+        ]);
+    }
 }
