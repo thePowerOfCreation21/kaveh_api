@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Casts\CustomDateCast;
 
-class Articles extends Model
+class Article extends Model
 {
     use HasFactory;
 
