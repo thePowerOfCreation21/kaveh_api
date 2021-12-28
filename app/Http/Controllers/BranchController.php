@@ -46,4 +46,13 @@ class BranchController extends Controller
             'message' => 'branch deleted successfully'
         ]);
     }
+
+    public function update (Request $request, string $id)
+    {
+        BranchActions::update($request, $id);
+
+        return response()->json([
+            'message' => 'branch updated successfully'
+        ]);
+    }
 }

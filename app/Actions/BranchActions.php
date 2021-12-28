@@ -83,4 +83,37 @@ class BranchActions
 
         return $branch->delete();
     }
+
+    public static function update (Request $request, string $id): Branch
+    {
+        $branch = self::get_by_id($id);
+
+        $request->validate([
+            'title' => 'string|max:150',
+            'description' => 'string|max:250',
+            'address' => 'string|max:250',
+            'image' => 'file|mimes:png,jpg,jpeg,gif|max:2048'
+        ]);
+
+        $update = [];
+
+        !empty($request->input('title')) && $update['title'] = $request->input('title');
+        !empty($request->input('description')) && $update['description'] = $request->input('description');
+        !empty($request->input('address')) && $update['address'] = $request->input('address');
+        $image = UploadIt($_FILES['image'] ?? [], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/');
+
+        if (!empty($image))
+        {
+            $update['image'] = $image;
+
+            if (is_file($branch->image))
+            {
+                unlink($branch->image);
+            }
+        }
+
+        $branch->update($update);
+
+        return $branch;
+    }
 }

@@ -128,6 +128,7 @@ Route::group([
 
                 Route::post('/', [BranchController::class, 'store']);
                 Route::delete('/{id}', [BranchController::class, 'delete_by_id']);
+                Route::put('/{id}', [BranchController::class, 'update']);
 
             });
 
