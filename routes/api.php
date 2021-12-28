@@ -47,6 +47,14 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => '/branch'
+], function(){
+
+    Route::get('/', [BranchController::class, 'get']);
+
+});
+
+Route::group([
     'middleware' => ['auth:sanctum']
 ], function(){
 
