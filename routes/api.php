@@ -7,6 +7,7 @@ use App\Http\Controllers\GalleryImageController;
 use App\Http\Controllers\ContactUsContentController;
 use App\Http\Controllers\ContactUsMessageController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\BranchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -109,6 +110,14 @@ Route::group([
                 Route::post('/', [ArticleController::class, 'store']);
                 Route::delete('/{id}', [ArticleController::class, 'delete_by_id']);
                 Route::put('/{id}', [ArticleController::class, 'update_by_id']);
+
+            });
+
+            Route::group([
+                'prefix' => '/branch'
+            ], function(){
+
+                Route::post('/', [BranchController::class, 'store']);
 
             });
 
