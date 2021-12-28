@@ -108,6 +108,7 @@ Route::group([
 
                 Route::post('/', [ArticleController::class, 'store']);
                 Route::delete('/{id}', [ArticleController::class, 'delete_by_id']);
+                Route::put('/{id}', [ArticleController::class, 'update_by_id']);
 
             });
 

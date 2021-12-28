@@ -91,4 +91,40 @@ class ArticleActions
 
         return $article->delete();
     }
+
+    /**
+     * update article by id
+     * returns 404 http response if id is wrong then dies
+     * only changes the given field(s)
+     * removes the old image file
+     *
+     * @param Request $request
+     * @param string $id
+     * @return bool
+     */
+    public static function update_by_id (Request $request, string $id): bool
+    {
+        $request->validate([
+            'title' => 'string|max:120',
+            'image' => 'file|mimes:png,jpg,jpeg,gif|max:2048',
+            'content' => 'string|max:5000'
+        ]);
+
+        $article = self::get_by_id($id);
+
+        $update = [];
+
+        !empty($request->input('title')) && $update['title'] = $request->input('title');
+        !empty($request->input('content')) && $update['content'] = $request->input('content');
+        if ($image = UploadIt($_FILES['image'] ?? [], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/'))
+        {
+            if (is_file($article->image))
+            {
+                unlink($article->image);
+            }
+            $update['image'] = $image;
+        }
+
+        return $article->update($update);
+    }
 }

@@ -46,4 +46,13 @@ class ArticleController extends Controller
             'message' => 'article deleted successfully'
         ]);
     }
+
+    public function update_by_id (Request $request, $id)
+    {
+        ArticleActions::update_by_id($request, $id);
+
+        return response()->json([
+            'message' => 'article updated successfully'
+        ]);
+    }
 }
