@@ -3,6 +3,8 @@
 namespace App\Actions;
 
 use App\Models\GalleryImage;
+use Illuminate\Http\Request;
+use function App\Helpers\UploadIt;
 
 class GalleryImageActions
 {
@@ -67,14 +69,21 @@ class GalleryImageActions
 
     /**
      * change image by id
+     * removes the old image
      *
      * @param string $image
      * @param string $id
      * @return GalleryImage
      */
-    public static function update (string $image, string $id): GalleryImage
+    public static function update (Request $request, string $id): GalleryImage
     {
         $gallery_image = self::get_by_id($id);
+
+        $request->validate([
+            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048'
+        ]);
+
+        $image = UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/');
 
         if (empty($image))
         {
@@ -83,6 +92,11 @@ class GalleryImageActions
                 'message' => 'can not update image by empty string in db'
             ], 400)->send();
             die();
+        }
+
+        if (is_file($gallery_image->image))
+        {
+            unlink($gallery_image->image);
         }
 
         $gallery_image->update([

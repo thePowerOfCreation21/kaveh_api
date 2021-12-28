@@ -43,12 +43,8 @@ class GalleryImageController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $request->validate([
-            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048'
-        ]);
-
         GalleryImageActions::update(
-            UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/'),
+            $request,
             $id
         );
 
