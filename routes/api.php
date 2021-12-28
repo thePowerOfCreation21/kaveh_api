@@ -37,6 +37,14 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => '/article'
+], function(){
+
+    Route::get('/', [ArticleController::class, 'get']);
+
+});
+
+Route::group([
     'middleware' => ['auth:sanctum']
 ], function(){
 
