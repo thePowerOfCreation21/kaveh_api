@@ -30,4 +30,11 @@ class BranchController extends Controller
             )
         );
     }
+
+    public function get_by_id (string $id)
+    {
+        return response()->json(
+            BranchActions::get_by_id($id)
+        );
+    }
 }

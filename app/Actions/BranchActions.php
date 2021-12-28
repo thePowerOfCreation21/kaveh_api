@@ -28,11 +28,40 @@ class BranchActions
         return Branch::create($fields);
     }
 
+    /**
+     * get branches from Db with pagination
+     *
+     * @param int $skip
+     * @param int $limit
+     * @return object
+     */
     public static function get (int $skip = 0, int $limit = 50)
     {
         return (object) [
             'count' => Branch::count(),
             'branches' => Branch::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
         ];
+    }
+
+    /**
+     * get branch by id (returns 404 http response if id is wrong then dies)
+     *
+     * @param string $id
+     * @return Branch
+     */
+    public static function get_by_id (string $id): Branch
+    {
+        $branch = Branch::where('id', $id)->first();
+
+        if (empty($branch))
+        {
+            response()->json([
+                'code' => 13,
+                'message' => 'could not find branch with this id'
+            ], 404)->send();
+            die();
+        }
+
+        return $branch;
     }
 }

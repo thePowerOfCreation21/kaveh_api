@@ -51,6 +51,7 @@ Route::group([
 ], function(){
 
     Route::get('/', [BranchController::class, 'get']);
+    Route::get('/{id}', [BranchController::class, 'get_by_id']);
 
 });
 
