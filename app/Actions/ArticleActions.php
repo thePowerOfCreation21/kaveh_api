@@ -71,4 +71,24 @@ class ArticleActions
 
         return $article;
     }
+
+    /**
+     * delete article by id
+     * returns 404 http response if id is wrong then dies
+     * removes the image file
+     *
+     * @param string $id
+     * @return int
+     */
+    public static function delete_by_id (string $id): int
+    {
+        $article = self::get_by_id($id);
+
+        if (is_file($article->image))
+        {
+            unlink($article->image);
+        }
+
+        return $article->delete();
+    }
 }

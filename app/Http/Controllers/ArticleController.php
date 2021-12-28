@@ -37,4 +37,13 @@ class ArticleController extends Controller
             ArticleActions::get_by_id($id)
         );
     }
+
+    public function delete_by_id (string $id)
+    {
+        ArticleActions::delete_by_id($id);
+
+        return response()->json([
+            'message' => 'article deleted successfully'
+        ]);
+    }
 }
