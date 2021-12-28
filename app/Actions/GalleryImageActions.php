@@ -108,12 +108,20 @@ class GalleryImageActions
 
     /**
      * delete image by id
+     * removes the image file
      *
      * @param string $id
      * @return int
      */
     public static function delete (string $id): int
     {
+        $gallery_image = self::get_by_id($id);
+
+        if (is_file($gallery_image->image))
+        {
+            unlink($gallery_image->image);
+        }
+
         return GalleryImage::where('id', $id)->delete();
     }
 }
