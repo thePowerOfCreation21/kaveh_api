@@ -64,4 +64,23 @@ class BranchActions
 
         return $branch;
     }
+
+    /**
+     * delete branch by id
+     * removes image file
+     *
+     * @param string $id
+     * @return bool
+     */
+    public static function delete_by_id (string $id): bool
+    {
+        $branch = self::get_by_id($id);
+
+        if (is_file($branch->image))
+        {
+            unlink($branch->image);
+        }
+
+        return $branch->delete();
+    }
 }

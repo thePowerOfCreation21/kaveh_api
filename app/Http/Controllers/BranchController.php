@@ -37,4 +37,13 @@ class BranchController extends Controller
             BranchActions::get_by_id($id)
         );
     }
+
+    public function delete_by_id (string $id)
+    {
+        BranchActions::delete_by_id($id);
+
+        return response()->json([
+            'message' => 'branch deleted successfully'
+        ]);
+    }
 }
