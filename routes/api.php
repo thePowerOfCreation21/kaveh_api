@@ -6,6 +6,7 @@ use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\GalleryImageController;
 use App\Http\Controllers\ContactUsContentController;
 use App\Http\Controllers\ContactUsMessageController;
+use App\Http\Controllers\ArticleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -89,6 +90,14 @@ Route::group([
 
                 Route::get('/', [ContactUsMessageController::class, 'get_all']);
                 Route::delete('/{id}', [ContactUsMessageController::class, 'delete_by_id']);
+
+            });
+
+            Route::group([
+                'prefix' => '/article'
+            ], function(){
+
+                Route::post('/', [ArticleController::class, 'store']);
 
             });
 
