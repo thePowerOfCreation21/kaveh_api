@@ -49,4 +49,26 @@ class ArticleActions
                 ->get()
         ];
     }
+
+    /**
+     * get article by id (returns 404 http response if id is wrong then dies)
+     *
+     * @param string $id
+     * @return Article
+     */
+    public static function get_by_id (string $id): Article
+    {
+        $article = Article::where('id', $id)->first();
+
+        if (empty($article))
+        {
+            response()->json([
+                'code' => 15,
+                'message' => "couldn't find article with this id"
+            ], 404)->send();
+            die();
+        }
+
+        return $article;
+    }
 }

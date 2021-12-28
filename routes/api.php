@@ -41,6 +41,7 @@ Route::group([
 ], function(){
 
     Route::get('/', [ArticleController::class, 'get']);
+    Route::get('/{id}', [ArticleController::class, 'get_by_id']);
 
 });
 
