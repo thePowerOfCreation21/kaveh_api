@@ -8,6 +8,7 @@ use App\Http\Controllers\ContactUsContentController;
 use App\Http\Controllers\ContactUsMessageController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BranchController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -131,6 +132,15 @@ Route::group([
                 Route::put('/{id}', [BranchController::class, 'update']);
 
             });
+
+        });
+
+        Route::group([
+            'middleware' => ['RequiredPrivilege:manage_users'],
+            'prefix' => '/user'
+        ], function(){
+
+            Route::post('/', [UserController::class, 'add']);
 
         });
 

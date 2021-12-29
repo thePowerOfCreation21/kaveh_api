@@ -25,4 +25,14 @@ class User extends Model
     protected $hidden = [
         'password'
     ];
+
+    public function format_user_data_array (array $user_data)
+    {
+        foreach ($this->fillable AS $field)
+        {
+            $user_data[$field] = $user_data[$field] ?? null;
+        }
+
+        return $user_data;
+    }
 }
