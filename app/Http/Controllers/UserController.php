@@ -42,4 +42,11 @@ class UserController extends Controller
             'message' => 'user unblocked successfully'
         ]);
     }
+
+    public function get (Request $request)
+    {
+        return response()->json(
+            UserActions::get_users_by_admin($request)
+        );
+    }
 }

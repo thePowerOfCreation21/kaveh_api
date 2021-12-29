@@ -41,7 +41,7 @@ class GalleryImageActions
     {
         return (object) [
             'count' => GalleryImage::count(),
-            'images' => GalleryImage::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
+            'data' => GalleryImage::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
         ];
     }
 

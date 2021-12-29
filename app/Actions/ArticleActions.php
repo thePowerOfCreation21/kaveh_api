@@ -38,7 +38,7 @@ class ArticleActions
     {
         return (object) [
             'count' => Article::count(),
-            'Articles' => Article::selectRaw('articles.*, IF(
+            'data' => Article::selectRaw('articles.*, IF(
                     LENGTH(content) > 100,
                     CONCAT(SUBSTRING(content, 1, 100), "..."),
                     content

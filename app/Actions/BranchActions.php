@@ -39,7 +39,7 @@ class BranchActions
     {
         return (object) [
             'count' => Branch::count(),
-            'branches' => Branch::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
+            'data' => Branch::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
         ];
     }
 

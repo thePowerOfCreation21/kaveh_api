@@ -100,7 +100,7 @@ class AdminActions
 
         return (object) [
             'count' => Admin::count(),
-            'admins' => Admin::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
+            'data' => Admin::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
         ];
     }
 

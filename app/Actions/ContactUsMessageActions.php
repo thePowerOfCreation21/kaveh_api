@@ -10,7 +10,7 @@ class ContactUsMessageActions
     {
         return (object) [
             'count' => ContactUsMessage::count(),
-            'messages' => ContactUsMessage::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
+            'data' => ContactUsMessage::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
         ];
     }
 }

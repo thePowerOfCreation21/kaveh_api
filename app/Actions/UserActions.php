@@ -186,4 +186,56 @@ class UserActions
             'reason_for_blocking' => null
         ]);
     }
+
+    /**
+     * get users by request
+     *
+     * @param Request $request
+     * @return object
+     */
+    public static function get_users_by_admin (Request $request)
+    {
+        $request->validate([
+            'skip' => 'numeric',
+            'limit' => 'numeric|max:50',
+            'search' => 'string|max:50'
+        ]);
+
+        return UserActions::get(
+            (! empty($request->input('skip'))) ? $request->input('skip') : 0,
+            (! empty($request->input('limit'))) ? $request->input('limit') : 50,
+            (string) $request->input('search')
+        );
+    }
+
+    /**
+     * get users from DB (has pagination)
+     *
+     * @param int $skip
+     * @param int $limit
+     * @param string $search
+     * @return object
+     */
+    public static function get (int $skip = 0, int $limit = 50, string $search = "")
+    {
+        $user = new User();
+
+        if (!empty($search))
+        {
+            $user = $user
+                ->where('name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('phone_number', 'like', "%{$search}%")
+                ->orWhere('card_number', 'like', "%{$search}%");
+        }
+
+        return (object) [
+            'count' => $user->count(),
+            'data' => $user
+                ->orderBy('id', 'DESC')
+                ->skip($skip)
+                ->take($limit)
+                ->get()
+        ];
+    }
 }
