@@ -142,6 +142,7 @@ Route::group([
 
             Route::post('/', [UserController::class, 'add']);
             Route::put('/{id}', [UserController::class, 'update_by_id']);
+            Route::put('/{id}/block', [UserController::class, 'block_user_by_id']);
 
         });
 

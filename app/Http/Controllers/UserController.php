@@ -24,4 +24,13 @@ class UserController extends Controller
             'message' => 'user updated successfully'
         ]);
     }
+
+    public function block_user_by_id (Request $request, string $id)
+    {
+        UserActions::block_user_by_admin($request, $id);
+
+        return response()->json([
+            'message' => 'user blocked successfully'
+        ]);
+    }
 }

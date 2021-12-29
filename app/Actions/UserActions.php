@@ -52,7 +52,7 @@ class UserActions
 
         !empty($user_data['password']) && $user_data['password'] = Hash::make($user_data['password']);
 
-        return User::create($user_data);
+        return User::create(array_filter($user_data));
     }
 
     /**
@@ -135,5 +135,32 @@ class UserActions
         }
 
         return $user;
+    }
+
+    public static function block_user_by_admin (Request $request, string $id)
+    {
+        return self::block_user(
+            $id,
+            $request->validate([
+                'reason_for_blocking' => 'required|string|max:255'
+            ])['reason_for_blocking']
+        );
+    }
+
+    /**
+     * block user by id
+     *
+     * @param string $id
+     * @param string $reason_for_blocking
+     * @return int
+     */
+    public static function block_user (string $id, string $reason_for_blocking = ""): int
+    {
+        $user = self::get_user_by_id($id);
+
+        return $user->update([
+            'is_blocked' => true,
+            'reason_for_blocking' => $reason_for_blocking
+        ]);
     }
 }
