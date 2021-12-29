@@ -19,11 +19,17 @@ class User extends Model
         'second_phone_number',
         'password',
         'area',
-        'card_number'
+        'card_number',
+        'is_blocked',
+        'reason_for_blocking'
     ];
 
     protected $hidden = [
         'password'
+    ];
+
+    protected $casts = [
+        'is_blocked' => 'boolean'
     ];
 
     public function format_user_data_array (array $user_data)
