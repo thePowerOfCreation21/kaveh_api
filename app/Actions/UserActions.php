@@ -4,6 +4,8 @@ namespace App\Actions;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Testing\Fluent\Concerns\Has;
 
 class UserActions
 {
@@ -48,6 +50,90 @@ class UserActions
             die();
         }
 
+        !empty($user_data['password']) && $user_data['password'] = Hash::make($user_data['password']);
+
         return User::create($user_data);
+    }
+
+    /**
+     * update user by request
+     *
+     * @param Request $request
+     * @param string $id
+     * @return User
+     */
+    public static function update_user_by_admin (Request $request, string $id)
+    {
+        $user_data = $request->validate([
+            'name' => 'string|max:64',
+            'last_name' => 'string|max:64',
+            'phone_number' => 'regex:/09\d{9}/',
+            'password' => 'string|min:6',
+            'area' => 'string|max:255'
+        ]);
+
+        return self::update_user($user_data, $id);
+    }
+
+    /**
+     * update user by id
+     * returns 400 http response if phone number is taken
+     *
+     * @param array $user_data
+     * @param string $id
+     * @return User
+     */
+    public static function update_user (array $user_data, string $id): User
+    {
+        $user = self::get_user_by_id($id);
+        $user_data = (new User())->format_user_data_array($user_data);
+        $update = [];
+
+        !empty($user_data['name']) && $update['name'] = $user_data['name'];
+        !empty($user_data['last_name']) && $update['last_name'] = $user_data['last_name'];
+        !empty($user_data['second_phone_number']) && $update['second_phone_number'] = $user_data['second_phone_number'];
+        !empty($user_data['area']) && $update['area'] = $user_data['area'];
+        !empty($user_data['password']) && $update['password'] = hash::make($user_data['password']);
+        if (!empty($user_data['phone_number']))
+        {
+            if (
+                User::where('id', '!=', $id)->where('phone_number', $user_data['phone_number'])->exists()
+            )
+            {
+                response()->json([
+                    'code' => 18,
+                    'message' => 'this phone number is already taken'
+                ], 400)->send();
+                die();
+            }
+            $update['phone_number'] = $user_data['phone_number'];
+        }
+
+        $user->update($update);
+
+        return $user;
+    }
+
+    /**
+     * get user by id
+     * returns 404 http response if id is wrong
+     *
+     * @param string $id
+     * @return User
+     */
+    public static function get_user_by_id (string $id): User
+    {
+        $user = User::where('id', $id)->first();
+
+        if (empty($user))
+        {
+            response()->json([
+                'code' => 18,
+                'message' => 'could not find user with this id'
+            ], 404)->send();
+            die();
+        }
+
+        return $user;
     }
 }

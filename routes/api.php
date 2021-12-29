@@ -141,6 +141,7 @@ Route::group([
         ], function(){
 
             Route::post('/', [UserController::class, 'add']);
+            Route::put('/{id}', [UserController::class, 'update_by_id']);
 
         });
 

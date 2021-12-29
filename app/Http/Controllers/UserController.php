@@ -15,4 +15,13 @@ class UserController extends Controller
             'message' => 'user added successfully'
         ]);
     }
+
+    public function update_by_id (Request $request, string $id)
+    {
+        UserActions::update_user_by_admin($request, $id);
+
+        return response()->json([
+            'message' => 'user updated successfully'
+        ]);
+    }
 }
