@@ -77,7 +77,6 @@ function time_to_custom_date ($time = 'current_time')
 
     return (object) [
         'timestamp' => $time,
-        'date' => jdate("Y/m/j",$time),
         'date_time' => jdate("Y/m/j H:i:s",$time),
         'string' => jdate("l j F Y",$time)
     ];
