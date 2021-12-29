@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('area')->nullable();
             $table->string('card_number', 16)->nullable();
+            $table->boolean('is_blocked')->default(false);
+            $table->string('reason_for_blocking')->nullable();
             $table->timestamps();
         });
     }
