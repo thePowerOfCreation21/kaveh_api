@@ -137,7 +137,14 @@ class UserActions
         return $user;
     }
 
-    public static function block_user_by_admin (Request $request, string $id)
+    /**
+     * block user by request
+     *
+     * @param Request $request
+     * @param string $id
+     * @return int
+     */
+    public static function block_user_by_admin (Request $request, string $id): int
     {
         return self::block_user(
             $id,
@@ -161,6 +168,22 @@ class UserActions
         return $user->update([
             'is_blocked' => true,
             'reason_for_blocking' => $reason_for_blocking
+        ]);
+    }
+
+    /**
+     * unblock user by id
+     *
+     * @param string $id
+     * @return int
+     */
+    public static function unblock_user (string $id): int
+    {
+        $user = self::get_user_by_id($id);
+
+        return $user->update([
+            'is_blocked' => false,
+            'reason_for_blocking' => null
         ]);
     }
 }
