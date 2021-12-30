@@ -9,6 +9,7 @@ use App\Http\Controllers\ContactUsMessageController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -145,6 +146,15 @@ Route::group([
             Route::put('/{id}', [UserController::class, 'update_by_id']);
             Route::put('/{id}/block', [UserController::class, 'block_user_by_id']);
             Route::put('/{id}/unblock', [UserController::class, 'unblock_user_by_id']);
+
+        });
+
+        Route::group([
+            'middleware' => ['RequiredPrivilege:manage_products'],
+            'prefix' => '/product'
+        ], function(){
+
+            Route::post('/', [ProductController::class, 'store']);
 
         });
 
