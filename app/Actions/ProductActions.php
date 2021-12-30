@@ -30,6 +30,12 @@ class ProductActions
         return Product::create($product_data);
     }
 
+    /**
+     * get products by request
+     *
+     * @param Request $request
+     * @return object
+     */
     public static function get_by_request (Request $request)
     {
         $request->validate([
@@ -78,5 +84,27 @@ class ProductActions
                 ->take($limit)
                 ->get()
         ];
+    }
+
+    /**
+     * get product by id
+     *
+     * @param string $id
+     * @return Product
+     */
+    public static function get_by_id (string $id): Product
+    {
+        $product = Product::where('id', $id)->first();
+
+        if (empty($product))
+        {
+            response()->json([
+                'code' => 21,
+                'message' => 'could not find product with this id'
+            ], 404)->send();
+            die();
+        }
+
+        return $product;
     }
 }
