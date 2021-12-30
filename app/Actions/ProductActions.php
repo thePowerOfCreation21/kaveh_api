@@ -29,4 +29,54 @@ class ProductActions
 
         return Product::create($product_data);
     }
+
+    public static function get_by_request (Request $request)
+    {
+        $request->validate([
+            'skip' => 'numeric|min:0',
+            'limit' => 'numeric|min:0|max:50',
+            'search' => 'string|max:128',
+            'type' => 'in:limited,unlimited'
+        ]);
+
+        return self::get(
+            !empty($request->input('skip')) ? $request->input('skip') : 0,
+            !empty($request->input('limit')) ? $request->input('limit') : 50,
+            (string) $request->input('search'),
+            (string) $request->input('type'),
+        );
+    }
+
+    /**
+     * get products
+     *
+     * @param int $skip
+     * @param int $limit
+     * @param string $search
+     * @param string $type
+     * @return object
+     */
+    public static function get (int $skip = 0, $limit = 50, string $search = "", string $type = "")
+    {
+        $product = new Product();
+
+        if (!empty($search))
+        {
+            $product = $product->where('title', 'like', "%{$search}%");
+        }
+
+        if (!empty($type))
+        {
+            $product = $product->where('type', $type);
+        }
+
+        return (object) [
+            'count' => $product->count(),
+            'data' => $product
+                ->orderBy('id', 'DESC')
+                ->skip($skip)
+                ->take($limit)
+                ->get()
+        ];
+    }
 }

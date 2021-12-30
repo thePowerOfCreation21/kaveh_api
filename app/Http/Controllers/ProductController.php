@@ -15,4 +15,11 @@ class ProductController extends Controller
             'message' => 'product added successfully'
         ]);
     }
+
+    public function get (Request $request)
+    {
+        return response()->json(
+            ProductActions::get_by_request($request)
+        );
+    }
 }
