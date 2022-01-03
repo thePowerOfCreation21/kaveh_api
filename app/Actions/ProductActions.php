@@ -107,4 +107,22 @@ class ProductActions
 
         return $product;
     }
+
+    /**
+     * delete product by id
+     *
+     * @param string $id
+     * @return int
+     */
+    public static function delete_by_id (string $id): int
+    {
+        $product = self::get_by_id($id);
+
+        if (is_file($product->image))
+        {
+            unlink($product->image);
+        }
+
+        return $product->delete();
+    }
 }

@@ -157,6 +157,7 @@ Route::group([
             Route::post('/', [ProductController::class, 'store']);
             Route::get('/', [ProductController::class, 'get']);
             Route::get('/{id}', [ProductController::class, 'get_by_id']);
+            Route::delete('/{id}', [ProductController::class, 'delete_by_id']);
 
         });
 
