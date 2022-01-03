@@ -125,4 +125,45 @@ class ProductActions
 
         return $product->delete();
     }
+
+    /**
+     * edit product by id
+     *
+     * @param Request $request
+     * @param string $id
+     * @return Product
+     */
+    public static function edit_by_request (Request $request, string $id): Product
+    {
+        $product = self::get_by_id($id);
+
+        $product_data = $request->validate([
+            'title' => 'string|max:128',
+            'image' => 'file|mimes:png,jpg,jpeg,gif|max:2048',
+            'description' => 'string|max:500',
+            'price' => 'numeric|min:1|max:1000000',
+            'discount_percentage' => 'numeric|min:0|max:99',
+            'stock' => 'numeric|min:0|max:100000'
+        ]);
+
+        if (isset($_FILES['image']))
+        {
+            if (is_file($product->image))
+            {
+                unlink($product->image);
+            }
+
+            $product_data['image'] = UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/');
+        }
+
+        if ($product->type == 'unlimited' && isset($product_data['stock']))
+        {
+            unset($product_data['stock']);
+        }
+
+        $product->update($product_data);
+
+        return $product;
+
+    }
 }

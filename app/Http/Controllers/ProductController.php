@@ -38,4 +38,13 @@ class ProductController extends Controller
             'message' => 'product deleted successfully'
         ]);
     }
+
+    public function edit_by_id (Request $request, string $id)
+    {
+        ProductActions::edit_by_request($request, $id);
+
+        return response()->json([
+            'message' => 'product updated successfully'
+        ]);
+    }
 }

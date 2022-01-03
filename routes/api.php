@@ -158,6 +158,7 @@ Route::group([
             Route::get('/', [ProductController::class, 'get']);
             Route::get('/{id}', [ProductController::class, 'get_by_id']);
             Route::delete('/{id}', [ProductController::class, 'delete_by_id']);
+            Route::put('/{id}', [ProductController::class, 'edit_by_id']);
 
         });
 
