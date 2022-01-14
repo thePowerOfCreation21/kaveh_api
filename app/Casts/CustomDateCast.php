@@ -34,6 +34,18 @@ class CustomDateCast implements CastsAttributes
      */
     public function set($model, string $key, $value, array $attributes)
     {
-        return date("Y-m-d H:i:s");
+        if (!is_numeric($value))
+        {
+            if (empty($value))
+            {
+                $value = time();
+            }
+            else
+            {
+                $value = strtotime($value);
+            }
+        }
+
+        return date("Y-m-d H:i:s", $value);
     }
 }
