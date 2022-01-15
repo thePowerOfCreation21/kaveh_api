@@ -76,7 +76,7 @@ class AdminActions
             }
         }
 
-      return response()->json([
+      response()->json([
             'code' => 3,
             'message' => 'user_name or password is wrong'
         ], 400);
