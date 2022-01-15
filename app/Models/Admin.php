@@ -39,6 +39,7 @@ class Admin extends Model
         'manage_guest_side',
         'manage_users',
         'manage_products',
-        'manage_orders'
+        'manage_orders',
+        'manage_discounts'
     ];
 }
