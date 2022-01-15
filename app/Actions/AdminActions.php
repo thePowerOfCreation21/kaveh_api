@@ -60,6 +60,7 @@ class AdminActions
      */
     public static function login (Request $request)
     {
+        //abort(401, 'salam');
         $request->validate([
             'user_name' => 'required',
             'password' => 'required'
@@ -75,11 +76,10 @@ class AdminActions
             }
         }
 
-        response()->json([
+      return response()->json([
             'code' => 3,
             'message' => 'user_name or password is wrong'
-        ], 400)->send();
-        die();
+        ], 400);
     }
 
     /**

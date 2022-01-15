@@ -10,6 +10,7 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\DiscountCodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,13 +137,15 @@ Route::group([
 
         });
 
+        Route::get('/user', [UserController::class, 'get'])
+            ->middleware('RequiredPrivilege:manage_users|manage_discounts');
+
         Route::group([
             'middleware' => ['RequiredPrivilege:manage_users'],
             'prefix' => '/user'
         ], function(){
 
             Route::post('/', [UserController::class, 'add']);
-            Route::get('/', [UserController::class, 'get']);
             Route::put('/{id}', [UserController::class, 'update_by_id']);
             Route::put('/{id}/block', [UserController::class, 'block_user_by_id']);
             Route::put('/{id}/unblock', [UserController::class, 'unblock_user_by_id']);
@@ -159,6 +162,15 @@ Route::group([
             Route::get('/{id}', [ProductController::class, 'get_by_id']);
             Route::delete('/{id}', [ProductController::class, 'delete_by_id']);
             Route::put('/{id}', [ProductController::class, 'edit_by_id']);
+
+        });
+
+        Route::group([
+            'middleware' => ['RequiredPrivilege:manage_discounts'],
+            'prefix' => '/discount'
+        ], function(){
+
+            Route::post('/', [DiscountCodeController::class, 'store']);
 
         });
 
