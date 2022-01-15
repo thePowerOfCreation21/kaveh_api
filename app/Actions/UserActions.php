@@ -20,10 +20,23 @@ class UserActions
         $user_data = $request->validate([
             'name' => 'required|string|max:64',
             'last_name' => 'required|string|max:64',
-            'phone_number' => 'required|regex:/09\d{9}/',
+            'phone_number' => 'required|string',
             'password' => 'required|string|min:6',
             'area' => 'required|string|max:255'
         ]);
+
+        preg_match("/09\d{9}/", $user_data['phone_number'], $phone_number);
+
+        if (empty($phone_number))
+        {
+            response()->json([
+                'code' => 30,
+                'message' => 'could not match phone number with required regex pattern'
+            ], 400)->send();
+            die();
+        }
+
+        $user_data['phone_number'] = $phone_number[0];
 
         return self::add_user($user_data);
     }
