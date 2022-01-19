@@ -158,6 +158,7 @@ class AdminActions
      * @param Request $request
      * @param string $id
      * @return Admin
+     * @throws \Exception
      */
     public static function delete (string $id): Admin
     {
@@ -165,11 +166,7 @@ class AdminActions
 
         if ($admin->is_primary)
         {
-            response()->json([
-                'code' => 11,
-                'message' => 'you can not delete primary accounts'
-            ], 403)->send();
-            die();
+            throw new \Exception('primary accounts can not be deleted', 11);
         }
 
         $admin->delete();
@@ -183,6 +180,7 @@ class AdminActions
      * @param Request $request
      * @param string $id
      * @return Admin
+     * @throws \Exception
      */
     public static function add_privileges (Request $request, string $id): Admin
     {
@@ -214,6 +212,7 @@ class AdminActions
      * @param Request $request
      * @param string $id
      * @return Admin
+     * @throws \Exception
      */
     public static function delete_privileges (Request $request, string $id): Admin
     {
