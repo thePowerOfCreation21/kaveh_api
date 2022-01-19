@@ -72,7 +72,7 @@ class AdminActions
      *
      * @param Request $request
      * @return object $admin->createToken('auth_token')
-     * @throws \Exception
+     * @throws CustomException
      */
     public static function login (Request $request)
     {
@@ -92,14 +92,7 @@ class AdminActions
             }
         }
 
-        throw new \Exception('user_name or password is wrong', 3);
-
-        /*
-        response()->json([
-            'code' => 3,
-            'message' => 'user_name or password is wrong'
-        ], 400)->send();
-        */
+        throw new CustomException('user_name or password is wrong', 3, 400);
     }
 
     /**

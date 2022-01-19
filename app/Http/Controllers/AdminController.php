@@ -21,15 +21,9 @@ class AdminController extends Controller
 
     public function login (Request $request)
     {
-        try {
-            return response()->json([
-                'token' => AdminActions::login($request)->plainTextToken
-            ]);
-        }
-        catch (\Exception $exception)
-        {
-            return AdminView::get_response_by_exception($exception);
-        }
+        return response()->json([
+            'token' => AdminActions::login($request)->plainTextToken
+        ]);
 
     }
 
