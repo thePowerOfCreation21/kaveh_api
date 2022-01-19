@@ -10,6 +10,7 @@ class AdminView
     {
         switch ($exception->getCode())
         {
+            case 1:
             case 3:
                 return response()->json([
                     'code' => $exception->getCode(),

@@ -26,11 +26,7 @@ class AdminActions
 
         if (Admin::where('user_name', $request->input('user_name'))->exists())
         {
-            response()->json([
-                'code' => 1,
-                'message' => 'this user_name is already taken'
-            ], 400)->send();
-            die();
+            throw new \Exception('this user_name is already taken', 1);
         }
 
         $admin_data = [
