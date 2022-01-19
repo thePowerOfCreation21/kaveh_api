@@ -103,11 +103,17 @@ class AdminController extends Controller
 
     public function delete_privileges (Request $request, string $id)
     {
-        AdminActions::delete_privileges($request, $id);
+        try {
+            AdminActions::delete_privileges($request, $id);
 
-        return response()->json([
-            'message' => 'privilege(s) removed successfully'
-        ]);
+            return response()->json([
+                'message' => 'privilege(s) removed successfully'
+            ]);
+        }
+        catch (\Exception $exception)
+        {
+            return AdminView::get_response_by_exception($exception);
+        }
     }
 
     public function get_info (Request $request)
