@@ -15,7 +15,7 @@ class AdminActions
      *
      * @param string $id
      * @return Admin
-     * @throws \Exception
+     * @throws CustomException
      */
     public static function get_by_id (string $id): Admin
     {
@@ -30,7 +30,7 @@ class AdminActions
     /**
      * @param Request $request
      * @return Admin
-     * @throws \Exception
+     * @throws CustomException
      */
     public static function register (Request $request): Admin
     {
@@ -45,7 +45,7 @@ class AdminActions
 
         if (Admin::where('user_name', $request->input('user_name'))->exists())
         {
-            throw new \Exception('this user_name is already taken', 1);
+            throw new CustomException('this user_name is already taken', 1, 400);
         }
 
         $admin_data = [

@@ -12,18 +12,11 @@ class AdminController extends Controller
 {
     public function register (Request $request)
     {
-        try {
-            AdminActions::register($request);
+        AdminActions::register($request);
 
-            return response()->json([
-                'message' => 'admin registered successfully'
-            ]);
-        }
-        catch (\Exception $exception)
-        {
-            return AdminView::get_response_by_exception($exception);
-        }
-
+        return response()->json([
+            'message' => 'admin registered successfully'
+        ]);
     }
 
     public function login (Request $request)
