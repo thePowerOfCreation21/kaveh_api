@@ -47,7 +47,13 @@ class AdminController extends Controller
 
     public function get_by_id (string $id)
     {
-        return AdminActions::get_by_id($id);
+        try {
+            return AdminView::get_by_id($id);
+        }
+        catch (\Exception $exception)
+        {
+            return AdminView::get_response_by_exception($exception);
+        }
     }
 
     public function update (Request $request, string $id)

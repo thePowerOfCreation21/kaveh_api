@@ -83,47 +83,6 @@ class AdminActions
     }
 
     /**
-     * get all admins with pagination (can take 50 admins at max)
-     *
-     * @param Request $request
-     * @return object
-     */
-    public static function get_all (Request $request)
-    {
-        $request->validate([
-            'skip' => 'numeric',
-            'limit' => 'numeric|max:50'
-        ]);
-
-        $skip = (! empty($request->input('skip'))) ? $request->input('skip') : 0;
-        $limit = (! empty($request->input('limit'))) ? $request->input('limit') : 50;
-
-        return (object) [
-            'count' => Admin::count(),
-            'data' => Admin::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
-        ];
-    }
-
-    /**
-     * get admin by id (returns 404 http response if id is wrong then dies)
-     *
-     * @param string $id
-     * @return Admin
-     */
-    public static function get_by_id (string $id): Admin
-    {
-        $admin = Admin::where('id', $id)->first();
-        if (empty($admin))
-        {
-            response()->json([
-                'message' => 'admin not found'
-            ], 404)->send();
-            die();
-        }
-        return $admin;
-    }
-
-    /**
      * update admin by id (returns 404 http response if id is wrong then dies)
      * no one can edit primary admins (returns 403 http response if admin is primary)
      *
