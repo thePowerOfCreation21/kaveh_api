@@ -39,17 +39,11 @@ class AdminController extends Controller
 
     public function update (Request $request, string $id)
     {
-        try {
-            AdminActions::update($request, $id);
+        AdminActions::update($request, $id);
 
-            return response()->json([
-                'message' => 'admin updated successfully'
-            ]);
-        }
-        catch (\Exception $exception)
-        {
-            return AdminView::get_response_by_exception($exception);
-        }
+        return response()->json([
+            'message' => 'admin updated successfully'
+        ]);
     }
 
     public function delete (string $id)

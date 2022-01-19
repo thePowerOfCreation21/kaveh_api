@@ -116,7 +116,7 @@ class AdminActions
 
         if ($admin->is_primary)
         {
-            throw new \Exception('primary accounts can not be edited', 11);
+            throw new CustomException('primary accounts can not be edited', 11, 400);
         }
 
         $update_data = [
@@ -131,7 +131,7 @@ class AdminActions
         }
         else if (Admin::where('id', '!=', $id)->where('user_name', $request->input('user_name'))->exists())
         {
-            throw new \Exception('this user_namme is already taken', 6);
+            throw new CustomException('this user_namme is already taken', 6, 400);
         }
 
         $admin->update($update_data);
