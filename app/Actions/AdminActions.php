@@ -10,8 +10,26 @@ use Illuminate\Support\Facades\Hash;
 class AdminActions
 {
     /**
+     * get admin by id
+     *
+     * @param string $id
+     * @return Admin
+     * @throws \Exception
+     */
+    public static function get_by_id (string $id): Admin
+    {
+        $admin = Admin::where('id', $id)->first();
+        if (empty($admin))
+        {
+            throw new \Exception('admin not found', 51);
+        }
+        return $admin;
+    }
+
+    /**
      * @param Request $request
      * @return Admin
+     * @throws \Exception
      */
     public static function register (Request $request): Admin
     {
@@ -53,6 +71,7 @@ class AdminActions
      *
      * @param Request $request
      * @return object $admin->createToken('auth_token')
+     * @throws \Exception
      */
     public static function login (Request $request)
     {
@@ -89,6 +108,7 @@ class AdminActions
      * @param Request $request
      * @param string $id
      * @return Admin
+     * @throws \Exception
      */
     public static function update (Request $request, string $id): Admin
     {
@@ -102,11 +122,7 @@ class AdminActions
 
         if ($admin->is_primary)
         {
-            response()->json([
-                'code' => 11,
-                'message' => 'you can not edit primary accounts'
-            ], 403)->send();
-            die();
+            throw new \Exception('primary accounts can not be edited', 11);
         }
 
         $update_data = [
@@ -121,11 +137,7 @@ class AdminActions
         }
         else if (Admin::where('id', '!=', $id)->where('user_name', $request->input('user_name'))->exists())
         {
-            response()->json([
-                'code' => 6,
-                'message' => 'this user_name is already taken'
-            ], 400)->send();
-            die();
+            throw new \Exception('this user_namme is already taken', 6);
         }
 
         $admin->update($update_data);

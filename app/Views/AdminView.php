@@ -16,6 +16,8 @@ class AdminView
     {
         switch ($exception->getCode())
         {
+            case 6:
+            case 11:
             case 51:
             case 1:
             case 3:
@@ -30,22 +32,5 @@ class AdminView
                     'message' => 'something went wrong'
                 ], 400);
         }
-    }
-
-    /**
-     * get admin by id
-     *
-     * @param string $id
-     * @return Admin
-     * @throws \Exception
-     */
-    public static function get_by_id (string $id): Admin
-    {
-        $admin = Admin::where('id', $id)->first();
-        if (empty($admin))
-        {
-            throw new \Exception('admin not found', 51);
-        }
-        return $admin;
     }
 }

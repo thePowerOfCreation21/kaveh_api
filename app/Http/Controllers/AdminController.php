@@ -48,7 +48,7 @@ class AdminController extends Controller
     public function get_by_id (string $id)
     {
         try {
-            return AdminView::get_by_id($id);
+            return AdminActions::get_by_id($id);
         }
         catch (\Exception $exception)
         {
@@ -58,11 +58,17 @@ class AdminController extends Controller
 
     public function update (Request $request, string $id)
     {
-        AdminActions::update($request, $id);
+        try {
+            AdminActions::update($request, $id);
 
-        return response()->json([
-            'message' => 'admin updated successfully'
-        ]);
+            return response()->json([
+                'message' => 'admin updated successfully'
+            ]);
+        }
+        catch (\Exception $exception)
+        {
+            return AdminView::get_response_by_exception($exception);
+        }
     }
 
     public function delete (string $id)
