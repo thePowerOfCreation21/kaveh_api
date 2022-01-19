@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\AdminChangesHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Exceptions\CustomException;
 
 class AdminActions
 {
@@ -21,7 +22,7 @@ class AdminActions
         $admin = Admin::where('id', $id)->first();
         if (empty($admin))
         {
-            throw new \Exception('admin not found', 51);
+            throw new CustomException('admin not found', 51, 400);
         }
         return $admin;
     }
