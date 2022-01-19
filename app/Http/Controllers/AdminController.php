@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
+use App\Services\PaginationService;
 use Illuminate\Http\Request;
 use App\Actions\AdminActions;
 use App\Views\AdminView;
@@ -40,7 +42,7 @@ class AdminController extends Controller
 
     public function get_all (Request $request)
     {
-        return AdminActions::get_all($request);
+        return PaginationService::paginate_with_request($request, (new Admin()));
     }
 
     public function get_by_id (string $id)
