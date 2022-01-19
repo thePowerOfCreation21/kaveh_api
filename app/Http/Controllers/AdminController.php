@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Actions\AdminActions;
+use App\Views\AdminView;
 
 class AdminController extends Controller
 {
@@ -18,9 +19,16 @@ class AdminController extends Controller
 
     public function login (Request $request)
     {
-        return response()->json([
-            'token' => AdminActions::login($request)->plainTextToken
-        ]);
+        try {
+            return response()->json([
+                'token' => AdminActions::login($request)->plainTextToken
+            ]);
+        }
+        catch (\Exception $exception)
+        {
+            return AdminView::get_response_by_exception($exception);
+        }
+
     }
 
     public function get_all (Request $request)

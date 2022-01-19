@@ -76,10 +76,14 @@ class AdminActions
             }
         }
 
-      response()->json([
+        throw new \Exception('user_name or password is wrong', 3);
+
+        /*
+        response()->json([
             'code' => 3,
             'message' => 'user_name or password is wrong'
-        ], 400);
+        ], 400)->send();
+        */
     }
 
     /**
