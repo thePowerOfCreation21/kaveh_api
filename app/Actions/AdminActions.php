@@ -206,7 +206,7 @@ class AdminActions
      * @param Request $request
      * @param string $id
      * @return Admin
-     * @throws \Exception
+     * @throws CustomException
      */
     public static function delete_privileges (Request $request, string $id): Admin
     {
@@ -219,7 +219,7 @@ class AdminActions
 
         $admin_privileges = [];
 
-        foreach ($admin->privileges as $key => $privilege)
+        foreach ($admin->privileges as $privilege)
         {
             if (! in_array($privilege, $request->input('privileges')))
             {
