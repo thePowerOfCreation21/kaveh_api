@@ -18,17 +18,7 @@ class ArticleController extends Controller
 
     public function get (Request $request)
     {
-        $request->validate([
-            'skip' => 'numeric',
-            'limit' => 'numeric|max:50'
-        ]);
-
-        return response()->json(
-            ArticleActions::get(
-                (! empty($request->input('skip'))) ? $request->input('skip') : 0,
-                (! empty($request->input('limit'))) ? $request->input('limit') : 50
-            )
-        );
+        return ArticleActions::get_with_request($request);
     }
 
     public function get_by_id (string $id)

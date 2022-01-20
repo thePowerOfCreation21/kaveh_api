@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Services\PaginationService;
 use Illuminate\Http\Request;
 use App\Models\Article;
 use function App\Helpers\UploadIt;
@@ -28,26 +29,25 @@ class ArticleActions
     }
 
     /**
-     * get all Articles (has pagination)
+     * get articles with request
+     * (uses PaginationService to paginate)
      *
-     * @param int $skip
-     * @param int $limit
+     * @param Request $request
      * @return object
      */
-    public static function get (int $skip = 0, int $limit = 50)
+    public static function get_with_request (Request $request)
     {
-        return (object) [
-            'count' => Article::count(),
-            'data' => Article::selectRaw('articles.*, IF(
+        return PaginationService::paginate_with_request(
+            $request,
+            Article::selectRaw('
+                articles.*,
+                IF(
                     LENGTH(content) > 100,
                     CONCAT(SUBSTRING(content, 1, 100), "..."),
                     content
-                ) AS content')
-                ->orderBy('id', 'DESC')
-                ->skip($skip)
-                ->take($limit)
-                ->get()
-        ];
+                ) AS content
+            ')
+        );
     }
 
     /**
