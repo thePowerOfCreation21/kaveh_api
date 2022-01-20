@@ -4,12 +4,21 @@ namespace App\Actions;
 
 use App\Models\Admin;
 use App\Models\AdminChangesHistory;
+use App\Services\PaginationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Exceptions\CustomException;
 
 class AdminActions
 {
+    public static function get_with_request (Request $request)
+    {
+        return PaginationService::paginate_with_request(
+            $request,
+            Admin::orderBy('id', 'DESC')
+        );
+    }
+
     /**
      * get admin by id
      *

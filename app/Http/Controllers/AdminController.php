@@ -29,7 +29,7 @@ class AdminController extends Controller
 
     public function get_all (Request $request)
     {
-        return PaginationService::paginate_with_request($request, (new Admin()));
+        return AdminActions::get_with_request($request);
     }
 
     public function get_by_id (string $id)
