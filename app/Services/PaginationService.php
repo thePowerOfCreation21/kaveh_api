@@ -25,7 +25,6 @@ class PaginationService
         return (object) [
             'count' => $model->count(),
             'data' => $model
-                ->orderBy('id', 'DESC')
                 ->skip($skip)
                 ->take($limit)
                 ->get()
