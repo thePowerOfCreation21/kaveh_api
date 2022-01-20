@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Exceptions\CustomException;
 use App\Services\PaginationService;
 use Illuminate\Http\Request;
 use App\Models\Article;
@@ -55,6 +56,7 @@ class ArticleActions
      *
      * @param string $id
      * @return Article
+     * @throws CustomException
      */
     public static function get_by_id (string $id): Article
     {
@@ -62,11 +64,7 @@ class ArticleActions
 
         if (empty($article))
         {
-            response()->json([
-                'code' => 15,
-                'message' => "couldn't find article with this id"
-            ], 404)->send();
-            die();
+            throw new CustomException("couldn't find article with this id", 15, 404);
         }
 
         return $article;
