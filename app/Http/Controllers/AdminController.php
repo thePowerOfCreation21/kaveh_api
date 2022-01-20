@@ -57,17 +57,11 @@ class AdminController extends Controller
 
     public function add_privileges (Request $request, string $id)
     {
-        try {
-            AdminActions::add_privileges($request, $id);
+        AdminActions::add_privileges($request, $id);
 
-            return response()->json([
-                'message' => 'privilege(s) added successfully'
-            ]);
-        }
-        catch (\Exception $exception)
-        {
-            return AdminView::get_response_by_exception($exception);
-        }
+        return response()->json([
+            'message' => 'privilege(s) added successfully'
+        ]);
     }
 
     public function delete_privileges (Request $request, string $id)

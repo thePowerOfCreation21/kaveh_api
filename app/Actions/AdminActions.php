@@ -174,7 +174,7 @@ class AdminActions
      * @param Request $request
      * @param string $id
      * @return Admin
-     * @throws \Exception
+     * @throws CustomException
      */
     public static function add_privileges (Request $request, string $id): Admin
     {
