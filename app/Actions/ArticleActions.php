@@ -48,6 +48,7 @@ class ArticleActions
                     content
                 ) AS content
             ')
+            ->orderBy('id', 'DESC')
         );
     }
 
