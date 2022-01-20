@@ -49,7 +49,7 @@ function UploadIt($file, $array_allowed_format=['png','jpg','jpeg'], $direction=
     if(in_array($file_ext , $array_allowed_format)){
         if ($change_file_name)
         {
-            $file_name=time()."_".rand(1,1000000)."_".base64_encode($file['name']).".$file_ext";
+            $file_name=time()."_".rand(1,1000000)."_".".$file_ext";
         }
         else
         {
