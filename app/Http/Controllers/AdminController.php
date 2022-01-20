@@ -48,17 +48,11 @@ class AdminController extends Controller
 
     public function delete (string $id)
     {
-        try {
-            AdminActions::delete($id);
+        AdminActions::delete($id);
 
-            return response()->json([
-                'message' => 'admin deleted successfully'
-            ]);
-        }
-        catch (\Exception $exception)
-        {
-            return AdminView::get_response_by_exception($exception);
-        }
+        return response()->json([
+            'message' => 'admin deleted successfully'
+        ]);
     }
 
     public function add_privileges (Request $request, string $id)

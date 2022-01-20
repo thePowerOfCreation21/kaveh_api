@@ -102,7 +102,7 @@ class AdminActions
      * @param Request $request
      * @param string $id
      * @return Admin
-     * @throws \Exception
+     * @throws CustomException
      */
     public static function update (Request $request, string $id): Admin
     {
@@ -152,7 +152,7 @@ class AdminActions
      * @param Request $request
      * @param string $id
      * @return Admin
-     * @throws \Exception
+     * @throws CustomException
      */
     public static function delete (string $id): Admin
     {
@@ -160,7 +160,7 @@ class AdminActions
 
         if ($admin->is_primary)
         {
-            throw new \Exception('primary accounts can not be deleted', 11);
+            throw new CustomException('primary accounts can not be deleted', 11, 400);
         }
 
         $admin->delete();
