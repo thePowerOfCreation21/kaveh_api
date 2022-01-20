@@ -77,6 +77,7 @@ class ArticleActions
      *
      * @param string $id
      * @return int
+     * @throws CustomException
      */
     public static function delete_by_id (string $id): int
     {
@@ -99,6 +100,7 @@ class ArticleActions
      * @param Request $request
      * @param string $id
      * @return bool
+     * @throws CustomException
      */
     public static function update_by_id (Request $request, string $id): bool
     {
