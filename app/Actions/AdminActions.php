@@ -11,6 +11,13 @@ use App\Exceptions\CustomException;
 
 class AdminActions
 {
+    /**
+     * get admins
+     * (uses PaginationService to paginate)
+     *
+     * @param Request $request
+     * @return object
+     */
     public static function get_with_request (Request $request)
     {
         return PaginationService::paginate_with_request(
