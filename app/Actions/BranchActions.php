@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Exceptions\CustomException;
 use App\Services\PaginationService;
 use Illuminate\Http\Request;
 use App\Models\Branch;
@@ -48,6 +49,7 @@ class BranchActions
      *
      * @param string $id
      * @return Branch
+     * @throws CustomException
      */
     public static function get_by_id (string $id): Branch
     {
@@ -55,11 +57,7 @@ class BranchActions
 
         if (empty($branch))
         {
-            response()->json([
-                'code' => 13,
-                'message' => 'could not find branch with this id'
-            ], 404)->send();
-            die();
+            throw new CustomException('could not find branch with this id', 13, 404);
         }
 
         return $branch;
@@ -71,6 +69,7 @@ class BranchActions
      *
      * @param string $id
      * @return bool
+     * @throws CustomException
      */
     public static function delete_by_id (string $id): bool
     {
@@ -84,6 +83,16 @@ class BranchActions
         return $branch->delete();
     }
 
+    /**
+     * update branch with request and id
+     * only updates fields that user entered
+     * deletes old image file if user edits image
+     *
+     * @param Request $request
+     * @param string $id
+     * @return Branch
+     * @throws CustomException
+     */
     public static function update (Request $request, string $id): Branch
     {
         $branch = self::get_by_id($id);
