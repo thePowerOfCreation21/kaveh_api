@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Models\GalleryImage;
 use Illuminate\Http\Request;
+use App\Exceptions\CustomException;
 use function App\Helpers\UploadIt;
 
 class GalleryImageActions
@@ -13,16 +14,13 @@ class GalleryImageActions
      *
      * @param string $image
      * @return GalleryImage
+     * @throws CustomException
      */
     public static function store (string $image): GalleryImage
     {
         if (empty($image))
         {
-            response()->json([
-                'code' => 12,
-                'message' => 'can not store an empty image string in db'
-            ], 400)->send();
-            die();
+            throw new CustomException('can not store an empty image string in db', 12, 400);
         }
 
         return GalleryImage::create([
