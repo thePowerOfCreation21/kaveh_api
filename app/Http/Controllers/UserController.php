@@ -18,7 +18,7 @@ class UserController extends Controller
 
     public function update_by_id (Request $request, string $id)
     {
-        UserActions::update_user_by_admin($request, $id);
+        UserActions::update_user_with_request($request, $id);
 
         return response()->json([
             'message' => 'user updated successfully'

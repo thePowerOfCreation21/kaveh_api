@@ -30,11 +30,8 @@ class UserActions
 
         if (empty($phone_number))
         {
-            response()->json([
-                'code' => 30,
-                'message' => 'could not match phone number with required regex pattern'
-            ], 400)->send();
-            die();
+            throw new CustomException('could not match phone number with required regex pattern', 30, 400);
+
         }
 
         $user_data['phone_number'] = $phone_number[0];
@@ -72,8 +69,9 @@ class UserActions
      * @param Request $request
      * @param string $id
      * @return User
+     * @throws CustomException
      */
-    public static function update_user_by_admin (Request $request, string $id)
+    public static function update_user_with_request (Request $request, string $id): User
     {
         $user_data = $request->validate([
             'name' => 'string|max:64',
@@ -82,6 +80,16 @@ class UserActions
             'password' => 'string|min:6',
             'area' => 'string|max:255'
         ]);
+
+        preg_match("/09\d{9}/", $user_data['phone_number'], $phone_number);
+
+        if (empty($phone_number))
+        {
+            throw new CustomException('could not match phone number with required regex pattern', 30, 400);
+
+        }
+
+        $user_data['phone_number'] = $phone_number[0];
 
         return self::update_user($user_data, $id);
     }
@@ -93,6 +101,7 @@ class UserActions
      * @param array $user_data
      * @param string $id
      * @return User
+     * @throws CustomException
      */
     public static function update_user (array $user_data, string $id): User
     {
@@ -111,11 +120,7 @@ class UserActions
                 User::where('id', '!=', $id)->where('phone_number', $user_data['phone_number'])->exists()
             )
             {
-                response()->json([
-                    'code' => 18,
-                    'message' => 'this phone number is already taken'
-                ], 400)->send();
-                die();
+                throw new CustomException('this phone number is already taken', 18, 400);
             }
             $update['phone_number'] = $user_data['phone_number'];
         }
