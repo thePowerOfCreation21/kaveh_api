@@ -5,6 +5,7 @@ namespace App\Actions;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Services\PaginationService;
+use App\Exceptions\CustomException;
 use function App\Helpers\UploadIt;
 
 class ProductActions
@@ -89,6 +90,7 @@ class ProductActions
      *
      * @param string $id
      * @return Product
+     * @throws CustomException
      */
     public static function get_by_id (string $id): Product
     {
@@ -96,11 +98,7 @@ class ProductActions
 
         if (empty($product))
         {
-            response()->json([
-                'code' => 21,
-                'message' => 'could not find product with this id'
-            ], 404)->send();
-            die();
+            throw new CustomException('could not find product with this id', 21, 404);
         }
 
         return $product;
@@ -111,6 +109,7 @@ class ProductActions
      *
      * @param string $id
      * @return int
+     * @throws CustomException
      */
     public static function delete_by_id (string $id): int
     {
@@ -130,6 +129,7 @@ class ProductActions
      * @param Request $request
      * @param string $id
      * @return Product
+     * @throws CustomException
      */
     public static function edit_by_request (Request $request, string $id): Product
     {
