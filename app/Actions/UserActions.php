@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Exceptions\CustomException;
+use App\Services\PaginationService;
 
 class UserActions
 {
@@ -157,7 +158,7 @@ class UserActions
      * @param string $id
      * @return int
      */
-    public static function block_user_by_admin (Request $request, string $id): int
+    public static function block_user_with_request (Request $request, string $id): int
     {
         return self::block_user(
             $id,
@@ -208,7 +209,7 @@ class UserActions
      * @param Request $request
      * @return object
      */
-    public static function get_users_by_admin (Request $request)
+    public static function get_users_with_request (Request $request)
     {
         $request->validate([
             'skip' => 'numeric',
@@ -225,6 +226,7 @@ class UserActions
 
     /**
      * get users from DB (has pagination)
+     * (using PaginationService to paginate)
      *
      * @param int $skip
      * @param int $limit
@@ -244,13 +246,10 @@ class UserActions
                 ->orWhere('card_number', 'like', "%{$search}%");
         }
 
-        return (object) [
-            'count' => $user->count(),
-            'data' => $user
-                ->orderBy('id', 'DESC')
-                ->skip($skip)
-                ->take($limit)
-                ->get()
-        ];
+        return PaginationService::paginate(
+            $user->orderBy('id', 'DESC'),
+            $skip,
+            $limit
+        );
     }
 }

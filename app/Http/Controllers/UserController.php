@@ -27,7 +27,7 @@ class UserController extends Controller
 
     public function block_user_by_id (Request $request, string $id)
     {
-        UserActions::block_user_by_admin($request, $id);
+        UserActions::block_user_with_request($request, $id);
 
         return response()->json([
             'message' => 'user blocked successfully'
@@ -45,8 +45,6 @@ class UserController extends Controller
 
     public function get (Request $request)
     {
-        return response()->json(
-            UserActions::get_users_by_admin($request)
-        );
+        return UserActions::get_users_with_request($request);
     }
 }
