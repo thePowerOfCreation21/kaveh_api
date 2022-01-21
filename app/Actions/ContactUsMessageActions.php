@@ -4,9 +4,16 @@ namespace App\Actions;
 
 use App\Models\ContactUsMessage;
 use Illuminate\Http\Request;
+use App\Services\PaginationService;
 
 class ContactUsMessageActions
 {
+    /**
+     * store new message
+     *
+     * @param Request $request
+     * @return mixed
+     */
     public static function store_with_request (Request $request)
     {
         return ContactUsMessage::create(
@@ -18,11 +25,18 @@ class ContactUsMessageActions
         );
     }
 
-    public static function get_all (int $skip = 0, int $limit = 50)
+    /**
+     * get all messages
+     * (uses PaginationService to paginate)
+     *
+     * @param Request $request
+     * @return object
+     */
+    public static function get_all_with_request (Request $request)
     {
-        return (object) [
-            'count' => ContactUsMessage::count(),
-            'data' => ContactUsMessage::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
-        ];
+        return PaginationService::paginate_with_request(
+            $request,
+            ContactUsMessage::orderBy('id', 'DESC')
+        );
     }
 }
