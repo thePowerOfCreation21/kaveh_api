@@ -10,6 +10,22 @@ use function App\Helpers\UploadIt;
 class GalleryImageActions
 {
     /**
+     * validates request then stores the image url
+     *
+     * @param Request $request
+     * @return GalleryImage
+     * @throws CustomException
+     */
+    public static function store_with_request (Request $request): GalleryImage
+    {
+        $request->validate([
+            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048'
+        ]);
+
+        return self::store(UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/'));
+    }
+
+    /**
      * add new image to gallery images
      *
      * @param string $image
