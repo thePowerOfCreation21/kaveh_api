@@ -65,6 +65,7 @@ class GalleryImageActions
      *
      * @param string $id
      * @return GalleryImage
+     * @throws CustomException
      */
     public static function get_by_id (string $id): GalleryImage
     {
@@ -72,11 +73,7 @@ class GalleryImageActions
 
         if (empty($gallery_image))
         {
-            response()->json([
-                'code' => 13,
-                'message' => 'could not find image with this id'
-            ], 404)->send();
-            die();
+            throw new CustomException('could not find image with this id', 13, 404);
         }
 
         return $gallery_image;
