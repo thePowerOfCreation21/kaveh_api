@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Models\GalleryImage;
 use Illuminate\Http\Request;
 use App\Exceptions\CustomException;
+use App\Services\PaginationService;
 use function App\Helpers\UploadIt;
 
 class GalleryImageActions
@@ -46,17 +47,17 @@ class GalleryImageActions
 
     /**
      * get all images of gallery images (has pagination)
+     * (uses PaginationService to paginate)
      *
-     * @param int $skip
-     * @param int $limit
+     * @param Request $request
      * @return object
      */
-    public static function get_all (int $skip = 0, int $limit = 50)
+    public static function get_all_with_request (Request $request)
     {
-        return (object) [
-            'count' => GalleryImage::count(),
-            'data' => GalleryImage::orderBy('id', 'DESC')->skip($skip)->take($limit)->get()
-        ];
+        return PaginationService::paginate_with_request(
+            $request,
+            GalleryImage::orderBy('id', 'DESC')
+        );
     }
 
     /**
