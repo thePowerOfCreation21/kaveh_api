@@ -134,6 +134,7 @@ class GalleryImageActions
      *
      * @param string $id
      * @return int
+     * @throws CustomException
      */
     public static function delete (string $id): int
     {
