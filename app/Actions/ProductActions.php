@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Services\PaginationService;
 use function App\Helpers\UploadIt;
 
 class ProductActions
@@ -62,7 +63,7 @@ class ProductActions
      * @param string $type
      * @return object
      */
-    public static function get (int $skip = 0, $limit = 50, string $search = "", string $type = "")
+    public static function get (int $skip = 0, int $limit = 50, string $search = "", string $type = "")
     {
         $product = new Product();
 
@@ -76,14 +77,11 @@ class ProductActions
             $product = $product->where('type', $type);
         }
 
-        return (object) [
-            'count' => $product->count(),
-            'data' => $product
-                ->orderBy('id', 'DESC')
-                ->skip($skip)
-                ->take($limit)
-                ->get()
-        ];
+        return PaginationService::paginate(
+            $product->orderBy('id', 'DESC'),
+            $skip,
+            $limit
+        );
     }
 
     /**
