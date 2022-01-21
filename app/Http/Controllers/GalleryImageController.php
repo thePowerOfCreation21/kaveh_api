@@ -29,7 +29,7 @@ class GalleryImageController extends Controller
 
     public function update(Request $request, string $id)
     {
-        GalleryImageActions::update(
+        GalleryImageActions::update_with_request(
             $request,
             $id
         );

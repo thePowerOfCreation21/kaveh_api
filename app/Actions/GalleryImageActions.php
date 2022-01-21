@@ -80,16 +80,16 @@ class GalleryImageActions
     }
 
     /**
-     * change image by id
-     * removes the old image
+     * uploads image then sends image url to update method
      *
-     * @param string $image
+     * @param Request $request
      * @param string $id
      * @return GalleryImage
+     * @throws CustomException
      */
-    public static function update (Request $request, string $id): GalleryImage
+    public static function update_with_request (Request $request, string $id)
     {
-        $gallery_image = self::get_by_id($id);
+        $galleryImage = self::get_by_id($id);
 
         $request->validate([
             'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048'
@@ -97,25 +97,35 @@ class GalleryImageActions
 
         $image = UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/');
 
+        return self::update($image, $galleryImage);
+    }
+
+    /**
+     * change image by id
+     * removes the old image
+     *
+     * @param string $image
+     * @param GalleryImage $galleryImage
+     * @return GalleryImage
+     * @throws CustomException
+     */
+    public static function update (string $image, GalleryImage $galleryImage): GalleryImage
+    {
         if (empty($image))
         {
-            response()->json([
-                'code' => 12,
-                'message' => 'can not update image by empty string in db'
-            ], 400)->send();
-            die();
+            throw new CustomException('can not update image by empty string in db', 12, 400);
         }
 
-        if (is_file($gallery_image->image))
+        if (is_file($galleryImage->image))
         {
-            unlink($gallery_image->image);
+            unlink($galleryImage->image);
         }
 
-        $gallery_image->update([
+        $galleryImage->update([
             'image' => $image
         ]);
 
-        return $gallery_image;
+        return $galleryImage;
     }
 
     /**
