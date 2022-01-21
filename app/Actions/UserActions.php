@@ -136,6 +136,7 @@ class UserActions
      *
      * @param string $id
      * @return User
+     * @throws CustomException
      */
     public static function get_user_by_id (string $id): User
     {
@@ -143,11 +144,7 @@ class UserActions
 
         if (empty($user))
         {
-            response()->json([
-                'code' => 18,
-                'message' => 'could not find user with this id'
-            ], 404)->send();
-            die();
+            throw new CustomException('could not find user with this id', 18, 404);
         }
 
         return $user;
@@ -176,6 +173,7 @@ class UserActions
      * @param string $id
      * @param string $reason_for_blocking
      * @return int
+     * @throws CustomException
      */
     public static function block_user (string $id, string $reason_for_blocking = ""): int
     {
@@ -192,6 +190,7 @@ class UserActions
      *
      * @param string $id
      * @return int
+     * @throws CustomException
      */
     public static function unblock_user (string $id): int
     {
