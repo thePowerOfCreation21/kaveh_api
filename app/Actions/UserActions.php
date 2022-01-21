@@ -5,7 +5,7 @@ namespace App\Actions;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Testing\Fluent\Concerns\Has;
+use App\Exceptions\CustomException;
 
 class UserActions
 {
@@ -14,6 +14,7 @@ class UserActions
      *
      * @param Request $request
      * @return User
+     * @throws CustomException
      */
     public static function add_user_by_admin (Request $request): User
     {
@@ -47,6 +48,7 @@ class UserActions
      *
      * @param array $user_data
      * @return User
+     * @throws CustomException
      */
     public static function add_user (array $user_data): User
     {
@@ -56,11 +58,7 @@ class UserActions
             User::where('phone_number', $user_data['phone_number'])->exists()
         )
         {
-            response()->json([
-                'code' => 17,
-                'message' => 'this phone number is already taken'
-            ] ,400)->send();
-            die();
+            throw new CustomException('this phone number is already taken', 17, 400);
         }
 
         !empty($user_data['password']) && $user_data['password'] = Hash::make($user_data['password']);
