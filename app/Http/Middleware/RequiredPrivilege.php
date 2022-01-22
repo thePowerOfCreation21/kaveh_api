@@ -28,7 +28,7 @@ class RequiredPrivilege
                 $privileges = explode('&', $or_privileges);
                 foreach ($privileges AS $privilege_key => $privilege)
                 {
-                    if (! in_array($privilege, $user->privileges))
+                    if (!isset($user->privileges->$privilege) || !$user->privileges->$privilege)
                     {
                         if ($or_privilege_key == $last_index_of_or_privileges)
                         {
