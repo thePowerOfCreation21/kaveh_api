@@ -166,7 +166,7 @@ class AdminActions
             $update_data['privileges'] = Admin::fix_privileges(
                 (object) (!isset($update_data['privileges']) ? [] : $update_data['privileges']),
                 Admin::fix_privileges(
-                    $admin->privileges
+                    (object) $admin->privileges
                 )
             );
         }
