@@ -125,23 +125,12 @@ class AdminActions
      */
     public static function update_with_request (Request $request, string $id): Admin
     {
-        $request->validate([
+        $update_data = $request->validate([
             'user_name' => 'string|max:25',
             'password' => 'string',
+            'privileges' => 'array|max:'.count(Admin::$privileges_list),
+            'privileges.*' => 'boolean'
         ]);
-
-        $update_data = [];
-
-        (! empty($request->input('password'))) && $update_data['password'] = Hash::make($request->input('password'));
-
-        if (! empty($request->input('user_name')))
-        {
-            $update_data['user_name'] = $request->input('user_name');
-        }
-        else if (Admin::where('id', '!=', $id)->where('user_name', $request->input('user_name'))->exists())
-        {
-            throw new CustomException('this user_name is already taken', 6, 400);
-        }
 
         return self::update($update_data, $id);
     }
@@ -163,6 +152,23 @@ class AdminActions
         if ($admin->is_primary)
         {
             throw new CustomException('primary accounts can not be edited', 11, 400);
+        }
+
+        if (isset($update_data['user_name']) && Admin::where('id', '!=', $id)->where('user_name', $update_data['user_name'])->exists())
+        {
+            throw new CustomException('this user_name is already taken', 6, 400);
+        }
+
+        isset($update_data['password']) && $update_data['password'] = Hash::make($update_data['password']);
+
+        if (isset($update_data['privileges']))
+        {
+            $update_data['privileges'] = Admin::fix_privileges(
+                (object) (!isset($update_data['privileges']) ? [] : $update_data['privileges']),
+                Admin::fix_privileges(
+                    $admin->privileges
+                )
+            );
         }
 
         $admin->update(array_merge($update_data, [
