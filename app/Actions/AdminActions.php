@@ -97,7 +97,6 @@ class AdminActions
      */
     public static function login (Request $request)
     {
-        //abort(401, 'salam');
         $request->validate([
             'user_name' => 'required',
             'password' => 'required'
@@ -117,32 +116,21 @@ class AdminActions
     }
 
     /**
-     * update admin by id (returns 404 http response if id is wrong then dies)
-     * no one can edit primary admins (returns 403 http response if admin is primary)
+     * update admin with request
      *
      * @param Request $request
      * @param string $id
      * @return Admin
      * @throws CustomException
      */
-    public static function update (Request $request, string $id): Admin
+    public static function update_with_request (Request $request, string $id): Admin
     {
         $request->validate([
             'user_name' => 'string|max:25',
             'password' => 'string',
         ]);
 
-        $time = date('Y-m-d H:i:s');
-        $admin = self::get_by_id($id);
-
-        if ($admin->is_primary)
-        {
-            throw new CustomException('primary accounts can not be edited', 11, 400);
-        }
-
-        $update_data = [
-            'updated_at' => $time
-        ];
+        $update_data = [];
 
         (! empty($request->input('password'))) && $update_data['password'] = Hash::make($request->input('password'));
 
@@ -152,16 +140,34 @@ class AdminActions
         }
         else if (Admin::where('id', '!=', $id)->where('user_name', $request->input('user_name'))->exists())
         {
-            throw new CustomException('this user_namme is already taken', 6, 400);
+            throw new CustomException('this user_name is already taken', 6, 400);
         }
 
-        $admin->update($update_data);
-        AdminChangesHistory::create([
-            'doer_id' => $request->user()->id,
-            'subject_id' => $admin->id,
-            'action' => 'update',
-            'date' => $time
-        ]);
+        return self::update($update_data, $id);
+    }
+
+    /**
+     * update admin
+     * could not update primary admin
+     *
+     * @param array $update_data
+     * @param string $id
+     * @return Admin
+     * @throws CustomException
+     */
+    public static function update (array $update_data, string $id)
+    {
+        $time = date('Y-m-d H:i:s');
+        $admin = self::get_by_id($id);
+
+        if ($admin->is_primary)
+        {
+            throw new CustomException('primary accounts can not be edited', 11, 400);
+        }
+
+        $admin->update(array_merge($update_data, [
+            'updated_at' => $time
+        ]));
 
         return $admin;
     }
@@ -170,7 +176,6 @@ class AdminActions
      * delete admin by id (returns 404 http response if id is wrong then dies)
      * no one can delete primary admins (returns 403 http response if admin is primary)
      *
-     * @param Request $request
      * @param string $id
      * @return Admin
      * @throws CustomException
