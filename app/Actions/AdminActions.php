@@ -44,43 +44,48 @@ class AdminActions
     }
 
     /**
+     * register admin with request
+     *
      * @param Request $request
      * @return Admin
      * @throws CustomException
      */
-    public static function register (Request $request): Admin
+    public static function register_with_request (Request $request): Admin
     {
-        $request->validate([
+        $admin_data = $request->validate([
             'user_name' => 'required|max:25',
             'password' => 'required|min:6',
-            'privileges' => 'array',
-            'privileges.*' => 'distinct|in:'.implode(",", Admin::$privileges_list)
+            'privileges' => 'array|max:'.count(Admin::$privileges_list),
+            'privileges.*' => 'boolean'
         ]);
 
+        $admin_data['privileges'] = Admin::fix_privileges(
+            (object) (!isset($admin_data['privileges']) ? [] : $admin_data['privileges'])
+        );
+
+        return self::register($admin_data);
+    }
+
+    /**
+     * register new admin
+     *
+     * @param array $admin_data
+     * @return Admin
+     * @throws CustomException
+     */
+    public static function register (array $admin_data): Admin
+    {
         $current_time = date("Y-m-d H:i:s");
 
-        if (Admin::where('user_name', $request->input('user_name'))->exists())
+        if (Admin::where('user_name', $admin_data)->exists())
         {
             throw new CustomException('this user_name is already taken', 1, 400);
         }
 
-        $admin_data = [
-            'user_name' => $request->input('user_name'),
-            'password' => Hash::make($request->input('password')),
+        return Admin::create(array_merge($admin_data, [
             'created_at' => $current_time,
             'updated_at' => $current_time
-        ];
-        (! empty($request->input('privileges'))) ? $admin_data['privileges'] = $request->input('privileges') : $admin_data['privileges'] = [];
-
-        $admin = Admin::create($admin_data);
-        AdminChangesHistory::create([
-            'doer_id' => (isset($request->user()->id)) ? $request->user()->id : null,
-            'subject_id' => $admin->id,
-            'action' => 'register',
-            'date' => $current_time
-        ]);
-
-        return $admin;
+        ]));
     }
 
     /**

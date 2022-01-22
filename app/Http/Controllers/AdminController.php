@@ -12,7 +12,7 @@ class AdminController extends Controller
 {
     public function register (Request $request)
     {
-        AdminActions::register($request);
+        AdminActions::register_with_request($request);
 
         return response()->json([
             'message' => 'admin registered successfully'

@@ -30,7 +30,7 @@ class Admin extends Model
 
     protected $casts = [
         'is_primary' => 'boolean',
-        'privileges' => 'array',
+        'privileges' => 'object',
     ];
 
     public $timestamps = false;
@@ -42,4 +42,26 @@ class Admin extends Model
         'manage_orders',
         'manage_discounts'
     ];
+
+    public static function fix_privileges (object $temp_privileges, $privileges = null)
+    {
+        if (! is_object($privileges))
+        {
+            $privileges = (object) [];
+            foreach (self::$privileges_list AS $privilege)
+            {
+                $privileges->$privilege = false;
+            }
+        }
+
+        foreach ($temp_privileges AS $privilege => $value)
+        {
+            if (isset($privileges->$privilege))
+            {
+                $privileges->$privilege = (bool) $temp_privileges->$privilege;
+            }
+        }
+
+        return $privileges;
+    }
 }
