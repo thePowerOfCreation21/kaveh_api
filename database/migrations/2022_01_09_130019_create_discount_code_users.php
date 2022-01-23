@@ -18,7 +18,6 @@ class CreateDiscountCodeUsers extends Migration
             $table->string('user_id');
             $table->string('discount_code');
             $table->boolean('is_used');
-            $table->timestamps();
         });
     }
 

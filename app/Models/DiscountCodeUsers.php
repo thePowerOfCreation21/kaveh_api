@@ -23,6 +23,8 @@ class DiscountCodeUsers extends Model
         'is_used' => 'boolean'
     ];
 
+    public $timestamps = false;
+
     public function user ()
     {
         return $this->hasOne(User::class, 'id', 'user_id');
