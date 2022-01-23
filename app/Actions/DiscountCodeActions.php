@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Exceptions\CustomException;
+use App\Jobs\StoreDiscountUsers;
 use App\Models\DiscountCode;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,7 @@ class DiscountCodeActions
             'amount' => 'required|numeric|min:1',
             'type' => 'required|in:percent,price',
             'users' => 'array|max:1000',
-            'users.*' => 'string|max:25',
+            'users.*' => 'distinct|numeric|min:1',
             'expiration_date' => 'date_format:Y-m-d H:i:s'
         ]);
 
@@ -49,6 +50,12 @@ class DiscountCodeActions
         }
 
         $discount_data['is_for_all_users'] = true;
+
+        if (isset($discount_data['users']))
+        {
+            $discount_data['is_for_all_users'] = false;
+            UserActions::check_if_users_exists($discount_data['users']);
+        }
 
         return DiscountCode::create($discount_data);
     }
