@@ -169,6 +169,7 @@ Route::group([
         ], function(){
 
             Route::post('/', [DiscountCodeController::class, 'store']);
+            Route::get('/', [DiscountCodeController::class, 'get']);
 
         });
 

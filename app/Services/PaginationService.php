@@ -8,16 +8,26 @@ class PaginationService
 {
     public static function paginate_with_request (Request $request, $model)
     {
+        $values = self::get_values_from_request($request);
+
+        return self::paginate(
+            $model,
+            $values['skip'],
+            $values['limit']
+        );
+    }
+
+    public static function get_values_from_request (Request $request)
+    {
         $request->validate([
             'skip' => 'numeric|min:0',
             'limit' => 'numeric|min:0|max:50',
         ]);
 
-        return self::paginate(
-            $model,
-            !empty($request->input('skip')) ? $request->input('skip') : 0,
-            !empty($request->input('limit')) ? $request->input('limit') : 50,
-        );
+        return [
+            'skip' => !empty($request->input('skip')) ? $request->input('skip') : 0,
+            'limit' => !empty($request->input('limit')) ? $request->input('limit') : 50,
+        ];
     }
 
     public static function paginate ($model, int $skip = 0, $limit = 50)

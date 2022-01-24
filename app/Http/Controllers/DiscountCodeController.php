@@ -15,4 +15,11 @@ class DiscountCodeController extends Controller
             'message' => 'discount added successfully'
         ]);
     }
+
+    public function get (Request $request)
+    {
+        return response()->json(
+            DiscountCodeActions::get_with_request($request)
+        );
+    }
 }

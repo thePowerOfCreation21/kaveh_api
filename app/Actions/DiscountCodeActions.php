@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Exceptions\CustomException;
 use App\Jobs\StoreDiscountUsers;
 use App\Models\DiscountCode;
+use App\Services\PaginationService;
 use Illuminate\Http\Request;
 
 class DiscountCodeActions
@@ -65,5 +66,36 @@ class DiscountCodeActions
         }
 
         return $discountCode;
+    }
+
+    public static function get_with_request (Request $request)
+    {
+        $pagination_values = PaginationService::get_values_from_request($request);
+
+        return self::get([
+            'skip' => $pagination_values['skip'],
+            'limit' => $pagination_values['limit'],
+        ]);
+    }
+
+    /**
+     * get discounts
+     * (has pagination)
+     *
+     * @param array $query
+     * @return object
+     */
+    public static function get (array $query)
+    {
+        $query = [
+            'skip' => $query['skip'] ?? 0,
+            'limit' => $query['limit'] ?? 50,
+        ];
+
+        return PaginationService::paginate(
+            (new DiscountCode()),
+            $query['skip'],
+            $query['limit']
+        );
     }
 }
