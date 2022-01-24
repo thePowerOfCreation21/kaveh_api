@@ -98,7 +98,7 @@ class DiscountCodeActions
      * @param array $query
      * @return object
      */
-    public static function get (array $query)
+    public static function get (array $query = [])
     {
         $discountCode = DiscountCode::orderBy('id', 'DESC');
 
@@ -141,5 +141,27 @@ class DiscountCodeActions
         }
 
         return $discountCode;
+    }
+
+    public static function get_users_with_request (Request $request, string $id)
+    {
+        $pagination_values = PaginationService::get_values_from_request($request);
+        return self::get_users($id, $pagination_values);
+    }
+
+    public static function get_users (string $id, array $query = [])
+    {
+        $discountCode = self::get_by_id($id);
+
+        $discountCodeUsers = $discountCode->users();
+
+        $query['skip'] = $query['skip'] ?? 0;
+        $query['limit'] = $query['limit'] ?? 50;
+
+        return PaginationService::paginate(
+            $discountCodeUsers,
+            $query['skip'],
+            $query['limit']
+        );
     }
 }
