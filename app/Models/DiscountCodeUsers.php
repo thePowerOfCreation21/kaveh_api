@@ -15,7 +15,7 @@ class DiscountCodeUsers extends Model
 
     protected $fillable = [
         'user_id',
-        'discount_code',
+        'discount_id',
         'is_used'
     ];
 
@@ -30,8 +30,8 @@ class DiscountCodeUsers extends Model
         return $this->hasOne(User::class, 'id', 'user_id');
     }
 
-    public function discount_code ()
+    public function discountCode ()
     {
-        return $this->hasOne(DiscountCode::class, 'code', 'discount_code');
+        return $this->hasOne(DiscountCode::class, 'id', 'discount_id');
     }
 }

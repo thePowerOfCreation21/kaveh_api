@@ -63,7 +63,7 @@ class DiscountCodeActions
 
         if (!$discount_data['is_for_all_users'])
         {
-            StoreDiscountUsers::dispatch($discountCode->code, $discount_data['users']);
+            StoreDiscountUsers::dispatch($discountCode->id, $discount_data['users']);
         }
 
         return $discountCode;

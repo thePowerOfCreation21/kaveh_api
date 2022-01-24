@@ -14,7 +14,8 @@ class CreateDiscountCodesTable extends Migration
     public function up()
     {
         Schema::create('discount_codes', function (Blueprint $table) {
-            $table->string('code')->unique()->primary();
+            $table->id();
+            $table->string('code')->unique();
             $table->string('type', 25);
             $table->bigInteger('amount');
             $table->boolean('is_for_all_users')->default(false);

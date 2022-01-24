@@ -17,7 +17,7 @@ class StoreDiscountUsers implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $discount_code = "";
+    public $discount_id = "";
     public $user_ids = [];
 
     /**
@@ -25,9 +25,9 @@ class StoreDiscountUsers implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(string $discount_code, array $user_ids)
+    public function __construct(string $discount_id, array $user_ids)
     {
-        $this->discount_code = $discount_code;
+        $this->discount_id = $discount_id;
         $this->user_ids = $user_ids;
     }
 
@@ -39,9 +39,9 @@ class StoreDiscountUsers implements ShouldQueue
      */
     public function handle()
     {
-        if (!DiscountCode::where('code', $this->discount_code)->exists())
+        if (!DiscountCode::where('id', $this->discount_id)->exists())
         {
-            throw new CustomException("discount '{$this->discount_code}' not found", 56, 404);
+            throw new CustomException("discount with id '{$this->discount_id}' not found", 56, 404);
         }
 
         UserActions::check_if_users_exists($this->user_ids);
@@ -49,7 +49,7 @@ class StoreDiscountUsers implements ShouldQueue
         foreach ($this->user_ids AS $user_id)
         {
             DiscountCodeUsers::create([
-                'discount_code' => $this->discount_code,
+                'discount_id' => $this->discount_id,
                 'user_id' => $user_id,
                 'is_used' => false
             ]);
