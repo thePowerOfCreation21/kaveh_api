@@ -22,4 +22,11 @@ class DiscountCodeController extends Controller
             DiscountCodeActions::get_with_request($request)
         );
     }
+
+    public function get_by_id (string $id)
+    {
+        return response()->json(
+            DiscountCodeActions::get_by_id($id)
+        );
+    }
 }

@@ -170,6 +170,7 @@ Route::group([
 
             Route::post('/', [DiscountCodeController::class, 'store']);
             Route::get('/', [DiscountCodeController::class, 'get']);
+            Route::get('/{id}', [DiscountCodeController::class, 'get_by_id']);
 
         });
 

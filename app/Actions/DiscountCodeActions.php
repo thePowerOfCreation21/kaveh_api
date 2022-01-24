@@ -69,6 +69,12 @@ class DiscountCodeActions
         return $discountCode;
     }
 
+    /**
+     * get discounts with request
+     *
+     * @param Request $request
+     * @return object
+     */
     public static function get_with_request (Request $request)
     {
         $query_from_request = $request->validate([
@@ -94,7 +100,7 @@ class DiscountCodeActions
      */
     public static function get (array $query)
     {
-        $discountCode = new DiscountCode();
+        $discountCode = DiscountCode::orderBy('id', 'DESC');
 
         $query['skip'] = $query['skip'] ?? 0;
         $query['limit'] = $query['limit'] ?? 50;
@@ -116,5 +122,24 @@ class DiscountCodeActions
             $query['skip'],
             $query['limit']
         );
+    }
+
+    /**
+     * get discount by id
+     *
+     * @param string $id
+     * @return DiscountCode
+     * @throws CustomException
+     */
+    public static function get_by_id (string $id): DiscountCode
+    {
+        $discountCode = DiscountCode::where('id', $id)->first();
+
+        if (empty($discountCode))
+        {
+            throw new CustomException("could not find discount with id '{$id}'", 57, 404);
+        }
+
+        return $discountCode;
     }
 }
