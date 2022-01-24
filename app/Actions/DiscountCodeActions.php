@@ -7,6 +7,7 @@ use App\Jobs\StoreDiscountUsers;
 use App\Models\DiscountCode;
 use App\Services\PaginationService;
 use Illuminate\Http\Request;
+use function App\Helpers\convert_to_boolean;
 
 class DiscountCodeActions
 {
@@ -70,12 +71,18 @@ class DiscountCodeActions
 
     public static function get_with_request (Request $request)
     {
+        $query_from_request = $request->validate([
+            'expired' => 'string|max:5'
+        ]);
+
+        if (isset($query_from_request['expired']))
+        {
+            $query_from_request['expired'] = convert_to_boolean($query_from_request['expired']);
+        }
+
         $pagination_values = PaginationService::get_values_from_request($request);
 
-        return self::get([
-            'skip' => $pagination_values['skip'],
-            'limit' => $pagination_values['limit'],
-        ]);
+        return self::get(array_merge($query_from_request, $pagination_values));
     }
 
     /**
@@ -87,13 +94,25 @@ class DiscountCodeActions
      */
     public static function get (array $query)
     {
-        $query = [
-            'skip' => $query['skip'] ?? 0,
-            'limit' => $query['limit'] ?? 50,
-        ];
+        $discountCode = new DiscountCode();
+
+        $query['skip'] = $query['skip'] ?? 0;
+        $query['limit'] = $query['limit'] ?? 50;
+
+        if (isset($query['expired']))
+        {
+            if ($query['expired'])
+            {
+                $discountCode = $discountCode->whereDate('expiration_date', '<=', date('Y-m-d H:i:s'));
+            }
+            else
+            {
+                $discountCode = $discountCode->whereDate('expiration_date', '>', date('Y-m-d H:i:s'));
+            }
+        }
 
         return PaginationService::paginate(
-            (new DiscountCode()),
+            $discountCode,
             $query['skip'],
             $query['limit']
         );

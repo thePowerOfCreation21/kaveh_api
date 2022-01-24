@@ -77,8 +77,21 @@ function time_to_custom_date ($time = 'current_time')
 
     return (object) [
         'timestamp' => $time,
-        'jdate' => jdate("Y/m/j H:i:s",$time),
         'date' => date("Y/m/j H:i:s",$time),
+        'jdate' => jdate("Y/m/j H:i:s",$time),
         'string' => jdate("l j F Y",$time)
     ];
+}
+
+function convert_to_boolean ($mixed)
+{
+    if (is_string($mixed))
+    {
+        $falsy_values = [0, 'false'];
+        return !in_array($mixed, $falsy_values);
+    }
+    else
+    {
+        return !empty($mixed);
+    }
 }
