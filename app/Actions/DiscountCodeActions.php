@@ -143,25 +143,73 @@ class DiscountCodeActions
         return $discountCode;
     }
 
+    /**
+     * get discount users with request
+     *
+     * @param Request $request
+     * @param string $id
+     * @return object
+     */
     public static function get_users_with_request (Request $request, string $id)
     {
+        $query_from_request = $request->validate([
+            'is_used' => 'string|max:5',
+            'search' => 'string|max:50'
+        ]);
+
+        if (isset($query_from_request['is_used']))
+        {
+            $query_from_request['is_used'] = convert_to_boolean($query_from_request['is_used']);
+        }
+
         $pagination_values = PaginationService::get_values_from_request($request);
-        return self::get_users($id, $pagination_values);
+
+        return self::get_users($id, array_merge($query_from_request, $pagination_values));
     }
 
+    /**
+     * get discount users
+     * (has pagination)
+     *
+     * @param string $id
+     * @param array $query
+     * @return object
+     * @throws CustomException
+     */
     public static function get_users (string $id, array $query = [])
     {
         $discountCode = self::get_by_id($id);
-
-        $discountCodeUsers = $discountCode->users();
 
         $query['skip'] = $query['skip'] ?? 0;
         $query['limit'] = $query['limit'] ?? 50;
 
         return PaginationService::paginate(
-            $discountCodeUsers,
+            self::users_query_to_eloquent($discountCode, $query),
             $query['skip'],
             $query['limit']
         );
+    }
+
+    /**
+     * converts query to discount users eloquent
+     *
+     * @param DiscountCode $discountCode
+     * @param array $query
+     * @param null $eloquent
+     * @return \App\Models\User|null
+     */
+    public static function users_query_to_eloquent (DiscountCode $discountCode, array $query = [], $eloquent = null)
+    {
+        if ($eloquent === null)
+        {
+            $eloquent = $discountCode->users();
+        }
+
+        if (isset($query['is_used']))
+        {
+            $eloquent = $eloquent->where('is_used', $query['is_used']);
+        }
+
+        return UserActions::query_to_eloquent($query, $eloquent);
     }
 }

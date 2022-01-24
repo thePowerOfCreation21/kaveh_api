@@ -212,16 +212,16 @@ class UserActions
      */
     public static function get_users_with_request (Request $request)
     {
-        $request->validate([
-            'skip' => 'numeric',
-            'limit' => 'numeric|max:50',
+        $query_from_request = $request->validate([
             'search' => 'string|max:50'
         ]);
 
+        $pagination_values = PaginationService::get_values_from_request($request);
+
         return UserActions::get(
-            (! empty($request->input('skip'))) ? $request->input('skip') : 0,
-            (! empty($request->input('limit'))) ? $request->input('limit') : 50,
-            (string) $request->input('search')
+            $pagination_values['skip'],
+            $pagination_values['limit'],
+            $query_from_request
         );
     }
 
@@ -231,27 +231,44 @@ class UserActions
      *
      * @param int $skip
      * @param int $limit
-     * @param string $search
+     * @param array $query
      * @return object
      */
-    public static function get (int $skip = 0, int $limit = 50, string $search = "")
+    public static function get (int $skip = 0, int $limit = 50, array $query = [])
     {
-        $user = new User();
-
-        if (!empty($search))
-        {
-            $user = $user
-                ->where('name', 'like', "%{$search}%")
-                ->orWhere('last_name', 'like', "%{$search}%")
-                ->orWhere('phone_number', 'like', "%{$search}%")
-                ->orWhere('card_number', 'like', "%{$search}%");
-        }
+        $user = self::query_to_eloquent($query);
 
         return PaginationService::paginate(
             $user->orderBy('id', 'DESC'),
             $skip,
             $limit
         );
+    }
+
+    /**
+     * converts query array to eloquent
+     *
+     * @param array $query
+     * @param null $eloquent
+     * @return User
+     */
+    public static function query_to_eloquent (array $query = [], $eloquent = null)
+    {
+        if ($eloquent === null)
+        {
+            $eloquent = new User();
+        }
+
+
+        if (isset($query['search']))
+        {
+            $eloquent = $eloquent
+                ->where('name', 'like', "%{$query['search']}%")
+                ->orWhere('last_name', 'like', "%{$query['search']}%")
+                ->orWhere('phone_number', 'like', "%{$query['search']}%")
+                ->orWhere('card_number', 'like', "%{$query['search']}%");
+        }
+        return $eloquent;
     }
 
     /**
