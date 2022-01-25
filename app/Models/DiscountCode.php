@@ -38,6 +38,7 @@ class DiscountCode extends Model
         $eloquent = (new DiscountCodeUsers())->selectRaw("
             users.name AS user_name,
             users.last_name AS user_last_name,
+            users.phone_number AS user_phone_number,
             users.id AS user_id,
             IFNULL(discount_code_users.is_used, '0') AS is_used,
             IFNULL(discount_code_users.discount_id, '{$this->id}') AS discount_id

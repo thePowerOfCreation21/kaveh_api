@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Exceptions\CustomException;
 use App\Jobs\StoreDiscountUsers;
 use App\Models\DiscountCode;
+use App\Models\DiscountCodeUsers;
 use App\Services\PaginationService;
 use Illuminate\Http\Request;
 use function App\Helpers\convert_to_boolean;
@@ -218,5 +219,16 @@ class DiscountCodeActions
         }
 
         return UserActions::query_to_eloquent($query, $eloquent);
+    }
+
+    /**
+     * delete discount by id
+     *
+     * @param string $id
+     */
+    public static function delete_by_id (string $id)
+    {
+        DiscountCode::where('id', $id)->delete();
+        DiscountCodeUsers::where('discount_id', $id)->delete();
     }
 }

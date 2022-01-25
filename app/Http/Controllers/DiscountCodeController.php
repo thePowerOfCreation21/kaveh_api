@@ -36,4 +36,13 @@ class DiscountCodeController extends Controller
             DiscountCodeActions::get_users_with_request($request, $id)
         );
     }
+
+    public function delete_by_id (string $id)
+    {
+        DiscountCodeActions::delete_by_id($id);
+
+        return response()->json([
+            'message' => 'discount deleted successfully'
+        ]);
+    }
 }
