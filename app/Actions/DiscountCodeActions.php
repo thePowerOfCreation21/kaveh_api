@@ -207,7 +207,14 @@ class DiscountCodeActions
 
         if (isset($query['is_used']))
         {
-            $eloquent = $eloquent->where('is_used', $query['is_used']);
+            if ($query['is_used'])
+            {
+                $eloquent = $eloquent->where('is_used', $query['is_used']);
+            }
+            else
+            {
+                $eloquent = $eloquent->where('is_used', "=", null)->orWhere('is_used', false);
+            }
         }
 
         return UserActions::query_to_eloquent($query, $eloquent);
