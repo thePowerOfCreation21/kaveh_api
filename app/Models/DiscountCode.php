@@ -36,12 +36,13 @@ class DiscountCode extends Model
     public function users()
     {
         $eloquent = (new DiscountCodeUsers())->selectRaw("
-                        users.name AS user_name,
-                        users.last_name AS user_last_name,
-                        users.id AS user_id,
-                        IFNULL(discount_code_users.is_used, '0') AS is_used,
-                        IFNULL(discount_code_users.discount_id, '{$this->id}') AS discount_id
-                    ");
+            users.name AS user_name,
+            users.last_name AS user_last_name,
+            users.id AS user_id,
+            IFNULL(discount_code_users.is_used, '0') AS is_used,
+            IFNULL(discount_code_users.discount_id, '{$this->id}') AS discount_id
+        ");
+
         if (!$this->is_for_all_users)
         {
             return $eloquent->join('users', function($join){
