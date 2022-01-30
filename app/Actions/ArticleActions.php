@@ -38,18 +38,43 @@ class ArticleActions
      */
     public static function get_with_request (Request $request)
     {
+        $query_from_request = $request->validate([
+            'search' => 'string|max:100'
+        ]);
+
         return PaginationService::paginate_with_request(
             $request,
-            Article::selectRaw('
+            self::query_to_eloquent($query_from_request)->orderBy('id', 'DESC')
+        );
+    }
+
+    /**
+     * converts query to Article eloquent
+     *
+     * @param array $query
+     * @param $eloquent
+     * @return mixed|null
+     */
+    public static function query_to_eloquent (array $query = [], $eloquent = null)
+    {
+        if ($eloquent === null)
+        {
+            $eloquent = Article::selectRaw('
                 articles.*,
                 IF(
                     LENGTH(content) > 100,
                     CONCAT(SUBSTRING(content, 1, 100), "..."),
                     content
                 ) AS content
-            ')
-            ->orderBy('id', 'DESC')
-        );
+            ');
+        }
+
+        if (isset($query['search']))
+        {
+            $eloquent->where('title', 'LIKE', "%{$query['search']}%");
+        }
+
+        return $eloquent;
     }
 
     /**
@@ -107,7 +132,7 @@ class ArticleActions
     {
         $request->validate([
             'title' => 'string|max:120',
-            'image' => 'file|mimes:png,jpg,jpeg,gif|max:2048',
+            'image' => 'file|mimes:png,jpg,jpeg,gif|max:10000',
             'content' => 'string|max:5000'
         ]);
 
