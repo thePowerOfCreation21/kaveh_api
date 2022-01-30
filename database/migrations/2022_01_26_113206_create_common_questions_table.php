@@ -15,6 +15,8 @@ class CreateCommonQuestionsTable extends Migration
     {
         Schema::create('common_questions', function (Blueprint $table) {
             $table->id();
+            $table->string('question');
+            $table->string('answer', 1500);
             $table->timestamps();
         });
     }
