@@ -20,11 +20,11 @@ class ArticleActions
     {
         $article_data = $request->validate([
             'title' => 'required|string|max:120',
-            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048',
+            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000',
             'content' => 'required|string|max:5000'
         ]);
 
-        $article_data['image'] = UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/');
+        $article_data['image'] = $request->file('image')->store('/uploads');
 
         return Article::create($article_data);
     }
@@ -117,13 +117,14 @@ class ArticleActions
 
         !empty($request->input('title')) && $update['title'] = $request->input('title');
         !empty($request->input('content')) && $update['content'] = $request->input('content');
-        if ($image = UploadIt($_FILES['image'] ?? [], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/'))
+
+        if (! empty($request->file('image')))
         {
             if (is_file($article->image))
             {
                 unlink($article->image);
             }
-            $update['image'] = $image;
+            $update['image'] = $request->file('image')->store('/uploads');
         }
 
         return $article->update($update);
