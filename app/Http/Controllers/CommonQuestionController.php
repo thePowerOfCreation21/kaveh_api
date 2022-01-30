@@ -29,4 +29,13 @@ class CommonQuestionController extends Controller
             CommonQuestionActions::get_by_id($id)
         );
     }
+
+    public function edit_by_id (Request $request, string $id)
+    {
+        CommonQuestionActions::edit_by_request_and_id($request, $id);
+
+        return response()->json([
+            'message' => 'CommonQuestion updated successfully'
+        ]);
+    }
 }

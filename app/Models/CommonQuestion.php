@@ -15,4 +15,9 @@ class CommonQuestion extends Model
         'question',
         'answer'
     ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at'
+    ];
 }

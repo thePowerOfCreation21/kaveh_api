@@ -146,7 +146,10 @@ Route::group([
             Route::group([
                 'prefix' => '/common_question',
             ], function (){
+
                 Route::post('/', [CommonQuestionController::class, 'store']);
+                Route::put('/{id}', [CommonQuestionController::class, 'edit_by_id']);
+
             });
 
         });

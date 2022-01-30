@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Exceptions\CustomException;
 use App\Services\PaginationService;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use App\Models\CommonQuestion;
 
@@ -71,5 +72,67 @@ class CommonQuestionActions
         }
 
         return $commonQuestion;
+    }
+
+    /**
+     * update CommonQuestion by id
+     * gets values from Request
+     *
+     * @param Request $request
+     * @param string $id
+     * @return bool|int
+     * @throws CustomException
+     */
+    public static function edit_by_request_and_id (Request $request, string $id)
+    {
+        $data = $request->validate([
+            'question' => 'string|max:255',
+            'answer' => 'string|max:1500'
+        ]);
+
+        return self::edit($data, ['id' => $id]);
+    }
+
+    /**
+     * update CommonQuestion
+     *
+     * @param array $data
+     * @param array $query
+     * @return bool|int
+     * @throws CustomException
+     */
+    public static function edit (array $data, array $query)
+    {
+        $eloquent = self::query_to_eloquent($query);
+
+        if (! $eloquent->exists())
+        {
+            throw new CustomException('common question not found', 62, 404);
+        }
+
+        return $eloquent->update($data);
+    }
+
+    /**
+     * convert query to eloquent
+     * can filter by: id
+     *
+     * @param array $query
+     * @param null $eloquent
+     * @return CommonQuestion|Builder
+     */
+    public static function query_to_eloquent (array $query = [], $eloquent = null)
+    {
+        if ($eloquent === null)
+        {
+            $eloquent = new CommonQuestion();
+        }
+
+        if (isset($query['id']))
+        {
+            $eloquent = $eloquent->where('id', $query['id']);
+        }
+
+        return $eloquent;
     }
 }
