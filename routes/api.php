@@ -30,6 +30,8 @@ Route::get('/about_us', [AboutUsController::class, 'get']);
 
 Route::get('/contact_us_content', [ContactUsContentController::class, 'get']);
 
+Route::get('/common_question', [CommonQuestionController::class, 'get']);
+
 Route::post('/contact_us_message', [ContactUsMessageController::class, 'store']);
 
 Route::group([

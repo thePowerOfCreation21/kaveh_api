@@ -15,4 +15,11 @@ class CommonQuestionController extends Controller
             'message' => 'common question stored successfully'
         ]);
     }
+
+    public function get (Request $request)
+    {
+        return response()->json(
+            CommonQuestionActions::get_by_request($request)
+        );
+    }
 }
