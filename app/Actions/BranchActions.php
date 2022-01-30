@@ -22,10 +22,10 @@ class BranchActions
             'title' => 'required|string|max:150',
             'description' => 'required|string|max:250',
             'address' => 'required|string|max:250',
-            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048'
+            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000'
         ]);
 
-        $fields['image'] = UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/');
+        $fields['image'] = $request->file('image')->store('/uploads');
 
         return Branch::create($fields);
     }
@@ -101,7 +101,7 @@ class BranchActions
             'title' => 'string|max:150',
             'description' => 'string|max:250',
             'address' => 'string|max:250',
-            'image' => 'file|mimes:png,jpg,jpeg,gif|max:2048'
+            'image' => 'file|mimes:png,jpg,jpeg,gif|max:10000'
         ]);
 
         $update = [];
@@ -109,11 +109,10 @@ class BranchActions
         !empty($request->input('title')) && $update['title'] = $request->input('title');
         !empty($request->input('description')) && $update['description'] = $request->input('description');
         !empty($request->input('address')) && $update['address'] = $request->input('address');
-        $image = UploadIt($_FILES['image'] ?? [], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/');
 
-        if (!empty($image))
+        if (!empty($request->file('image')))
         {
-            $update['image'] = $image;
+            $update['image'] = $request->file('image')->store('/uploads');
 
             if (is_file($branch->image))
             {
