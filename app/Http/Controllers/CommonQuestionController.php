@@ -38,4 +38,13 @@ class CommonQuestionController extends Controller
             'message' => 'CommonQuestion updated successfully'
         ]);
     }
+
+    public function delete_by_id (string $id)
+    {
+        CommonQuestionActions::delete_by_id($id);
+
+        return response()->json([
+            'message' => 'common question deleted successfully'
+        ]);
+    }
 }

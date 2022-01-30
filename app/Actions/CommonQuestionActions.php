@@ -94,7 +94,7 @@ class CommonQuestionActions
     }
 
     /**
-     * update CommonQuestion
+     * update CommonQuestion(s)
      *
      * @param array $data
      * @param array $query
@@ -111,6 +111,30 @@ class CommonQuestionActions
         }
 
         return $eloquent->update($data);
+    }
+
+    /**
+     * delete CommonQuestion by id
+     *
+     * @param string $id
+     * @return bool|int|null
+     */
+    public static function delete_by_id (string $id)
+    {
+        return self::delete(['id' => $id]);
+    }
+
+    /**
+     * delete CommonQuestion(s)
+     *
+     * @param array $query
+     * @return bool|int|null
+     */
+    public static function delete (array $query)
+    {
+        $eloquent = self::query_to_eloquent($query);
+
+        return $eloquent->delete();
     }
 
     /**

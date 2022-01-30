@@ -149,6 +149,7 @@ Route::group([
 
                 Route::post('/', [CommonQuestionController::class, 'store']);
                 Route::put('/{id}', [CommonQuestionController::class, 'edit_by_id']);
+                Route::delete('/{id}', [CommonQuestionController::class, 'delete_by_id']);
 
             });
 
