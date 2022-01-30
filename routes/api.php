@@ -11,6 +11,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DiscountCodeController;
+use App\Http\Controllers\CommonQuestionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -131,6 +132,12 @@ Route::group([
                 Route::delete('/{id}', [BranchController::class, 'delete_by_id']);
                 Route::put('/{id}', [BranchController::class, 'update']);
 
+            });
+
+            Route::group([
+                'prefix' => '/common_question',
+            ], function (){
+                Route::post('/', [CommonQuestionController::class, 'store']);
             });
 
         });
