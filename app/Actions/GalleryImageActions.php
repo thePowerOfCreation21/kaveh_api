@@ -19,30 +19,34 @@ class GalleryImageActions
      */
     public static function store_with_request (Request $request): GalleryImage
     {
-        $request->validate([
+        $data = $request->validate([
             'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048'
         ]);
 
-        return self::store(UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/'));
+        $data['image'] = $request->file('image')->store('/uploads');
+
+        return self::store($data);
     }
 
     /**
      * add new image to gallery images
      *
-     * @param string $image
+     * @param array $data
      * @return GalleryImage
      * @throws CustomException
      */
-    public static function store (string $image): GalleryImage
+    public static function store (array $data): GalleryImage
     {
-        if (empty($image))
+        $data = [
+            'image' => $data['image'] ?? null
+        ];
+
+        if (empty($data['image']))
         {
             throw new CustomException('can not store an empty image string in db', 12, 400);
         }
 
-        return GalleryImage::create([
-            'image' => $image
-        ]);
+        return GalleryImage::create($data);
     }
 
     /**
@@ -91,27 +95,29 @@ class GalleryImageActions
     {
         $galleryImage = self::get_by_id($id);
 
-        $request->validate([
+        $data = $request->validate([
             'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048'
         ]);
 
-        $image = UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/');
+        $data['image'] = $request->file('image')->store('/uploads');
 
-        return self::update($image, $galleryImage);
+        return self::update($data, $galleryImage);
     }
 
     /**
      * change image by id
      * removes the old image
      *
-     * @param string $image
+     * @param array $data
      * @param GalleryImage $galleryImage
      * @return GalleryImage
      * @throws CustomException
      */
-    public static function update (string $image, GalleryImage $galleryImage): GalleryImage
+    public static function update (array $data, GalleryImage $galleryImage): GalleryImage
     {
-        if (empty($image))
+        $data['image'] = $data['image'] ?? null;
+
+        if (empty($data['image']))
         {
             throw new CustomException('can not update image by empty string in db', 12, 400);
         }
@@ -121,9 +127,7 @@ class GalleryImageActions
             unlink($galleryImage->image);
         }
 
-        $galleryImage->update([
-            'image' => $image
-        ]);
+        $galleryImage->update($data);
 
         return $galleryImage;
     }
