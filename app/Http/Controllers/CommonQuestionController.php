@@ -22,4 +22,11 @@ class CommonQuestionController extends Controller
             CommonQuestionActions::get_by_request($request)
         );
     }
+
+    public function get_by_id (string $id)
+    {
+        return response()->json(
+            CommonQuestionActions::get_by_id($id)
+        );
+    }
 }
