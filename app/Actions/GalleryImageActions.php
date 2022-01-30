@@ -20,7 +20,7 @@ class GalleryImageActions
     public static function store_with_request (Request $request): GalleryImage
     {
         $data = $request->validate([
-            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048'
+            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000'
         ]);
 
         $data['image'] = $request->file('image')->store('/uploads');
@@ -96,7 +96,7 @@ class GalleryImageActions
         $galleryImage = self::get_by_id($id);
 
         $data = $request->validate([
-            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048'
+            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000'
         ]);
 
         $data['image'] = $request->file('image')->store('/uploads');

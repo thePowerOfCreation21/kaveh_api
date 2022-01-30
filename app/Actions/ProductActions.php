@@ -20,14 +20,14 @@ class ProductActions
     {
         $product_data = $request->validate([
             'title' => 'required|string|max:128',
-            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:2048',
+            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000',
             'description' => 'string|max:500',
             'price' => 'required|numeric|min:1|max:1000000',
             'discount_percentage' => 'numeric|min:0|max:99',
             'type' => 'required|in:limited,unlimited',
             'stock' => 'required_if:type,==,limited|numeric|min:0|max:100000'
         ]);
-        $product_data['image'] = UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/');
+        $product_data['image'] = $request->file('image')->store('/uploads');
 
         return Product::create($product_data);
     }
@@ -137,21 +137,21 @@ class ProductActions
 
         $product_data = $request->validate([
             'title' => 'string|max:128',
-            'image' => 'file|mimes:png,jpg,jpeg,gif|max:2048',
+            'image' => 'file|mimes:png,jpg,jpeg,gif|max:10000',
             'description' => 'string|max:500',
             'price' => 'numeric|min:1|max:1000000',
             'discount_percentage' => 'numeric|min:0|max:99',
             'stock' => 'numeric|min:0|max:100000'
         ]);
 
-        if (isset($_FILES['image']))
+        if (!empty($request->file('image')))
         {
             if (is_file($product->image))
             {
                 unlink($product->image);
             }
 
-            $product_data['image'] = UploadIt($_FILES['image'], ['png', 'jpg', 'jpeg', 'gif'], 'uploads/');
+            $product_data['image'] = $request->file('image')->store('/uploads');
         }
 
         if ($product->type == 'unlimited' && isset($product_data['stock']))
