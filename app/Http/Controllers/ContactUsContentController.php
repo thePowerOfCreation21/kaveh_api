@@ -10,13 +10,7 @@ class ContactUsContentController extends Controller
 {
     public function update (Request $request)
     {
-        $fields = $request->validate(
-            ContactUsContent::$fields
-        );
-
-        ContactUsContentActions::update(
-            (object) $fields
-        );
+        (new ContactUsContent())->update_by_request($request);
 
         return response()->json([
             'message' => 'content of the contact us updated successfully'
@@ -26,7 +20,7 @@ class ContactUsContentController extends Controller
     public function get ()
     {
         return response()->json(
-            ContactUsContentActions::get()
+            (new ContactUsContent())->get()
         );
     }
 }

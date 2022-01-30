@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
-class ContactUsContent
+use App\Abstracts\KeyObjectConfig;
+
+class ContactUsContent extends KeyObjectConfig
 {
-    public static $fields = [
+    protected $key = 'contact_us_content';
+
+    protected $fields = [
         'phone_number' => 'string|max:20',
         'social_network_links' => 'array|max:10',
         'social_network_links.*' => 'string',
@@ -12,11 +16,11 @@ class ContactUsContent
         'email' => 'email|max:255'
     ];
 
-    public static $ignore_this_fields = [
+    public $ignore_this_fields = [
         'social_network_links.*'
     ];
 
-    public static $default_values = [
+    public $default_values = [
         'social_network_links' => []
     ];
 }
