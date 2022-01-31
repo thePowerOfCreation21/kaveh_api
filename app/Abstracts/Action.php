@@ -68,7 +68,7 @@ abstract class Action
         return [];
     }
 
-    public function change_request_data_before_store_or_update (array $data, Request $request): array
+    public function change_request_data_before_store_or_update (array $data, Request $request, $eloquent = null): array
     {
         return $data;
     }
@@ -83,9 +83,12 @@ abstract class Action
         );
     }
 
-    public function query_to_eloquent (array $query)
+    public function query_to_eloquent (array $query, $eloquent = null)
     {
-        $eloquent = new $this->model();
+        if ($eloquent === null)
+        {
+            $eloquent = new $this->model();
+        }
 
         if (isset($query['id']))
         {
@@ -123,5 +126,23 @@ abstract class Action
     public function delete_by_id (string $id)
     {
         return $this->delete(['id' => $id]);
+    }
+
+    public function update_by_request (Request $request, array $query = [], $eloquent = null, $validation_role = 'update')
+    {
+        $data = $this->get_data_from_request($request, $validation_role);
+        $data = $this->change_request_data_before_store_or_update($data, $request, $eloquent);
+        return $this->update($data, $query, $eloquent);
+    }
+
+    public function update (array $data, array $query = [], $eloquent = null)
+    {
+        return $this->query_to_eloquent($query, $eloquent)->update($data);
+    }
+
+    public function update_entity_by_request_and_id (Request $request, string $id)
+    {
+        $entity = $this->get_by_id($id);
+        return $this->update_by_request($request, [], $entity);
     }
 }
