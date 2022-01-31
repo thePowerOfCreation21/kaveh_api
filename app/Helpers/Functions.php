@@ -95,3 +95,9 @@ function convert_to_boolean ($mixed)
         return !empty($mixed);
     }
 }
+
+function isAssoc(array $arr)
+{
+    if (array() === $arr) return false;
+    return array_keys($arr) !== range(0, count($arr) - 1);
+}

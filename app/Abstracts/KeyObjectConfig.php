@@ -5,6 +5,7 @@ namespace App\Abstracts;
 use App\Exceptions\CustomException;
 use App\Actions\KeyValueConfigActions;
 use Illuminate\Http\Request;
+use function App\Helpers\isAssoc;
 
 abstract class KeyObjectConfig
 {
@@ -52,6 +53,9 @@ abstract class KeyObjectConfig
     {
         $object = $this->get();
 
+        $object = $this->merge_objects($object, $new_object);
+
+        /*
         foreach ($this->fields AS $field => $validation_role)
         {
             if (in_array($field, $this->ignore_this_fields))
@@ -61,6 +65,9 @@ abstract class KeyObjectConfig
 
             $object->$field = $new_object->$field ?? ($this->default_values[$field] ?? null);
         }
+        */
+
+        $object = $this->before_saving_update($object);
 
         KeyValueConfigActions::set($this->key, $object);
 
@@ -69,10 +76,31 @@ abstract class KeyObjectConfig
         return $object;
     }
 
+    public function merge_objects (object $object_1, object $object_2, string $merge_level = "")
+    {
+        foreach ($object_1 AS $field => $value)
+        {
+            if (is_object($object_1->$field))
+            {
+                if (isset($object_2->$field))
+                {
+                    $object_1->$field = $this->merge_objects($object_1->$field, (object) $object_2->$field, "{$merge_level}{$field}.");
+                }
+            }
+            else
+            {
+                $object_1->$field = $object_2->$field ?? ($this->default_values["{$merge_level}{$field}"] ?? ($this->default_values["{$merge_level}*"] ?? null));
+            }
+        }
+
+        return $object_1;
+    }
+
     /**
      * get object
      *
      * @param bool $forced_get_from_DB
+     * @param bool $forced_fix_object
      * @return object
      * @throws CustomException
      */
@@ -119,5 +147,16 @@ abstract class KeyObjectConfig
         return $this->update(
             (object) $request->validate($this->fields)
         );
+    }
+
+    /**
+     * it's blank but can use it on child class
+     *
+     * @param object $new_object
+     * @return object
+     */
+    public function before_saving_update (object $new_object): object
+    {
+        return $new_object;
     }
 }

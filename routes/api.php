@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DiscountCodeController;
 use App\Http\Controllers\CommonQuestionController;
+use App\Http\Controllers\OrderTimeLimitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -150,6 +151,21 @@ Route::group([
                 Route::post('/', [CommonQuestionController::class, 'store']);
                 Route::put('/{id}', [CommonQuestionController::class, 'edit_by_id']);
                 Route::delete('/{id}', [CommonQuestionController::class, 'delete_by_id']);
+
+            });
+
+        });
+
+        Route::group([
+            'middleware' => ['RequiredPrivilege:manage_orders']
+        ], function (){
+
+            Route::group([
+                'prefix' => '/order_time_limit'
+            ], function (){
+
+                Route::get('/', [OrderTimeLimitController::class, 'get']);
+                Route::put('/', [OrderTimeLimitController::class, 'update']);
 
             });
 
