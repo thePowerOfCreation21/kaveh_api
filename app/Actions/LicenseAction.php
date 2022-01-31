@@ -29,4 +29,16 @@ class LicenseAction extends Action
 
         return $data;
     }
+
+    public function delete_by_id(string $id)
+    {
+        $entity = $this->get_by_id($id);
+
+        if (is_file($entity->image))
+        {
+            unlink($entity->image);
+        }
+
+        return $entity->delete();
+    }
 }

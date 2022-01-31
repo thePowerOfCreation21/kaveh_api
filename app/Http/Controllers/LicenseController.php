@@ -29,4 +29,13 @@ class LicenseController extends Controller
             (new LicenseAction())->get_by_id($id)
         );
     }
+
+    public function delete_by_id (string $id)
+    {
+        (new LicenseAction())->delete_by_id($id);
+
+        return response()->json([
+            'message' => 'deleted successfully'
+        ]);
+    }
 }

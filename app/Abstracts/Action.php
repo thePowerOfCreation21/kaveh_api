@@ -114,4 +114,14 @@ abstract class Action
     {
         return $this->get_entity(['id' => $id]);
     }
+
+    public function delete (array $query)
+    {
+        return $this->query_to_eloquent($query)->delete();
+    }
+
+    public function delete_by_id (string $id)
+    {
+        return $this->delete(['id' => $id]);
+    }
 }

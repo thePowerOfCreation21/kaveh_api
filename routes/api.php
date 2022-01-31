@@ -169,6 +169,7 @@ Route::group([
             ], function (){
 
                 Route::post('/', [LicenseController::class, 'store']);
+                Route::delete('/{id}', [LicenseController::class, 'delete_by_id']);
 
             });
 
