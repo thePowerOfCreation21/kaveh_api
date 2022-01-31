@@ -13,6 +13,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DiscountCodeController;
 use App\Http\Controllers\CommonQuestionController;
 use App\Http\Controllers\OrderTimeLimitController;
+use App\Http\Controllers\LicenseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -151,6 +152,14 @@ Route::group([
                 Route::post('/', [CommonQuestionController::class, 'store']);
                 Route::put('/{id}', [CommonQuestionController::class, 'edit_by_id']);
                 Route::delete('/{id}', [CommonQuestionController::class, 'delete_by_id']);
+
+            });
+
+            Route::group([
+                'prefix' => '/license'
+            ], function (){
+
+                Route::post('/', [LicenseController::class, 'store']);
 
             });
 
