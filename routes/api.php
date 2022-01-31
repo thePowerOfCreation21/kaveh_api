@@ -71,6 +71,14 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => '/license'
+], function (){
+
+    Route::get('/', [LicenseController::class, 'get']);
+
+});
+
+Route::group([
     'middleware' => ['auth:sanctum']
 ], function(){
 

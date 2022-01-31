@@ -3,6 +3,7 @@
 namespace App\Abstracts;
 
 use App\Exceptions\CustomException;
+use App\Services\PaginationService;
 use Illuminate\Http\Request;
 
 abstract class Action
@@ -11,10 +12,10 @@ abstract class Action
 
     protected $validation_roles = [];
 
-    public function get_data_from_request (Request $request, $validation_role)
+    public function get_data_from_request (Request $request, $validation_role, bool $throw_exception = true)
     {
         return $request->validate(
-            $this->get_validation_role($validation_role)
+            $this->get_validation_role($validation_role, $throw_exception)
         );
     }
 
@@ -32,7 +33,7 @@ abstract class Action
         return $this->model::create($data);
     }
 
-    public function get_validation_role ($validation_role)
+    public function get_validation_role ($validation_role, bool $throw_exception = true)
     {
         if (is_string($validation_role))
         {
@@ -42,10 +43,14 @@ abstract class Action
             }
             else
             {
-                throw new CustomException(
-                    "validation role '{$validation_role}' is not set for ".get_class($this),
-                    65, 500
-                );
+                if ($throw_exception)
+                {
+                    throw new CustomException(
+                        "validation role '{$validation_role}' is not set for ".get_class($this),
+                        65, 500
+                    );
+                }
+                return [];
             }
         }
         else if (is_array($validation_role))
@@ -53,14 +58,40 @@ abstract class Action
             return $validation_role;
         }
 
-        throw new CustomException(
-            "wrong validation role passed to ".get_class($this),
-            66, 500
-        );
+        if ($throw_exception)
+        {
+            throw new CustomException(
+                "wrong validation role passed to ".get_class($this),
+                66, 500
+            );
+        }
+        return [];
     }
 
     public function change_request_data_before_store_or_update (array $data, Request $request): array
     {
         return $data;
+    }
+
+    public function get_by_request (Request $request, $query_validation_role = 'get_query')
+    {
+        return PaginationService::paginate_with_request(
+            $request,
+            $this->query_to_eloquent(
+                $this->get_data_from_request($request, $query_validation_role, false)
+            )->orderBy('id', 'DESC')
+        );
+    }
+
+    public function query_to_eloquent (array $query)
+    {
+        $eloquent = new $this->model();
+
+        if (isset($query['id']))
+        {
+            $eloquent = $eloquent->where('id', $query['id']);
+        }
+
+        return new $eloquent;
     }
 }
