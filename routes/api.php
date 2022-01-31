@@ -75,6 +75,7 @@ Route::group([
 ], function (){
 
     Route::get('/', [LicenseController::class, 'get']);
+    Route::get('/{id}', [LicenseController::class, 'get_by_id']);
 
 });
 

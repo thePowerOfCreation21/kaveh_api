@@ -92,6 +92,26 @@ abstract class Action
             $eloquent = $eloquent->where('id', $query['id']);
         }
 
-        return new $eloquent;
+        return $eloquent;
+    }
+
+    public function get_entity (array $query)
+    {
+        $entity = $this->query_to_eloquent($query)->first();
+
+        if (empty($entity))
+        {
+            throw new CustomException(
+                "entity not found",
+                67, 404
+            );
+        }
+
+        return $entity;
+    }
+
+    public function get_by_id (string $id)
+    {
+        return $this->get_entity(['id' => $id]);
     }
 }

@@ -22,4 +22,11 @@ class LicenseController extends Controller
             (new LicenseAction())->get_by_request($request)
         );
     }
+
+    public function get_by_id (string $id)
+    {
+        return response()->json(
+            (new LicenseAction())->get_by_id($id)
+        );
+    }
 }
