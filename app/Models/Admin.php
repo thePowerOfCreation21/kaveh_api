@@ -40,7 +40,8 @@ class Admin extends Model
         'manage_users',
         'manage_products',
         'manage_orders',
-        'manage_discounts'
+        'manage_discounts',
+        'send_notifications'
     ];
 
     public static function fix_privileges (object $temp_privileges, $privileges = null)
