@@ -187,8 +187,8 @@ Route::group([
             ], function (){
 
                 Route::post('/', [NotificationFrameController::class, 'store']);
-
                 Route::get('/', [NotificationFrameController::class, 'get']);
+                Route::get('/{id}', [NotificationFrameController::class, 'get_by_id']);
 
             });
 
