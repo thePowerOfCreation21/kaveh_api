@@ -15,4 +15,11 @@ class NotificationFrameController extends Controller
             'message' => 'stored successfully'
         ]);
     }
+
+    public function get (Request $request)
+    {
+        return response()->json(
+            (new NotificationFrameAction())->get_by_request($request)
+        );
+    }
 }

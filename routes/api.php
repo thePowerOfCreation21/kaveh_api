@@ -188,6 +188,8 @@ Route::group([
 
                 Route::post('/', [NotificationFrameController::class, 'store']);
 
+                Route::get('/', [NotificationFrameController::class, 'get']);
+
             });
 
         });
