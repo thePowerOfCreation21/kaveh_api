@@ -29,4 +29,13 @@ class NotificationFrameController extends Controller
             (new NotificationFrameAction())->get_by_id($id)
         );
     }
+
+    public function update_by_id (Request $request, string $id)
+    {
+        (new NotificationFrameAction())->update_entity_by_request_and_id($request, $id);
+
+        return response()->json([
+            'message' => 'updated successfully'
+        ]);
+    }
 }
