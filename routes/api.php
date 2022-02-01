@@ -14,6 +14,7 @@ use App\Http\Controllers\DiscountCodeController;
 use App\Http\Controllers\CommonQuestionController;
 use App\Http\Controllers\OrderTimeLimitController;
 use App\Http\Controllers\LicenseController;
+use App\Http\Controllers\NotificationFrameController;
 
 /*
 |--------------------------------------------------------------------------
@@ -171,6 +172,21 @@ Route::group([
                 Route::post('/', [LicenseController::class, 'store']);
                 Route::put('/{id}', [LicenseController::class, 'update_by_id']);
                 Route::delete('/{id}', [LicenseController::class, 'delete_by_id']);
+
+            });
+
+        });
+
+        Route::group([
+            'middleware' => ['RequiredPrivilege:send_notifications'],
+            'prefix' => '/notification'
+        ], function (){
+
+            Route::group([
+                'prefix' => '/frame'
+            ], function (){
+
+                Route::post('/', [NotificationFrameController::class, 'store']);
 
             });
 
