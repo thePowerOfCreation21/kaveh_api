@@ -190,6 +190,7 @@ Route::group([
                 Route::get('/', [NotificationFrameController::class, 'get']);
                 Route::get('/{id}', [NotificationFrameController::class, 'get_by_id']);
                 Route::put('/{id}', [NotificationFrameController::class, 'update_by_id']);
+                Route::delete('/{id}', [NotificationFrameController::class, 'delete_by_id']);
 
             });
 
