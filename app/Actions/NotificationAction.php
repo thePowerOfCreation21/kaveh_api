@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Abstracts\Action;
+use App\Jobs\SendSMSToUsers;
 use App\Jobs\StoreNotificationUsers;
 use App\Services\SendSMSService;
 use Illuminate\Http\Request;
@@ -39,6 +40,19 @@ class NotificationAction extends Action
         {
             $data['is_for_all_users'] = false;
             UserActions::check_if_users_exists($data['users']);
+        }
+
+        if ($data['type'] == 'sms')
+        {
+            SendSMSToUsers::dispatch(
+                $data['text'],
+                $data['users'] ?? "*"
+            );
+
+            return [
+                'code' => 73,
+                'message' => 'sms will be sent (it is now in queue)'
+            ];
         }
 
         $notification = $this->model::create($data);

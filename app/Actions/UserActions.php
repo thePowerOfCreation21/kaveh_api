@@ -268,6 +268,12 @@ class UserActions
                 ->orWhere('phone_number', 'like', "%{$query['search']}%")
                 ->orWhere('card_number', 'like', "%{$query['search']}%");
         }
+
+        if (isset($query['ids']))
+        {
+            $eloquent = $eloquent->whereIn('id', $query['ids']);
+        }
+
         return $eloquent;
     }
 
@@ -323,5 +329,21 @@ class UserActions
             }
         }
         return $string;
+    }
+
+    public static function get_phone_numbers (array $query = [])
+    {
+        $phone_numbers = [];
+
+        $users = self::query_to_eloquent($query)
+            ->select('phone_number')
+            ->get();
+
+        foreach ($users AS $user)
+        {
+            $phone_numbers[] = $user['phone_number'];
+        }
+
+        return $phone_numbers;
     }
 }
