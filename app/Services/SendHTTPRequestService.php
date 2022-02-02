@@ -53,6 +53,16 @@ class SendHTTPRequestService
 
     public function set_body ($body): SendHTTPRequestService
     {
+        /*
+        if (is_array($body))
+        {
+            foreach ($body as $key => $value)
+            {
+                $body[$key] = urlencode($value);
+            }
+        }
+        */
+
         $this->body = $body;
         return $this;
     }
@@ -73,7 +83,7 @@ class SendHTTPRequestService
         return $this->method;
     }
 
-    public function set_request_headers ($headers): SendHTTPRequestService
+    public function set_headers ($headers): SendHTTPRequestService
     {
         if (!is_array($headers))
         {
@@ -107,14 +117,14 @@ class SendHTTPRequestService
             curl_setopt($ch, CURLOPT_PORT, $this->port);
         }
 
-        if (!empty($this->headers))
+        if (!empty($this->request_headers))
         {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $this->request_headers);
         }
 
         if (!empty($this->body))
         {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $this->body);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($this->body));
         }
 
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);

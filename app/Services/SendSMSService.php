@@ -19,7 +19,7 @@ class SendSMSService
             $receptor_numbers = implode(",", $receptor_numbers);
         }
 
-        $api = (new SendHTTPRequestService())->set_url("https://api.ghasedak.me/v2/sms/send/pair")
+        (new SendHTTPRequestService())->set_url("https://api.ghasedak.me/v2/sms/send/pair")
             ->set_method("POST")
             ->set_headers([
                 "apikey:{$this->api_key}"

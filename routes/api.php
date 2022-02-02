@@ -15,6 +15,7 @@ use App\Http\Controllers\CommonQuestionController;
 use App\Http\Controllers\OrderTimeLimitController;
 use App\Http\Controllers\LicenseController;
 use App\Http\Controllers\NotificationFrameController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -193,6 +194,8 @@ Route::group([
                 Route::delete('/{id}', [NotificationFrameController::class, 'delete_by_id']);
 
             });
+
+            Route::post('/', [NotificationController::class, 'send']);
 
         });
 
