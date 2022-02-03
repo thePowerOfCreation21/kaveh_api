@@ -22,4 +22,11 @@ class NotificationController extends Controller
             (new NotificationAction())->get_by_request($request)
         );
     }
+
+    public function get_by_id (string $id)
+    {
+        return response()->json(
+            (new NotificationAction())->get_by_id($id)
+        );
+    }
 }
