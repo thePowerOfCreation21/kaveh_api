@@ -15,4 +15,11 @@ class NotificationController extends Controller
             'message' => 'sent successfully'
         ]);
     }
+
+    public function get (Request $request)
+    {
+        return response()->json(
+            (new NotificationAction())->get_by_request($request)
+        );
+    }
 }

@@ -17,6 +17,11 @@ class NotificationAction extends Action
             'text' => 'required|string|max:1500',
             'users' => 'array|max:1000',
             'users.*' => 'numeric|max:25'
+        ],
+        'get_query' => [
+            'type' => 'in:message,toast',
+            'search' => 'string|max:100',
+            'user_id' => 'numeric|max:11'
         ]
     ];
 
@@ -63,5 +68,32 @@ class NotificationAction extends Action
         }
 
         return $notification;
+    }
+
+    public function query_to_eloquent(array $query, $eloquent = null)
+    {
+        $eloquent = parent::query_to_eloquent($query, $eloquent);
+
+        if (isset($query['type']))
+        {
+            $eloquent = $eloquent->where('type', $query['type']);
+        }
+
+        if (isset($query['search']))
+        {
+            $eloquent = $eloquent->where('text', 'LIKE', "%{$query['search']}%");
+        }
+
+        if (isset($query['user_id']))
+        {
+            $eloquent = $eloquent->select("notifications.*")
+                ->leftJoin('notification_users', function ($join){
+                    $join->on('notifications.id', 'notification_users.notification_id');
+                })
+                ->where("notifications.is_for_all_users", true)
+                ->orWhere("notification_users.user_id", $query['user_id']);
+        }
+
+        return $eloquent;
     }
 }

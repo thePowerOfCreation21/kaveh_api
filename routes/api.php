@@ -196,6 +196,7 @@ Route::group([
             });
 
             Route::post('/', [NotificationController::class, 'send']);
+            Route::get('/', [NotificationController::class, 'get']);
 
         });
 
