@@ -26,7 +26,8 @@ class NotificationAction extends Action
             'user_id' => 'numeric|max:11'
         ],
         'get_users_query' => [
-            'is_seen' => 'in:true,false'
+            'is_seen' => 'in:true,false',
+            'search' => 'string|max:100'
         ]
     ];
 
@@ -134,6 +135,8 @@ class NotificationAction extends Action
 
     public function users_query_to_eloquent (array $query, $eloquent)
     {
+        $eloquent = UserActions::query_to_eloquent($query, $eloquent);
+
         if (isset($query['is_seen']))
         {
             $query['is_seen'] = convert_to_boolean($query['is_seen']);
