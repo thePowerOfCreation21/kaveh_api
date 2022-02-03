@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\CustomDateCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,7 +19,8 @@ class NotificationUser extends Model
     ];
 
     protected $casts = [
-        'is_seen' => 'boolean'
+        'is_seen' => 'boolean',
+        'notification_created_at' => CustomDateCast::class,
     ];
 
     public $timestamps = false;

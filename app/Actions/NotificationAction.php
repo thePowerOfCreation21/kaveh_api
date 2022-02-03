@@ -137,6 +137,13 @@ class NotificationAction extends Action
     {
         $eloquent = UserActions::query_to_eloquent($query, $eloquent);
 
+        $eloquent = $this->notification_users_query_to_eloquent($query, $eloquent);
+
+        return $eloquent;
+    }
+
+    public function notification_users_query_to_eloquent (array $query, $eloquent)
+    {
         if (isset($query['is_seen']))
         {
             $query['is_seen'] = convert_to_boolean($query['is_seen']);

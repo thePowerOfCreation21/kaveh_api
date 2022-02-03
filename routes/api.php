@@ -200,6 +200,7 @@ Route::group([
             Route::get('/{id}', [NotificationController::class, 'get_by_id']);
             Route::delete('/{id}', [NotificationController::class, 'delete_by_id']);
             Route::get('/{id}/user', [NotificationController::class, 'get_users']);
+            Route::get('/user/{id}', [UserController::class, 'get_notifications_by_id']);
 
         });
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Exceptions\CustomException;
 use App\Services\PaginationService;
 use Illuminate\Support\Facades\DB;
+use function App\Helpers\convert_to_boolean;
 
 class UserActions
 {
@@ -345,5 +346,32 @@ class UserActions
         }
 
         return $phone_numbers;
+    }
+
+    public static function get_notifications_by_request_and_id (Request $request, string $id)
+    {
+        $user = self::get_user_by_id($id);
+
+        return self::get_notifications_by_request(
+            $request,
+            $user->notifications()
+        );
+    }
+
+    public static function get_notifications_by_request (Request $request, $eloquent)
+    {
+        $query = $request->validate([
+            'is_seen' => 'in:true,false'
+        ]);
+
+        return PaginationService::paginate_with_request(
+            $request,
+            self::notifications_query_to_eloquent($query, $eloquent)
+        );
+    }
+
+    public static function notifications_query_to_eloquent (array $query, $eloquent)
+    {
+        return (new NotificationAction())->notification_users_query_to_eloquent($query, $eloquent);
     }
 }
