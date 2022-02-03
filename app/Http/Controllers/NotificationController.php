@@ -38,4 +38,11 @@ class NotificationController extends Controller
             'message' => 'delete successfully'
         ]);
     }
+
+    public function get_users (Request $request, string $id)
+    {
+        return response()->json(
+            (new NotificationAction())->get_users_by_request_and_id($request, $id)
+        );
+    }
 }

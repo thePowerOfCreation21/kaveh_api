@@ -5,9 +5,11 @@ namespace App\Actions;
 use App\Abstracts\Action;
 use App\Jobs\SendSMSToUsers;
 use App\Jobs\StoreNotificationUsers;
+use App\Services\PaginationService;
 use App\Services\SendSMSService;
 use Illuminate\Http\Request;
 use App\Models\Notification;
+use function App\Helpers\convert_to_boolean;
 
 class NotificationAction extends Action
 {
@@ -22,6 +24,9 @@ class NotificationAction extends Action
             'type' => 'in:message,toast',
             'search' => 'string|max:100',
             'user_id' => 'numeric|max:11'
+        ],
+        'get_users_query' => [
+            'is_seen' => 'in:true,false'
         ]
     ];
 
@@ -92,6 +97,55 @@ class NotificationAction extends Action
                 })
                 ->where("notifications.is_for_all_users", true)
                 ->orWhere("notification_users.user_id", $query['user_id']);
+        }
+
+        return $eloquent;
+    }
+
+    public function get_users_by_request_and_id (Request $request, $id)
+    {
+        $notification = $this->get_by_id($id);
+
+        return $this->get_users_by_request(
+            $request,
+            $notification->users()
+        );
+    }
+
+    public function get_users_by_request (
+        Request $request,
+        $eloquent,
+        $query_validation_role = 'get_users_query',
+        $order_by = ['user_id' => 'DESC']
+    )
+    {
+        $eloquent = $this->users_query_to_eloquent(
+            $this->get_data_from_request($request, $query_validation_role),
+            $eloquent
+        );
+
+        $eloquent = $this->add_order_to_eloquent($order_by, $eloquent);
+
+        return PaginationService::paginate_with_request(
+            $request,
+            $eloquent
+        );
+    }
+
+    public function users_query_to_eloquent (array $query, $eloquent)
+    {
+        if (isset($query['is_seen']))
+        {
+            $query['is_seen'] = convert_to_boolean($query['is_seen']);
+
+            if ($query['is_seen'])
+            {
+                $eloquent = $eloquent->where('is_seen', $query['is_seen']);
+            }
+            else
+            {
+                $eloquent = $eloquent->where('is_seen', "=", null)->orWhere('is_seen', false);
+            }
         }
 
         return $eloquent;

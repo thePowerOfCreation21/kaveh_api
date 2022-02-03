@@ -73,14 +73,28 @@ abstract class Action
         return $data;
     }
 
-    public function get_by_request (Request $request, $query_validation_role = 'get_query')
+    public function get_by_request (Request $request, $query_validation_role = 'get_query', $eloquent = null, $order_by = ['id' => 'DESC'])
     {
+        $eloquent = $this->query_to_eloquent(
+            $this->get_data_from_request($request, $query_validation_role, false),
+            $eloquent
+        );
+
+        $eloquent = $this->add_order_to_eloquent($order_by, $eloquent);
+
         return PaginationService::paginate_with_request(
             $request,
-            $this->query_to_eloquent(
-                $this->get_data_from_request($request, $query_validation_role, false)
-            )->orderBy('id', 'DESC')
+            $eloquent
         );
+    }
+
+    public function add_order_to_eloquent (array $orders, $eloquent)
+    {
+        foreach ($orders AS $key => $value)
+        {
+            $eloquent = $eloquent->orderBy($key, $value);
+        }
+        return $eloquent;
     }
 
     public function query_to_eloquent (array $query, $eloquent = null)
