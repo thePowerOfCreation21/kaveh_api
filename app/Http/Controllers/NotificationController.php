@@ -29,4 +29,13 @@ class NotificationController extends Controller
             (new NotificationAction())->get_by_id($id)
         );
     }
+
+    public function delete_by_id (string $id)
+    {
+        (new NotificationAction())->delete_by_id($id);
+
+        return response()->json([
+            'message' => 'delete successfully'
+        ]);
+    }
 }

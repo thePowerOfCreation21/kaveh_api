@@ -198,6 +198,7 @@ Route::group([
             Route::post('/', [NotificationController::class, 'send']);
             Route::get('/', [NotificationController::class, 'get']);
             Route::get('/{id}', [NotificationController::class, 'get_by_id']);
+            Route::delete('/{id}', [NotificationController::class, 'delete_by_id']);
 
         });
 
