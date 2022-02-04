@@ -220,7 +220,7 @@ Route::group([
         });
 
         Route::get('/user', [UserController::class, 'get'])
-            ->middleware('RequiredPrivilege:manage_users|manage_discounts');
+            ->middleware('RequiredPrivilege:manage_users|manage_discounts|send_notificationsgit');
 
         Route::group([
             'middleware' => ['RequiredPrivilege:manage_users'],
