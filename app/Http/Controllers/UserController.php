@@ -54,4 +54,11 @@ class UserController extends Controller
             UserActions::get_notifications_by_request_and_id($request, $id)
         );
     }
+
+    public function get_by_id (string $id)
+    {
+        return response()->json(
+            UserActions::get_user_by_id($id)
+        );
+    }
 }
