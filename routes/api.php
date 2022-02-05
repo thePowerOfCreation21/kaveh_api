@@ -87,6 +87,7 @@ Route::group([
 ], function (){
 
     Route::get('/', [InformativeProductController::class, 'get']);
+    Route::get('/{id}', [InformativeProductController::class, 'get_by_id']);
 
 });
 
