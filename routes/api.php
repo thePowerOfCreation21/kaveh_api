@@ -16,6 +16,7 @@ use App\Http\Controllers\OrderTimeLimitController;
 use App\Http\Controllers\LicenseController;
 use App\Http\Controllers\NotificationFrameController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\InformativeProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -173,6 +174,14 @@ Route::group([
                 Route::post('/', [LicenseController::class, 'store']);
                 Route::put('/{id}', [LicenseController::class, 'update_by_id']);
                 Route::delete('/{id}', [LicenseController::class, 'delete_by_id']);
+
+            });
+
+            Route::group([
+                'prefix' => '/informative_product'
+            ], function(){
+
+                Route::post('/', [InformativeProductController::class, 'store']);
 
             });
 
