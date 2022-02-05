@@ -17,7 +17,7 @@ class CreateInformativeProductsTable extends Migration
             $table->id();
             $table->string('title', 128);
             $table->string('image', 255);
-            $table->string('description', 1500);
+            $table->string('description', 1500)->nullable();
             $table->integer('price')->unsigned();
             $table->timestamps();
         });
