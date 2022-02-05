@@ -83,6 +83,14 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => '/informative_product'
+], function (){
+
+    Route::get('/', [InformativeProductController::class, 'get']);
+
+});
+
+Route::group([
     'middleware' => ['auth:sanctum']
 ], function(){
 

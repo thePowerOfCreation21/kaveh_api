@@ -15,4 +15,11 @@ class InformativeProductController extends Controller
             'message' => 'stored successfully'
         ]);
     }
+
+    public function get (Request $request)
+    {
+        return response()->json(
+            (new InformativeProductAction())->get_by_request($request)
+        );
+    }
 }

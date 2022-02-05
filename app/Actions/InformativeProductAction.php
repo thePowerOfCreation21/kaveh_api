@@ -14,6 +14,9 @@ class InformativeProductAction extends Action
             'image' => 'required|file|mimes:png,jpg,jpeg|max:10000',
             'price' => 'required|integer|min:1|max:10000000',
             'description' => 'string|max:1500'
+        ],
+        'get_query' => [
+            'search' => 'string|max:100'
         ]
     ];
 
@@ -35,5 +38,17 @@ class InformativeProductAction extends Action
         }
 
         return $data;
+    }
+
+    public function query_to_eloquent(array $query, $eloquent = null)
+    {
+        $eloquent = parent::query_to_eloquent($query, $eloquent);
+
+        if (isset($query['search']))
+        {
+            $eloquent = $eloquent->where('title', 'LIKE', "%{$query['search']}%");
+        }
+
+        return $eloquent;
     }
 }
