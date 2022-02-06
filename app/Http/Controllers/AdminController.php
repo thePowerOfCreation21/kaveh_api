@@ -42,7 +42,7 @@ class AdminController extends Controller
 
     public function update (Request $request, string $id)
     {
-        AdminActions::update_with_request($request, $id);
+        (new AdminAction())->update_entity_by_request_and_id($request, $id);
 
         return response()->json([
             'message' => 'admin updated successfully'

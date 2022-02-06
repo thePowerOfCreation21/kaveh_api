@@ -31,9 +31,16 @@ class AdminAction extends Action
             'privileges' => 'array|max:'.count(Admin::$privileges_list)
         ];
 
+        $this->validation_roles['update'] = [
+            'user_name' => 'string|max:25',
+            'password' => 'string',
+            'privileges' => 'array|max:'.count(Admin::$privileges_list),
+        ];
+
         foreach (Admin::$privileges_list as $privilege)
         {
             $this->validation_roles['store']["privileges.$privilege"] = 'boolean';
+            $this->validation_roles['update']["privileges.$privilege"] = 'boolean';
         }
 
         $this->model = Admin::class;
@@ -69,6 +76,58 @@ class AdminAction extends Action
         }
 
         return $this->model::create($data);
+    }
+
+    /**
+     * @param Request $request
+     * @param string $id
+     * @param string|array $validation_role
+     * @return Model
+     * @throws CustomException
+     */
+    public function update_entity_by_request_and_id (Request $request, string $id, $validation_role = 'update'): Model
+    {
+        return $this->update_by_id(
+            $this->get_data_from_request($request, $validation_role),
+            $id
+        );
+    }
+
+    /**
+     * @param array $update_data
+     * @param string $id
+     * @return Model
+     * @throws CustomException
+     */
+    public function update_by_id (array $update_data, string $id): Model
+    {
+        $admin = $this->get_by_id($id);
+
+        if ($admin->is_primary)
+        {
+            throw new CustomException('primary accounts can not be edited', 11, 400);
+        }
+
+        if (isset($update_data['user_name']) && Admin::where('id', '!=', $id)->where('user_name', $update_data['user_name'])->exists())
+        {
+            throw new CustomException('this user_name is already taken', 6, 400);
+        }
+
+        isset($update_data['password']) && $update_data['password'] = Hash::make($update_data['password']);
+
+        if (isset($update_data['privileges']))
+        {
+            $update_data['privileges'] = Admin::fix_privileges(
+                (object) (!isset($update_data['privileges']) ? [] : $update_data['privileges']),
+                Admin::fix_privileges(
+                    (object) $admin->privileges
+                )
+            );
+        }
+
+        $admin->update($update_data);
+
+        return $admin;
     }
 
     /**
