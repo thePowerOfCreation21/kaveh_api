@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CustomException;
 use Illuminate\Http\Request;
 use App\Actions\AdminActions;
 use App\Actions\AdminAction;
 
 class AdminController extends Controller
 {
+    /**
+     * @throws CustomException
+     */
     public function register (Request $request)
     {
-        AdminActions::register_with_request($request);
+        (new AdminAction())->store_by_request($request);
 
         return response()->json([
             'message' => 'admin registered successfully'

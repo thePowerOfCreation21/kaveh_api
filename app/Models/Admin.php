@@ -33,8 +33,6 @@ class Admin extends Model
         'privileges' => 'object',
     ];
 
-    public $timestamps = false;
-
     public static $privileges_list = [
         'manage_guest_side',
         'manage_users',
