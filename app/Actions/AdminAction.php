@@ -48,6 +48,34 @@ class AdminAction extends Action
 
     /**
      * @param Request $request
+     * @param string $query_validation_role
+     * @param null $eloquent
+     * @param array|string[] $order_by
+     * @return object
+     * @throws CustomException
+     */
+    public function get_by_request(
+        Request $request,
+        $query_validation_role = 'get_query',
+        $eloquent = null,
+        array $order_by = ['id' => 'DESC']
+    ): object
+    {
+        return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+    }
+
+    /**
+     * @param string $id
+     * @return Model
+     * @throws CustomException
+     */
+    public function get_by_id(string $id): Model
+    {
+        return parent::get_by_id($id);
+    }
+
+    /**
+     * @param Request $request
      * @param string $validation_role
      * @return Admin
      * @throws CustomException
