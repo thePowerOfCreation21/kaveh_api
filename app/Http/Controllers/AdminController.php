@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Admin;
-use App\Services\PaginationService;
 use Illuminate\Http\Request;
 use App\Actions\AdminActions;
-use App\Views\AdminView;
+use App\Actions\AdminAction;
 
 class AdminController extends Controller
 {
@@ -29,7 +27,9 @@ class AdminController extends Controller
 
     public function get_all (Request $request)
     {
-        return AdminActions::get_with_request($request);
+        return response()->json(
+            (new AdminAction())->get_by_request($request)
+        );
     }
 
     public function get_by_id (string $id)

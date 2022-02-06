@@ -142,6 +142,9 @@ abstract class Action
     }
 
     /**
+     * converts query to laravel eloquent
+     * filters by: id
+     *
      * @param array $query
      * @param null|Builder|Model $eloquent
      * @return Builder|Model
