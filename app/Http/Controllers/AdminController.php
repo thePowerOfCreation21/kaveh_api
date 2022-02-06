@@ -51,28 +51,10 @@ class AdminController extends Controller
 
     public function delete (string $id)
     {
-        AdminActions::delete($id);
+        (new AdminAction())->delete_by_id($id);
 
         return response()->json([
             'message' => 'admin deleted successfully'
-        ]);
-    }
-
-    public function add_privileges (Request $request, string $id)
-    {
-        AdminActions::add_privileges($request, $id);
-
-        return response()->json([
-            'message' => 'privilege(s) added successfully'
-        ]);
-    }
-
-    public function delete_privileges (Request $request, string $id)
-    {
-        AdminActions::delete_privileges($request, $id);
-
-        return response()->json([
-            'message' => 'privilege(s) removed successfully'
         ]);
     }
 

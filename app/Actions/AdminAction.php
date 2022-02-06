@@ -182,4 +182,23 @@ class AdminAction extends Action
 
         return $eloquent;
     }
+
+    /**
+     * @param string $id
+     * @return Model
+     * @throws CustomException
+     */
+    public function delete_by_id(string $id): Model
+    {
+        $admin = $this->get_by_id($id);
+
+        if ($admin->is_primary)
+        {
+            throw new CustomException('primary accounts can not be deleted', 11, 400);
+        }
+
+        $admin->delete();
+
+        return $admin;
+    }
 }
