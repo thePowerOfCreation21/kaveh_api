@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ContactUsContent;
-use App\Actions\ContactUsContentActions;
 
 class ContactUsContentController extends Controller
 {
