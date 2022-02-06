@@ -34,7 +34,9 @@ class AdminController extends Controller
 
     public function get_by_id (string $id)
     {
-        return AdminActions::get_by_id($id);
+        return response()->json(
+            (new AdminAction())->get_by_id($id)
+        );
     }
 
     public function update (Request $request, string $id)
