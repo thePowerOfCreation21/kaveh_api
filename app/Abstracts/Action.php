@@ -22,7 +22,7 @@ abstract class Action
      * @return array
      * @throws CustomException
      */
-    public function get_data_from_request (Request $request, $validation_role, array $options = []): array
+    protected function get_data_from_request (Request $request, $validation_role, array $options = []): array
     {
         return $request->validate(
             $this->get_validation_role(
@@ -38,7 +38,7 @@ abstract class Action
      * @return mixed
      * @throws CustomException
      */
-    public function store_by_request (Request $request, $validation_role = 'store')
+    protected function store_by_request (Request $request, $validation_role = 'store')
     {
         $data = $this->get_data_from_request($request, $validation_role);
 
@@ -51,7 +51,7 @@ abstract class Action
      * @param array $data
      * @return mixed
      */
-    public function store (array $data)
+    protected function store (array $data)
     {
         return $this->model::create($data);
     }
@@ -62,7 +62,7 @@ abstract class Action
      * @return array|mixed
      * @throws CustomException
      */
-    public function get_validation_role ($validation_role, bool $throw_exception = true)
+    protected function get_validation_role ($validation_role, bool $throw_exception = true)
     {
         if (is_string($validation_role))
         {
@@ -103,7 +103,7 @@ abstract class Action
      * @param null|Builder|Model $eloquent
      * @return array
      */
-    public function change_request_data_before_store_or_update (array $data, Request $request, $eloquent = null): array
+    protected function change_request_data_before_store_or_update (array $data, Request $request, $eloquent = null): array
     {
         return $data;
     }
@@ -116,7 +116,7 @@ abstract class Action
      * @return object
      * @throws CustomException
      */
-    public function get_by_request (Request $request, $query_validation_role = 'get_query', $eloquent = null, array $order_by = ['id' => 'DESC']): object
+    protected function get_by_request (Request $request, $query_validation_role = 'get_query', $eloquent = null, array $order_by = ['id' => 'DESC']): object
     {
         $eloquent = $this->query_to_eloquent(
             $this->get_data_from_request($request, $query_validation_role, [
@@ -138,7 +138,7 @@ abstract class Action
      * @param Builder|Model $eloquent
      * @return mixed
      */
-    public function add_order_to_eloquent (array $orders, $eloquent)
+    protected function add_order_to_eloquent (array $orders, $eloquent)
     {
         foreach ($orders AS $key => $value)
         {
@@ -155,7 +155,7 @@ abstract class Action
      * @param null|Builder|Model $eloquent
      * @return Builder|Model
      */
-    public function query_to_eloquent (array $query, $eloquent = null)
+    protected function query_to_eloquent (array $query, $eloquent = null)
     {
         if ($eloquent === null)
         {
@@ -175,7 +175,7 @@ abstract class Action
      * @return Model
      * @throws CustomException
      */
-    public function get_entity (array $query): Model
+    protected function get_entity (array $query): Model
     {
         $entity = $this->query_to_eloquent($query)->first();
 
@@ -195,7 +195,7 @@ abstract class Action
      * @return Model
      * @throws CustomException
      */
-    public function get_by_id (string $id): Model
+    protected function get_by_id (string $id): Model
     {
         return $this->get_entity(['id' => $id]);
     }
@@ -204,7 +204,7 @@ abstract class Action
      * @param array $query
      * @return bool|int|null
      */
-    public function delete (array $query)
+    protected function delete (array $query)
     {
         return $this->query_to_eloquent($query)->delete();
     }
@@ -213,7 +213,7 @@ abstract class Action
      * @param string $id
      * @return bool|int|null
      */
-    public function delete_by_id (string $id)
+    protected function delete_by_id (string $id)
     {
         return $this->delete(['id' => $id]);
     }
@@ -226,7 +226,7 @@ abstract class Action
      * @return bool|int
      * @throws CustomException
      */
-    public function update_by_request (Request $request, array $query = [], $eloquent = null, $validation_role = 'update')
+    protected function update_by_request (Request $request, array $query = [], $eloquent = null, $validation_role = 'update')
     {
         $data = $this->get_data_from_request($request, $validation_role);
         $data = $this->change_request_data_before_store_or_update($data, $request, $eloquent);
@@ -239,7 +239,7 @@ abstract class Action
      * @param null $eloquent
      * @return bool|int
      */
-    public function update (array $data, array $query = [], $eloquent = null)
+    protected function update (array $data, array $query = [], $eloquent = null)
     {
         return $this->query_to_eloquent($query, $eloquent)->update($data);
     }
@@ -250,7 +250,7 @@ abstract class Action
      * @return bool|int
      * @throws CustomException
      */
-    public function update_entity_by_request_and_id (Request $request, string $id)
+    protected function update_entity_by_request_and_id (Request $request, string $id)
     {
         $entity = $this->get_by_id($id);
         return $this->update_by_request($request, [], $entity);
