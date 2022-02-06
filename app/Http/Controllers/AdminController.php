@@ -9,9 +9,6 @@ use App\Actions\AdminAction;
 
 class AdminController extends Controller
 {
-    /**
-     * @throws CustomException
-     */
     public function register (Request $request)
     {
         (new AdminAction())->store_by_request($request);
@@ -24,7 +21,7 @@ class AdminController extends Controller
     public function login (Request $request)
     {
         return response()->json([
-            'token' => AdminActions::login($request)->plainTextToken
+            'token' => (new AdminAction())->login_by_request($request)->plainTextToken
         ]);
 
     }

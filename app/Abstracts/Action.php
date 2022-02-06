@@ -17,14 +17,18 @@ abstract class Action
     /**
      * @param Request $request
      * @param string|array $validation_role
-     * @param bool $throw_exception
+     * @param array $options
+     * options: bool throw_exception (default value: true)
      * @return array
      * @throws CustomException
      */
-    public function get_data_from_request (Request $request, $validation_role, bool $throw_exception = true): array
+    public function get_data_from_request (Request $request, $validation_role, array $options = []): array
     {
         return $request->validate(
-            $this->get_validation_role($validation_role, $throw_exception)
+            $this->get_validation_role(
+                $validation_role,
+                $options['throw_exception'] ?? true
+            )
         );
     }
 
@@ -115,7 +119,9 @@ abstract class Action
     public function get_by_request (Request $request, $query_validation_role = 'get_query', $eloquent = null, array $order_by = ['id' => 'DESC']): object
     {
         $eloquent = $this->query_to_eloquent(
-            $this->get_data_from_request($request, $query_validation_role, false),
+            $this->get_data_from_request($request, $query_validation_role, [
+                'throw_exception' => false
+            ]),
             $eloquent
         );
 

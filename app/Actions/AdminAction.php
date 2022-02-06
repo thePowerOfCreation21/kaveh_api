@@ -8,10 +8,16 @@ use App\Models\Admin;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\NewAccessToken;
 
 class AdminAction extends Action
 {
     protected $validation_roles = [
+        'login' => [
+            'user_name' => 'required|string|max:150',
+            'password' => 'required|string|max:150'
+        ],
         'get_query' => [
             'search' => 'string|max:100'
         ]
@@ -33,15 +39,21 @@ class AdminAction extends Action
         $this->model = Admin::class;
     }
 
-    public function get_data_from_request(Request $request, $validation_role, bool $throw_exception = true): array
+    /**
+     * @param Request $request
+     * @param string $validation_role
+     * @return Admin
+     * @throws CustomException
+     */
+    public function store_by_request(Request $request, $validation_role = 'store'): Admin
     {
-        $data = parent::get_data_from_request($request, $validation_role, $throw_exception);
+        $data = $this->get_data_from_request($request, $validation_role);
 
         $data['privileges'] = Admin::fix_privileges(
             (object) (!isset($data['privileges']) ? [] : $data['privileges'])
         );
 
-        return $data;
+        return $this->store($data);
     }
 
     /**
@@ -57,6 +69,39 @@ class AdminAction extends Action
         }
 
         return $this->model::create($data);
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return NewAccessToken
+     * @throws CustomException
+     */
+    public function login_by_request (Request $request, $validation_role = 'login'): NewAccessToken
+    {
+        return $this->login(
+            $this->get_data_from_request($request, $validation_role)
+        );
+    }
+
+    /**
+     * @param array $data
+     * @return NewAccessToken
+     * @throws CustomException
+     */
+    public function login (array $data): NewAccessToken
+    {
+        $admin = $this->model::where('user_name', $data['user_name'])->first();
+
+        if (! empty($admin))
+        {
+            if (Hash::check($data['password'], $admin->password))
+            {
+                return $admin->createToken('auth_token');
+            }
+        }
+
+        throw new CustomException('user_name or password is wrong', 3, 400);
     }
 
     /**
