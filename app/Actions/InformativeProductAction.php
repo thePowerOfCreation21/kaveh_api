@@ -15,6 +15,12 @@ class InformativeProductAction extends Action
             'price' => 'required|integer|min:1|max:10000000',
             'description' => 'string|max:1500'
         ],
+        'update' => [
+            'title' => 'string|max:128',
+            'image' => 'file|mimes:png,jpg,jpeg|max:10000',
+            'price' => 'integer|min:1|max:10000000',
+            'description' => 'string|max:1500'
+        ],
         'get_query' => [
             'search' => 'string|max:100'
         ]
