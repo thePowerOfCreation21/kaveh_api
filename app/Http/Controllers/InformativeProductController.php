@@ -38,4 +38,13 @@ class InformativeProductController extends Controller
             'message' => 'updated successfully'
         ]);
     }
+
+    public function delete_by_id (string $id)
+    {
+        (new InformativeProductAction())->delete_by_id($id);
+
+        return response()->json([
+            'message' => 'deleted successfully'
+        ]);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Abstracts\Action;
+use App\Exceptions\CustomException;
 use App\Models\InformativeProduct;
 use Illuminate\Http\Request;
 
@@ -31,6 +32,12 @@ class InformativeProductAction extends Action
         $this->model = InformativeProduct::class;
     }
 
+    /**
+     * @param array $data
+     * @param Request $request
+     * @param null $eloquent
+     * @return array
+     */
     public function change_request_data_before_store_or_update(array $data, Request $request, $eloquent = null): array
     {
         if (!empty($request->file('image')))
@@ -46,6 +53,11 @@ class InformativeProductAction extends Action
         return $data;
     }
 
+    /**
+     * @param array $query
+     * @param null $eloquent
+     * @return mixed|null
+     */
     public function query_to_eloquent(array $query, $eloquent = null)
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
@@ -56,5 +68,22 @@ class InformativeProductAction extends Action
         }
 
         return $eloquent;
+    }
+
+    /**
+     * @param string $id
+     * @return bool|null
+     * @throws CustomException
+     */
+    public function delete_by_id(string $id): ?bool
+    {
+        $entity = $this->get_by_id($id);
+
+        if (isset($entity->image) && is_file($entity->image))
+        {
+            unlink($entity->image);
+        }
+
+        return $entity->delete();
     }
 }
