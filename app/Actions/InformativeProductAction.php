@@ -44,6 +44,12 @@ class InformativeProductAction extends Action
         return parent::store_by_request($request, $validation_role);
     }
 
+    /**
+     * @param Request $request
+     * @param string $id
+     * @return bool|int
+     * @throws CustomException
+     */
     public function update_entity_by_request_and_id(Request $request, string $id)
     {
         return parent::update_entity_by_request_and_id($request, $id);

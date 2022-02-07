@@ -3,7 +3,10 @@
 namespace App\Actions;
 
 use App\Abstracts\Action;
+use App\Exceptions\CustomException;
 use App\Models\License;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 
 class LicenseAction extends Action
@@ -24,6 +27,23 @@ class LicenseAction extends Action
         $this->model = License::class;
     }
 
+    /**
+     * @param Request $request
+     * @param string $validation_role
+     * @return mixed
+     * @throws CustomException
+     */
+    public function store_by_request(Request $request, $validation_role = 'store')
+    {
+        return parent::store_by_request($request, $validation_role);
+    }
+
+    /**
+     * @param array $data
+     * @param Request $request
+     * @param null|Model|Builder $eloquent
+     * @return array
+     */
     public function change_request_data_before_store_or_update (array $data, Request $request, $eloquent = null): array
     {
         if (!empty($request->file('image')))
@@ -39,6 +59,11 @@ class LicenseAction extends Action
         return $data;
     }
 
+    /**
+     * @param string $id
+     * @return bool|null
+     * @throws CustomException
+     */
     public function delete_by_id(string $id)
     {
         $entity = $this->get_by_id($id);
