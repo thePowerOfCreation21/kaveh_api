@@ -6,6 +6,7 @@ use App\Abstracts\Action;
 use App\Exceptions\CustomException;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,6 +29,9 @@ class UserAction extends Action
         ],
         'block_user' => [
             'reason_for_blocking' => 'required|string|max:255'
+        ],
+        'get_query' => [
+            'search' => 'string|max:100'
         ]
     ];
 
@@ -44,6 +48,47 @@ class UserAction extends Action
     public function get_by_id(string $id): Model
     {
         return parent::get_by_id($id);
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $query_validation_role
+     * @param null|Model|Builder $eloquent
+     * @param array|string[] $order_by
+     * @return object
+     * @throws CustomException
+     */
+    public function get_by_request(
+        Request $request,
+        $query_validation_role = 'get_query',
+        $eloquent = null,
+        array $order_by = ['id' => 'DESC']
+    ): object
+    {
+        return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+    }
+
+    public function query_to_eloquent(array $query, $eloquent = null)
+    {
+        $eloquent = parent::query_to_eloquent($query, $eloquent);
+
+        if (isset($query['search']))
+        {
+            $search = $query['search'];
+            $eloquent = $eloquent->where(function ($q) use ($search){
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('phone_number', 'like', "%{$search}%")
+                    ->orWhere('card_number', 'like', "%{$search}%");
+            });
+        }
+
+        if (isset($query['ids']))
+        {
+            $eloquent = $eloquent->whereIn('id', $query['ids']);
+        }
+
+        return $eloquent;
     }
 
     /**
@@ -79,6 +124,11 @@ class UserAction extends Action
         return $user;
     }
 
+    /**
+     * @param string $id
+     * @return Model
+     * @throws CustomException
+     */
     public function unblock_by_id (string $id): Model
     {
         $user = $this->get_by_id($id);
