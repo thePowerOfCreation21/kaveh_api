@@ -372,6 +372,6 @@ class UserActions
 
     public static function notifications_query_to_eloquent (array $query, $eloquent)
     {
-        return (new NotificationAction())->notification_users_query_to_eloquent($query, $eloquent);
+        return (new NotificationAction())->notification_user_query_to_eloquent($query, $eloquent);
     }
 }

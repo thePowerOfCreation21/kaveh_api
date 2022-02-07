@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Abstracts\Action;
 use App\Exceptions\CustomException;
 use App\Models\User;
+use App\Services\PaginationService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -33,6 +34,9 @@ class UserAction extends Action
         ],
         'get_query' => [
             'search' => 'string|max:100'
+        ],
+        'get_notifications_query' => [
+            'is_seen' => 'in:true,false'
         ]
     ];
 
@@ -95,6 +99,24 @@ class UserAction extends Action
         }
 
         return $eloquent;
+    }
+
+    public function get_user_notifications_by_request_and_id (Request $request, string $id, $validation_role = 'get_notifications_query')
+    {
+        $user = $this->get_by_id($id);
+
+        return PaginationService::paginate_with_request(
+            $request,
+            $this->notifications_query_to_eloquent(
+                $this->get_data_from_request($request, $validation_role),
+                $user->notifications()
+            )
+        );
+    }
+
+    public function notifications_query_to_eloquent (array $query, $eloquent)
+    {
+        return (new NotificationAction())->notification_user_query_to_eloquent($query, $eloquent);
     }
 
     /**
