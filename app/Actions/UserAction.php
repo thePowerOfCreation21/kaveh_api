@@ -68,6 +68,11 @@ class UserAction extends Action
         return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
     }
 
+    /**
+     * @param array $query
+     * @param null $eloquent
+     * @return Model|Builder
+     */
     public function query_to_eloquent(array $query, $eloquent = null)
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
