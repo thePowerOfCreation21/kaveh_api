@@ -35,10 +35,10 @@ abstract class Action
     /**
      * @param Request $request
      * @param string|array $validation_role
-     * @return mixed
+     * @return Model
      * @throws CustomException
      */
-    protected function store_by_request (Request $request, $validation_role = 'store')
+    protected function store_by_request (Request $request, $validation_role = 'store'): Model
     {
         $data = $this->get_data_from_request($request, $validation_role);
 
@@ -49,9 +49,9 @@ abstract class Action
 
     /**
      * @param array $data
-     * @return mixed
+     * @return Model
      */
-    protected function store (array $data)
+    protected function store (array $data): Model
     {
         return $this->model::create($data);
     }
