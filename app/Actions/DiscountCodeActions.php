@@ -57,7 +57,7 @@ class DiscountCodeActions
         if (isset($discount_data['users']))
         {
             $discount_data['is_for_all_users'] = false;
-            UserActions::check_if_users_exists($discount_data['users']);
+            UserAction::check_if_users_exists($discount_data['users']);
         }
 
         $discountCode = DiscountCode::create($discount_data);

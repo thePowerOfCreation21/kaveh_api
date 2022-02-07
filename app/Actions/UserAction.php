@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserAction extends Action
@@ -235,6 +236,45 @@ class UserAction extends Action
         }
 
         return $phone_numbers[0];
+    }
+
+    /**
+     * gets list of user ids and check if all users is in DB or not
+     *
+     * @param array $ids
+     * @return bool
+     * @throws CustomException
+     */
+    public static function check_if_users_exists (array $ids)
+    {
+        $users = DB::select("
+            SELECT
+            `id`
+            FROM `users`
+            WHERE
+            `id` in(".self::convert_id_array_to_string($ids).")
+        ");
+
+        foreach ($ids AS $id)
+        {
+            foreach ($users AS $user_key => $user)
+            {
+                $user_was_found = false;
+                if ($user->id == $id)
+                {
+                    $user_was_found = true;
+                    unset($users[$user_key]);
+                    break;
+                }
+            }
+
+            if (!$user_was_found)
+            {
+                throw new CustomException("user id '{$id}' not found", 55, 404);
+            }
+        }
+
+        return true;
     }
 }
 

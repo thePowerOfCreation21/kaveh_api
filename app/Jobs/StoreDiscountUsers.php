@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Actions\UserAction;
 use App\Exceptions\CustomException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -11,7 +12,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\DiscountCode;
 use App\Models\DiscountCodeUsers;
-use App\Actions\UserActions;
 
 class StoreDiscountUsers implements ShouldQueue
 {
@@ -44,7 +44,7 @@ class StoreDiscountUsers implements ShouldQueue
             throw new CustomException("discount with id '{$this->discount_id}' not found", 56, 404);
         }
 
-        UserActions::check_if_users_exists($this->user_ids);
+        UserAction::check_if_users_exists($this->user_ids);
 
         foreach ($this->user_ids AS $user_id)
         {

@@ -100,7 +100,7 @@ class NotificationAction extends Action
         if (isset($data['users']))
         {
             $data['is_for_all_users'] = false;
-            UserActions::check_if_users_exists($data['users']);
+            UserAction::check_if_users_exists($data['users']);
         }
 
         if ($data['type'] == 'sms')
