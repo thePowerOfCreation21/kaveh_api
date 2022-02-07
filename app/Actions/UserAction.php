@@ -247,16 +247,14 @@ class UserAction extends Action
      */
     public static function check_if_users_exists (array $ids)
     {
-        $users = DB::select("
-            SELECT
-            `id`
-            FROM `users`
-            WHERE
-            `id` in(".self::convert_id_array_to_string($ids).")
-        ");
+        $users = DB::table('users')
+            ->select('phone_number')
+            ->whereIn('id', $ids)
+            ->get();
 
         foreach ($ids AS $id)
         {
+            $user_was_found = false;
             foreach ($users AS $user_key => $user)
             {
                 $user_was_found = false;
