@@ -59,7 +59,7 @@ class UserController extends Controller
     public function get_by_id (string $id)
     {
         return response()->json(
-            UserActions::get_user_by_id($id)
+            (new UserAction())->get_by_id($id)
         );
     }
 }

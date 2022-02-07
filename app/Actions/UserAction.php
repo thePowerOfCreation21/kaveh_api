@@ -34,6 +34,16 @@ class UserAction extends Action
     }
 
     /**
+     * @param string $id
+     * @return Model
+     * @throws CustomException
+     */
+    public function get_by_id(string $id): Model
+    {
+        return parent::get_by_id($id);
+    }
+
+    /**
      * @param Request $request
      * @param string|array $validation_role
      * @return Model
