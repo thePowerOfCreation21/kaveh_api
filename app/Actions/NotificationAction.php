@@ -3,10 +3,12 @@
 namespace App\Actions;
 
 use App\Abstracts\Action;
+use App\Exceptions\CustomException;
 use App\Jobs\SendSMSToUsers;
 use App\Jobs\StoreNotificationUsers;
 use App\Services\PaginationService;
-use App\Services\SendSMSService;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use App\Models\Notification;
 use function App\Helpers\convert_to_boolean;
@@ -36,13 +38,42 @@ class NotificationAction extends Action
         $this->model = Notification::class;
     }
 
-    public function send_by_request (Request $request, $validation_role = 'send')
+    /**
+     * @param Request $request
+     * @param string|array $query_validation_role
+     * @param null|Model|Builder $eloquent
+     * @param array $order_by
+     * @return object
+     * @throws CustomException
+     */
+    public function get_by_request(
+        Request $request,
+        $query_validation_role = 'get_query',
+        $eloquent = null,
+        array $order_by = ['id' => 'DESC']
+    ): object
+    {
+        return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return array
+     * @throws CustomException
+     */
+    public function send_by_request (Request $request, $validation_role = 'send'): array
     {
         $data = $this->get_data_from_request($request, $validation_role);
 
         return $this->send($data);
     }
 
+    /**
+     * @param array $data
+     * @return array|Model
+     * @throws CustomException
+     */
     public function send (array $data)
     {
         $data['is_for_all_users'] = true;
@@ -76,6 +107,11 @@ class NotificationAction extends Action
         return $notification;
     }
 
+    /**
+     * @param array $query
+     * @param null|Model|Builder $eloquent
+     * @return Model|Builder
+     */
     public function query_to_eloquent(array $query, $eloquent = null)
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
@@ -103,7 +139,15 @@ class NotificationAction extends Action
         return $eloquent;
     }
 
-    public function get_users_by_request_and_id (Request $request, $id)
+    /**
+     * get notification users by request and notification id
+     *
+     * @param Request $request
+     * @param string $id
+     * @return object
+     * @throws CustomException
+     */
+    public function get_users_by_request_and_id (Request $request, string $id): object
     {
         $notification = $this->get_by_id($id);
 
@@ -113,12 +157,22 @@ class NotificationAction extends Action
         );
     }
 
+    /**
+     * get users by request
+     *
+     * @param Request $request
+     * @param $eloquent
+     * @param string|array $query_validation_role
+     * @param array $order_by
+     * @return object
+     * @throws CustomException
+     */
     public function get_users_by_request (
         Request $request,
         $eloquent,
         $query_validation_role = 'get_users_query',
-        $order_by = ['user_id' => 'DESC']
-    )
+        array $order_by = ['user_id' => 'DESC']
+    ): object
     {
         $eloquent = $this->users_query_to_eloquent(
             $this->get_data_from_request($request, $query_validation_role),
@@ -133,17 +187,15 @@ class NotificationAction extends Action
         );
     }
 
+    /**
+     * @param array $query
+     * @param $eloquent
+     * @return mixed
+     */
     public function users_query_to_eloquent (array $query, $eloquent)
     {
         $eloquent = UserActions::query_to_eloquent($query, $eloquent);
 
-        $eloquent = $this->notification_users_query_to_eloquent($query, $eloquent);
-
-        return $eloquent;
-    }
-
-    public function notification_users_query_to_eloquent (array $query, $eloquent)
-    {
         if (isset($query['is_seen']))
         {
             $query['is_seen'] = convert_to_boolean($query['is_seen']);
