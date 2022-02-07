@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Abstracts\Action;
 use App\Exceptions\CustomException;
 use App\Models\InformativeProduct;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class InformativeProductAction extends Action
@@ -41,6 +42,16 @@ class InformativeProductAction extends Action
     public function store_by_request(Request $request, $validation_role = 'store')
     {
         return parent::store_by_request($request, $validation_role);
+    }
+
+    /**
+     * @param string $id
+     * @return Model
+     * @throws CustomException
+     */
+    public function get_by_id(string $id): Model
+    {
+        return parent::get_by_id($id);
     }
 
     /**
