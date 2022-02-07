@@ -25,6 +25,9 @@ class UserAction extends Action
             'phone_number' => 'regex:/09\d{9}/',
             'password' => 'string|min:6',
             'area' => 'string|max:255'
+        ],
+        'block_user' => [
+            'reason_for_blocking' => 'required|string|max:255'
         ]
     ];
 
@@ -41,6 +44,26 @@ class UserAction extends Action
     public function get_by_id(string $id): Model
     {
         return parent::get_by_id($id);
+    }
+
+    public function block_by_request_and_id (Request $request, string $id, $validation_role = 'block_user')
+    {
+        return $this->block_by_id(
+            $id,
+            $this->get_data_from_request($request, $validation_role)
+        );
+    }
+
+    public function block_by_id (string $id, array $data)
+    {
+        $user = $this->get_by_id($id);
+
+        $user->update([
+            'is_blocked' => true,
+            'reason_for_blocking' => $data['reason_for_blocking']
+        ]);
+
+        return $user;
     }
 
     /**

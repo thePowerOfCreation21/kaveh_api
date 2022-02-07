@@ -28,7 +28,7 @@ class UserController extends Controller
 
     public function block_user_by_id (Request $request, string $id)
     {
-        UserActions::block_user_with_request($request, $id);
+        (new UserAction())->block_by_request_and_id($request, $id);
 
         return response()->json([
             'message' => 'user blocked successfully'
