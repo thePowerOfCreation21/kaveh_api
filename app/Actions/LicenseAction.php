@@ -40,6 +40,17 @@ class LicenseAction extends Action
 
     /**
      * @param Request $request
+     * @param string $id
+     * @return bool|int
+     * @throws CustomException
+     */
+    public function update_entity_by_request_and_id(Request $request, string $id)
+    {
+        return parent::update_entity_by_request_and_id($request, $id);
+    }
+
+    /**
+     * @param Request $request
      * @param string $query_validation_role
      * @param null|Model|Builder $eloquent
      * @param array $order_by
