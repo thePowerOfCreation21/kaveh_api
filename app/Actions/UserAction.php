@@ -46,7 +46,14 @@ class UserAction extends Action
         return parent::get_by_id($id);
     }
 
-    public function block_by_request_and_id (Request $request, string $id, $validation_role = 'block_user')
+    /**
+     * @param Request $request
+     * @param string $id
+     * @param string|array $validation_role
+     * @return Model
+     * @throws CustomException
+     */
+    public function block_by_request_and_id (Request $request, string $id, $validation_role = 'block_user'): Model
     {
         return $this->block_by_id(
             $id,
@@ -54,13 +61,31 @@ class UserAction extends Action
         );
     }
 
-    public function block_by_id (string $id, array $data)
+    /**
+     * @param string $id
+     * @param array $data
+     * @return Model
+     * @throws CustomException
+     */
+    public function block_by_id (string $id, array $data): Model
     {
         $user = $this->get_by_id($id);
 
         $user->update([
             'is_blocked' => true,
             'reason_for_blocking' => $data['reason_for_blocking']
+        ]);
+
+        return $user;
+    }
+
+    public function unblock_by_id (string $id): Model
+    {
+        $user = $this->get_by_id($id);
+
+        $user->update([
+            'is_blocked' => false,
+            'reason_for_blocking' => null
         ]);
 
         return $user;

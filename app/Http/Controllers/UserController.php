@@ -37,7 +37,7 @@ class UserController extends Controller
 
     public function unblock_user_by_id (string $id)
     {
-        UserActions::unblock_user($id);
+        (new UserAction())->unblock_by_id($id);
 
         return response()->json([
             'message' => 'user unblocked successfully'
