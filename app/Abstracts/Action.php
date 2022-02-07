@@ -111,12 +111,17 @@ abstract class Action
     /**
      * @param Request $request
      * @param string|array $query_validation_role
-     * @param null $eloquent
+     * @param null|Model|Builder $eloquent
      * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    protected function get_by_request (Request $request, $query_validation_role = 'get_query', $eloquent = null, array $order_by = ['id' => 'DESC']): object
+    protected function get_by_request (
+        Request $request,
+        $query_validation_role = 'get_query',
+        $eloquent = null,
+        array $order_by = ['id' => 'DESC']
+    ): object
     {
         $eloquent = $this->query_to_eloquent(
             $this->get_data_from_request($request, $query_validation_role, [

@@ -35,7 +35,7 @@ class InformativeProductAction extends Action
 
     /**
      * @param Request $request
-     * @param string $validation_role
+     * @param string|array $validation_role
      * @return mixed
      * @throws CustomException
      */
