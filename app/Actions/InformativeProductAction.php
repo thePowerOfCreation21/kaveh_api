@@ -33,6 +33,17 @@ class InformativeProductAction extends Action
     }
 
     /**
+     * @param Request $request
+     * @param string $validation_role
+     * @return mixed
+     * @throws CustomException
+     */
+    public function store_by_request(Request $request, $validation_role = 'store')
+    {
+        return parent::store_by_request($request, $validation_role);
+    }
+
+    /**
      * @param array $data
      * @param Request $request
      * @param null $eloquent
