@@ -73,4 +73,13 @@ class NotificationFrameAction extends Action
     {
         return parent::update_entity_by_request_and_id($request, $id);
     }
+
+    /**
+     * @param string $id
+     * @return bool|int|null
+     */
+    public function delete_by_id(string $id)
+    {
+        return parent::delete_by_id($id);
+    }
 }
