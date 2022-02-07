@@ -57,6 +57,16 @@ class LicenseAction extends Action
     }
 
     /**
+     * @param string $id
+     * @return Model
+     * @throws CustomException
+     */
+    public function get_by_id(string $id): Model
+    {
+        return parent::get_by_id($id);
+    }
+
+    /**
      * @param array $data
      * @param Request $request
      * @param null|Model|Builder $eloquent
