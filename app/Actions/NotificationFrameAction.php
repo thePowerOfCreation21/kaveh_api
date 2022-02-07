@@ -52,4 +52,14 @@ class NotificationFrameAction extends Action
     {
         return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
     }
+
+    /**
+     * @param string $id
+     * @return Model
+     * @throws CustomException
+     */
+    public function get_by_id(string $id): Model
+    {
+        return parent::get_by_id($id);
+    }
 }
