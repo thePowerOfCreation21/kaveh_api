@@ -101,6 +101,13 @@ class UserAction extends Action
         return $eloquent;
     }
 
+    /**
+     * @param Request $request
+     * @param string $id
+     * @param string|array $validation_role
+     * @return object
+     * @throws CustomException
+     */
     public function get_user_notifications_by_request_and_id (Request $request, string $id, $validation_role = 'get_notifications_query')
     {
         $user = $this->get_by_id($id);
@@ -114,6 +121,11 @@ class UserAction extends Action
         );
     }
 
+    /**
+     * @param array $query
+     * @param $eloquent
+     * @return Model|Builder|mixed
+     */
     public function notifications_query_to_eloquent (array $query, $eloquent)
     {
         return (new NotificationAction())->notification_user_query_to_eloquent($query, $eloquent);
