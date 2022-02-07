@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\UserAction;
 use Illuminate\Http\Request;
 use App\Actions\UserActions;
 
@@ -9,7 +10,7 @@ class UserController extends Controller
 {
     public function add (Request $request)
     {
-        UserActions::add_user_by_admin($request);
+        (new UserAction())->store_by_request($request);
 
         return response()->json([
             'message' => 'user added successfully'
