@@ -80,6 +80,15 @@ class NotificationAction extends Action
     }
 
     /**
+     * @param string $id
+     * @return bool|int|null
+     */
+    public function delete_by_id(string $id)
+    {
+        return parent::delete_by_id($id);
+    }
+
+    /**
      * @param array $data
      * @return array|Model
      * @throws CustomException
