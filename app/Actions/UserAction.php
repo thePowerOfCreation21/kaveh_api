@@ -239,6 +239,25 @@ class UserAction extends Action
     }
 
     /**
+     * @param array $query
+     * @return string[]
+     */
+    public function get_phone_numbers (array $query): array
+    {
+        $users = $this->query_to_eloquent($query)
+            ->select('phone_number')
+            ->get();
+
+        $phone_numbers = [];
+        foreach ($users AS $user)
+        {
+            $phone_numbers[] = $user['phone_number'];
+        }
+
+        return $phone_numbers;
+    }
+
+    /**
      * gets list of user ids and check if all users is in DB or not
      *
      * @param array $ids

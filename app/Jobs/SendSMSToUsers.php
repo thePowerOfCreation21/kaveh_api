@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Actions\UserActions;
+use App\Actions\UserAction;
 use App\Services\SendSMSService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -46,7 +46,7 @@ class SendSMSToUsers implements ShouldQueue
             ];
         }
 
-        $phone_numbers = UserActions::get_phone_numbers($query);
+        $phone_numbers = (new UserAction())->get_phone_numbers($query);
 
         (new SendSMSService())->send($phone_numbers, $this->message);
     }
