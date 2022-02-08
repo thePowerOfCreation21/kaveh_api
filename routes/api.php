@@ -29,7 +29,9 @@ use App\Http\Controllers\InformativeProductController;
 |
 */
 
-Route::post('admin/login', [AdminController::class, 'login']);
+Route::post('/user/login', [UserController::class, 'login']);
+
+Route::post('/admin/login', [AdminController::class, 'login']);
 
 Route::get('/about_us', [AboutUsController::class, 'get']);
 

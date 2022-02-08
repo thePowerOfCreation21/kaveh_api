@@ -11,10 +11,15 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\NewAccessToken;
 
 class UserAction extends Action
 {
     protected $validation_roles = [
+        'login' => [
+            'phone_number' => 'required|string|max:11',
+            'password' => 'required|string|max:100'
+        ],
         'register_by_admin' => [
             'name' => 'required|string|max:64',
             'last_name' => 'required|string|max:64',
@@ -108,7 +113,11 @@ class UserAction extends Action
      * @return object
      * @throws CustomException
      */
-    public function get_user_notifications_by_request_and_id (Request $request, string $id, $validation_role = 'get_notifications_query')
+    public function get_user_notifications_by_request_and_id (
+        Request $request,
+        string $id,
+        $validation_role = 'get_notifications_query'
+    ): object
     {
         $user = $this->get_by_id($id);
 
@@ -144,6 +153,36 @@ class UserAction extends Action
             $id,
             $this->get_data_from_request($request, $validation_role)
         );
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return NewAccessToken
+     * @throws CustomException
+     */
+    public function login_by_request (Request $request, $validation_role = 'login'): NewAccessToken
+    {
+        return $this->login(
+            $this->get_data_from_request($request, $validation_role)
+        );
+    }
+
+    /**
+     * @param array $data
+     * @return NewAccessToken
+     * @throws CustomException
+     */
+    public function login (array $data): NewAccessToken
+    {
+        $user = $this->model::where('phone_number', $data['phone_number'])->first();
+
+        if (!empty($user) && Hash::check($data['password'], $user->password))
+        {
+            return $user->createToken('auth_token');
+        }
+
+        throw new CustomException('login data was not valid', 83, 400);
     }
 
     /**
@@ -211,7 +250,7 @@ class UserAction extends Action
      * @return Model
      * @throws CustomException
      */
-    public function update_by_id (array $update_data, string $id)
+    public function update_by_id (array $update_data, string $id): Model
     {
         $user = $this->get_by_id($id);
 
@@ -298,7 +337,7 @@ class UserAction extends Action
      * @return bool
      * @throws CustomException
      */
-    public static function check_if_users_exists (array $ids)
+    public static function check_if_users_exists (array $ids): bool
     {
         $users = DB::table('users')
             ->select('phone_number')

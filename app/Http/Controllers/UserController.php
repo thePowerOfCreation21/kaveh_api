@@ -64,4 +64,11 @@ class UserController extends Controller
             (new UserAction())->get_by_id($id)
         );
     }
+
+    public function login (Request $request)
+    {
+        return response()->json([
+            'token' => (new UserAction())->login_by_request($request)->plainTextToken
+        ]);
+    }
 }
