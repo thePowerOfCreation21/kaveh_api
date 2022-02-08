@@ -213,11 +213,7 @@ class NotificationAction extends Action
      */
     public function users_query_to_eloquent (array $query, $eloquent)
     {
-        $eloquent = UserActions::query_to_eloquent($query, $eloquent);
-
-
-
-        return $eloquent;
+        return (new UserAction())->query_to_eloquent($query, $eloquent);
     }
 
     /**
