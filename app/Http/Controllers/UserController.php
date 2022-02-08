@@ -87,4 +87,9 @@ class UserController extends Controller
             'message' => 'one time password was sent to your phone number, try logging in with OTP'
         ]);
     }
+
+    public function get_user_from_request (Request $request)
+    {
+        return response()->json($request->user());
+    }
 }

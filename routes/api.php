@@ -106,8 +106,26 @@ Route::group([
 ], function(){
 
     Route::group([
-        'middleware' => ['AllowedUserClass:App\Models\Admin']
+        'middleware' => ['AllowedUserClass:App\Models\User']
     ], function(){
+
+        Route::group([
+            'middleware' => [
+                'CheckIfUserIsBlocked',
+                'CheckIfShouldChangePassword',
+            ]
+        ], function(){
+
+            Route::get('/user/info', [UserController::class, 'get_user_from_request']);
+
+        });
+
+    });
+
+    Route::group([
+        'middleware' => ['AllowedUserClass:App\Models\Admin']
+    ],function()
+    {
 
         Route::get('/admin/info', [AdminController::class, 'get_info']);
 
