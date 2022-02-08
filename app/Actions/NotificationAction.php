@@ -69,10 +69,10 @@ class NotificationAction extends Action
     /**
      * @param Request $request
      * @param string|array $validation_role
-     * @return array
+     * @return array|Model
      * @throws CustomException
      */
-    public function send_by_request (Request $request, $validation_role = 'send'): array
+    public function send_by_request (Request $request, $validation_role = 'send')
     {
         $data = $this->get_data_from_request($request, $validation_role);
 
