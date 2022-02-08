@@ -511,7 +511,7 @@ class UserAction extends Action
     public static function check_if_users_exists (array $ids): bool
     {
         $users = DB::table('users')
-            ->select('phone_number')
+            ->select(['phone_number', 'id'])
             ->whereIn('id', $ids)
             ->get();
 
