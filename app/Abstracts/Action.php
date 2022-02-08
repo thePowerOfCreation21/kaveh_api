@@ -206,6 +206,28 @@ abstract class Action
     }
 
     /**
+     * @param string $field
+     * @param string $value
+     * @return Model
+     * @throws CustomException
+     */
+    protected function get_by_field (string $field, string $value): Model
+    {
+        $entity = $this->model::where($field, $value)->first();
+
+        if (empty($entity))
+        {
+            throw new CustomException(
+                "could not find $field with value $value in {$this->model}",
+                84,
+                404
+            );
+        }
+
+        return $entity;
+    }
+
+    /**
      * @param array $query
      * @return bool|int|null
      */

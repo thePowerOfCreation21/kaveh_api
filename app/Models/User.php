@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\OneTimePasswordCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
@@ -18,6 +19,7 @@ class User extends Model
         'phone_number',
         'second_phone_number',
         'password',
+        'one_time_password',
         'area',
         'card_number',
         'should_change_password',
@@ -26,10 +28,12 @@ class User extends Model
     ];
 
     protected $hidden = [
+        'one_time_password',
         'password'
     ];
 
     protected $casts = [
+        'one_time_password' => OneTimePasswordCast::class,
         'should_change_password',
         'is_blocked' => 'boolean'
     ];

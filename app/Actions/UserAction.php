@@ -6,6 +6,7 @@ use App\Abstracts\Action;
 use App\Exceptions\CustomException;
 use App\Models\User;
 use App\Services\PaginationService;
+use App\Services\SendSMSService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -16,6 +17,13 @@ use Laravel\Sanctum\NewAccessToken;
 class UserAction extends Action
 {
     protected $validation_roles = [
+        'forgot_password' => [
+            'phone_number' => 'required|string|max:11'
+        ],
+        'login_with_OTP' => [
+            'phone_number' => 'required|string|max:11',
+            'password' => 'required|numeric|max:999999'
+        ],
         'login' => [
             'phone_number' => 'required|string|max:11',
             'password' => 'required|string|max:100'
@@ -164,7 +172,42 @@ class UserAction extends Action
     public function login_by_request (Request $request, $validation_role = 'login'): NewAccessToken
     {
         return $this->login(
-            $this->get_data_from_request($request, $validation_role)
+            $this->get_data_from_request($request, $validation_role), 'usual'
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return NewAccessToken
+     * @throws CustomException
+     */
+    public function login_with_OTP_by_request (Request $request, $validation_role = 'login_with_OTP'): NewAccessToken
+    {
+        return $this->login(
+            $this->get_data_from_request($request, $validation_role), 'OTP'
+        );
+    }
+
+    /**
+     * @param array $data
+     * @param string $login_type
+     * @return NewAccessToken
+     * @throws CustomException
+     */
+    public function login (array $data, string $login_type = 'usual'): NewAccessToken
+    {
+        switch ($login_type)
+        {
+            case 'usual':
+                return $this->usual_login($data);
+            case 'OTP':
+                return $this->OTP_login($data);
+        }
+
+        throw new CustomException(
+            "login_type is wrong!!! i'm scared, if you are seeing this error please contact me",
+            666, 500
         );
     }
 
@@ -173,7 +216,7 @@ class UserAction extends Action
      * @return NewAccessToken
      * @throws CustomException
      */
-    public function login (array $data): NewAccessToken
+    public function usual_login (array $data): NewAccessToken
     {
         $user = $this->model::where('phone_number', $data['phone_number'])->first();
 
@@ -183,6 +226,73 @@ class UserAction extends Action
         }
 
         throw new CustomException('login data was not valid', 83, 400);
+    }
+
+    /**
+     * @param array $data
+     * @return NewAccessToken
+     * @throws CustomException
+     */
+    public function OTP_login (array $data): NewAccessToken
+    {
+        $user = $this->get_by_field('phone_number', $data['phone_number']);
+
+        if ($user->one_time_password->password == $data['password'] && $user->one_time_password->expires_at > time())
+        {
+            $user->update([
+                'should_change_password' => true,
+            ]);
+            return $user->createToken('auth_token');
+        }
+
+        throw new CustomException(
+            "OTP is wrong or expired"
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return Model
+     * @throws CustomException
+     */
+    public function send_one_time_password_by_request (Request $request, $validation_role = 'forgot_password')
+    {
+        return $this->send_one_time_password_by_phone_number(
+            $this->get_data_from_request($request, $validation_role)['phone_number']
+        );
+    }
+
+    /**
+     * @param string $phone_number
+     * @return Model
+     * @throws CustomException
+     */
+    public function send_one_time_password_by_phone_number (string $phone_number): Model
+    {
+        $user = $this->get_by_field('phone_number', $phone_number);
+
+        if ($user->one_time_password->expires_at > time())
+        {
+            throw new CustomException(
+                "OTP was already sent, you can send new OTP in ".($user->one_time_password->expires_at - time())." seconds",
+                87,
+                400
+            );
+        }
+
+        $password = rand(100000, 999999);
+
+        $user->update([
+            'one_time_password' => [
+                'password' => $password,
+                'expires_at' => time()+180
+            ]
+        ]);
+
+        (new SendSMSService())->send_otp($user->phone_number, $password);
+
+        return $user;
     }
 
     /**

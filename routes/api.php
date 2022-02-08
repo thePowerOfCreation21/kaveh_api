@@ -29,8 +29,6 @@ use App\Http\Controllers\InformativeProductController;
 |
 */
 
-Route::post('/user/login', [UserController::class, 'login']);
-
 Route::post('/admin/login', [AdminController::class, 'login']);
 
 Route::get('/about_us', [AboutUsController::class, 'get']);
@@ -38,6 +36,16 @@ Route::get('/about_us', [AboutUsController::class, 'get']);
 Route::get('/contact_us_content', [ContactUsContentController::class, 'get']);
 
 Route::post('/contact_us_message', [ContactUsMessageController::class, 'store']);
+
+Route::group([
+    'prefix' => '/user'
+], function (){
+
+    Route::post('/login', [UserController::class, 'login']);
+    Route::post('/login/otp', [UserController::class, 'login_with_OTP']);
+    Route::post('/forgot_password', [UserController::class, 'forgot_password']);
+
+});
 
 Route::group([
     'prefix' => '/gallery_image'

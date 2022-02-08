@@ -61,7 +61,7 @@ class UserController extends Controller
     public function get_by_id (string $id)
     {
         return response()->json(
-            (new UserAction())->get_by_id($id)
+            (new UserAction())->get_by_id($id)->one_time_password
         );
     }
 
@@ -69,6 +69,22 @@ class UserController extends Controller
     {
         return response()->json([
             'token' => (new UserAction())->login_by_request($request)->plainTextToken
+        ]);
+    }
+
+    public function login_with_OTP (Request $request)
+    {
+        return response()->json([
+            'token' => (new UserAction())->login_with_OTP_by_request($request)->plainTextToken
+        ]);
+    }
+
+    public function forgot_password (Request $request)
+    {
+        (new UserAction())->send_one_time_password_by_request($request);
+
+        return response()->json([
+            'message' => 'one time password was sent to your phone number, try logging in with OTP'
         ]);
     }
 }

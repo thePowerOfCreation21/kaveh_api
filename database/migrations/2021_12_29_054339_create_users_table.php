@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('phone_number')->unique();
             $table->string('second_phone_number')->nullable();
             $table->string('password');
+            $table->json('one_time_password')->nullable();
             $table->string('area')->nullable();
             $table->string('card_number', 16)->nullable();
             $table->boolean('should_change_password')->default(false);
