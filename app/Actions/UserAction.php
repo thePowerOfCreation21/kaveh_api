@@ -17,6 +17,10 @@ use Laravel\Sanctum\NewAccessToken;
 class UserAction extends Action
 {
     protected $validation_roles = [
+        'change_password' => [
+            'current_password' => 'string|max:100',
+            'new_password' => 'required|string|min:6|max:100'
+        ],
         'forgot_password' => [
             'phone_number' => 'required|string|max:11'
         ],
@@ -32,14 +36,14 @@ class UserAction extends Action
             'name' => 'required|string|max:64',
             'last_name' => 'required|string|max:64',
             'phone_number' => 'required|string',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|max:100',
             'area' => 'required|string|max:255'
         ],
         'update_by_admin' => [
             'name' => 'string|max:64',
             'last_name' => 'string|max:64',
             'phone_number' => 'regex:/09\d{9}/',
-            'password' => 'string|min:6',
+            'password' => 'string|min:6|max:100',
             'area' => 'string|max:255'
         ],
         'block_user' => [
@@ -256,7 +260,7 @@ class UserAction extends Action
      * @return Model
      * @throws CustomException
      */
-    public function send_one_time_password_by_request (Request $request, $validation_role = 'forgot_password')
+    public function send_one_time_password_by_request (Request $request, $validation_role = 'forgot_password'): Model
     {
         return $this->send_one_time_password_by_phone_number(
             $this->get_data_from_request($request, $validation_role)['phone_number']
@@ -362,8 +366,14 @@ class UserAction extends Action
      */
     public function update_by_id (array $update_data, string $id): Model
     {
-        $user = $this->get_by_id($id);
+        return $this->update_by_model(
+            $update_data,
+            $this->get_by_id($id)
+        );
+    }
 
+    public function update_by_model (array $update_data, Model $user): Model
+    {
         isset($update_data['password']) && ($update_data['password'] = Hash::make($update_data['password']));
 
         if (isset($update_data['phone_number']))
@@ -371,7 +381,9 @@ class UserAction extends Action
             $update_data['phone_number'] = $this->check_phone_number($update_data['phone_number']);
 
             if (
-                User::where('id', '!=', $id)->where('phone_number', $update_data['phone_number'])->exists()
+                User::where('id', '!=', $user->id)
+                    ->where('phone_number', $update_data['phone_number'])
+                    ->exists()
             )
             {
                 throw new CustomException('this phone number is already taken', 18, 400);
@@ -379,6 +391,55 @@ class UserAction extends Action
         }
 
         $user->update($update_data);
+
+        return $user;
+    }
+
+    /**
+     * @param Request $request
+     * @param Model $user
+     * @param string $validation_role
+     * @return Model
+     * @throws CustomException
+     */
+    public function change_password_by_request_and_model (Request $request, Model $user, $validation_role = 'change_password'): Model
+    {
+        return $this->change_password_by_model(
+            $this->get_data_from_request($request, $validation_role),
+            $user
+        );
+    }
+
+    /**
+     * @param array $data
+     * @param Model $user
+     * @return Model
+     * @throws CustomException
+     */
+    public function change_password_by_model (array $data, Model $user): Model
+    {
+        if (!$user->should_change_password)
+        {
+            if (!isset($data['current_password']))
+            {
+                throw new CustomException('current_password field is required', 91, 400);
+            }
+
+            if (!Hash::check($data['current_password'], $user->password))
+            {
+                throw new CustomException('current_password is wrong', 92, 400);
+            }
+        }
+
+        if (Hash::check($data['new_password'], $user->password))
+        {
+            throw new CustomException('new_password should not be same as old password', 93, 400);
+        }
+
+        $user->update([
+            'should_change_password' => false,
+            'password' => Hash::make($data['new_password'])
+        ]);
 
         return $user;
     }

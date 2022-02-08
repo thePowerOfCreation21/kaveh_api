@@ -120,6 +120,9 @@ Route::group([
 
         });
 
+        Route::put('/user/password', [UserController::class, 'change_password'])
+            ->middleware(['CheckIfUserIsBlocked']);
+
     });
 
     Route::group([

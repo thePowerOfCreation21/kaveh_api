@@ -61,7 +61,7 @@ class UserController extends Controller
     public function get_by_id (string $id)
     {
         return response()->json(
-            (new UserAction())->get_by_id($id)->one_time_password
+            (new UserAction())->get_by_id($id)
         );
     }
 
@@ -91,5 +91,14 @@ class UserController extends Controller
     public function get_user_from_request (Request $request)
     {
         return response()->json($request->user());
+    }
+
+    public function change_password (Request $request)
+    {
+        (new UserAction())->change_password_by_request_and_model($request, $request->user());
+
+        return response()->json([
+            'message' => 'password changed successfully'
+        ]);
     }
 }
