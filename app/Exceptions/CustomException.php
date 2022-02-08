@@ -9,10 +9,13 @@ class CustomException extends Exception
 {
     protected $http_code = 500;
 
-    public function __construct(string $message = "", int $code = 0, int $http_code = 500, Throwable $previous = null)
+    protected $more_details = null;
+
+    public function __construct(string $message = "", int $code = 0, int $http_code = 500, $more_details = null, Throwable $previous = null)
     {
         parent::__construct($message, $code);
         $this->http_code = $http_code;
+        $this->more_details = $more_details;
     }
 
     /**
@@ -25,9 +28,13 @@ class CustomException extends Exception
 
     public function render ()
     {
-        return response()->json([
+        $data = [
             'code' => $this->getCode(),
             'message' => $this->getMessage()
-        ], $this->getHttpCode());
+        ];
+
+        !empty($this->more_details) && $data['more_details'] = $this->more_details;
+
+        return response()->json($data, $this->getHttpCode());
     }
 }
