@@ -20,6 +20,7 @@ class User extends Model
         'password',
         'area',
         'card_number',
+        'should_change_password',
         'is_blocked',
         'reason_for_blocking'
     ];
@@ -29,6 +30,7 @@ class User extends Model
     ];
 
     protected $casts = [
+        'should_change_password',
         'is_blocked' => 'boolean'
     ];
 
