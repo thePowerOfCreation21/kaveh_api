@@ -19,7 +19,9 @@ class ProductController extends Controller
 
     public function get (Request $request)
     {
-        return ProductActions::get_by_request($request);
+        return response()->json(
+            (new ProductAction())->get_by_request($request)
+        );
     }
 
     public function get_by_id (string $id)
