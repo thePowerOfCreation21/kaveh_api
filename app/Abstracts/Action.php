@@ -44,6 +44,10 @@ abstract class Action
         return $file->store('/uploads');
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
     protected function manage_unusual_fields (array $data): array
     {
         foreach ($this->unusual_fields as $unusual_field => $unusual_field_type)
@@ -73,7 +77,7 @@ abstract class Action
     {
         $data = $this->get_data_from_request($request, $validation_role);
 
-        $data = $this->manage_unusual_fields($data, $request);
+        $data = $this->manage_unusual_fields($data);
 
         $data = $this->change_request_data_before_store_or_update($data, $request);
 
@@ -251,7 +255,7 @@ abstract class Action
         if (empty($entity))
         {
             throw new CustomException(
-                "could not find $field with value $value in {$this->model}",
+                "could not find $field with value $value in $this->model",
                 84,
                 404
             );
