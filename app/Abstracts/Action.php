@@ -7,12 +7,15 @@ use App\Services\PaginationService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 
 abstract class Action
 {
     protected $model = null;
 
     protected $validation_roles = [];
+
+    protected $unusual_fields = [];
 
     /**
      * @param Request $request
@@ -33,6 +36,34 @@ abstract class Action
     }
 
     /**
+     * @param UploadedFile $file
+     * @return string
+     */
+    protected function upload_file (UploadedFile $file): string
+    {
+        return $file->store('/uploads');
+    }
+
+    protected function manage_unusual_fields (array $data): array
+    {
+        foreach ($this->unusual_fields as $unusual_field => $unusual_field_type)
+        {
+            switch ($unusual_field_type)
+            {
+                case 'file':
+                    if (is_a($data[$unusual_field], UploadedFile::class) && !empty($data[$unusual_field]))
+                    {
+                        $data[$unusual_field] = $this->upload_file(
+                            $data[$unusual_field]
+                        );
+                    }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * @param Request $request
      * @param string|array $validation_role
      * @return Model
@@ -41,6 +72,8 @@ abstract class Action
     protected function store_by_request (Request $request, $validation_role = 'store'): Model
     {
         $data = $this->get_data_from_request($request, $validation_role);
+
+        $data = $this->manage_unusual_fields($data, $request);
 
         $data = $this->change_request_data_before_store_or_update($data, $request);
 
