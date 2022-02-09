@@ -33,7 +33,7 @@ class ProductController extends Controller
 
     public function delete_by_id (string $id)
     {
-        ProductActions::delete_by_id($id);
+        (new ProductAction())->delete_by_id($id);
 
         return response()->json([
             'message' => 'product deleted successfully'

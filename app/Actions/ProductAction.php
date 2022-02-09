@@ -115,4 +115,21 @@ class ProductAction extends Action
     {
         return parent::get_by_id($id);
     }
+
+    /**
+     * @param string $id
+     * @return bool
+     * @throws CustomException
+     */
+    public function delete_by_id(string $id): bool
+    {
+        $product = $this->get_by_field('id', $id);
+
+        if (is_file($product->image))
+        {
+            unlink($product->image);
+        }
+
+        return $product->delete();
+    }
 }
