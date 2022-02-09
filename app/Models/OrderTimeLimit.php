@@ -52,6 +52,11 @@ class OrderTimeLimit extends KeyObjectConfig
         return $new_object;
     }
 
+    /**
+     * @param int|null $time
+     * @return array
+     * @throws CustomException
+     */
     public function get_available_groups (int $time = null): array
     {
         $available_groups = [];
