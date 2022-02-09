@@ -32,6 +32,11 @@ class OrderTimeLimit extends KeyObjectConfig
         'unlimited.to' => 1,
     ];
 
+    /**
+     * @param object $new_object
+     * @return object
+     * @throws CustomException
+     */
     public function before_saving_update (object $new_object): object
     {
         if ($new_object->limited->to < $new_object->limited->from)
@@ -45,5 +50,27 @@ class OrderTimeLimit extends KeyObjectConfig
         }
 
         return $new_object;
+    }
+
+    public function get_available_groups (int $time = null): array
+    {
+        $available_groups = [];
+
+        if ($time === null)
+        {
+            $time = time() - strtotime('today');
+        }
+
+        $orderTimeLimit = $this->get();
+
+        foreach ($orderTimeLimit as $group => $time_limit)
+        {
+            if ($time > $time_limit->from && $time < $time_limit->to)
+            {
+                $available_groups[] = $group;
+            }
+        }
+
+        return $available_groups;
     }
 }

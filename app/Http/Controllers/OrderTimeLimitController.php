@@ -22,4 +22,11 @@ class OrderTimeLimitController extends Controller
             'message' => 'order time limit updated successfully'
         ]);
     }
+
+    public function get_available_groups ()
+    {
+        return response()->json(
+            (new OrderTimeLimit())->get_available_groups()
+        );
+    }
 }

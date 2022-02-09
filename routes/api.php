@@ -268,6 +268,7 @@ Route::group([
             ], function (){
 
                 Route::get('/', [OrderTimeLimitController::class, 'get']);
+                Route::get('/available_groups', [OrderTimeLimitController::class, 'get_available_groups']);
                 Route::put('/', [OrderTimeLimitController::class, 'update']);
 
             });
@@ -302,7 +303,6 @@ Route::group([
         ], function(){
 
             Route::post('/', [ProductController::class, 'store']);
-            Route::get('/', [ProductController::class, 'get']);
             Route::get('/{id}', [ProductController::class, 'get_by_id']);
             Route::delete('/{id}', [ProductController::class, 'delete_by_id']);
             Route::put('/{id}', [ProductController::class, 'edit_by_id']);
@@ -323,5 +323,7 @@ Route::group([
         });
 
     });
+
+    Route::get('/product', [ProductController::class, 'get']);
 
 });
