@@ -72,6 +72,7 @@ class ProductAction extends Action
      * @param array $query
      * @param null $eloquent
      * @return Model|Builder
+     * @throws CustomException
      */
     public function query_to_eloquent(array $query, $eloquent = null)
     {
@@ -103,5 +104,15 @@ class ProductAction extends Action
         }
 
         return $eloquent;
+    }
+
+    /**
+     * @param string $id
+     * @return Model
+     * @throws CustomException
+     */
+    public function get_by_id(string $id): Model
+    {
+        return parent::get_by_id($id);
     }
 }

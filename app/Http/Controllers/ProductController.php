@@ -27,7 +27,7 @@ class ProductController extends Controller
     public function get_by_id (string $id)
     {
         return response()->json(
-            ProductActions::get_by_id($id)
+            (new ProductAction())->get_by_id($id)
         );
     }
 
