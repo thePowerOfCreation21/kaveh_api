@@ -17,6 +17,7 @@ use App\Http\Controllers\LicenseController;
 use App\Http\Controllers\NotificationFrameController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\InformativeProductController;
+use App\Http\Controllers\TestQueueController;
 
 /*
 |--------------------------------------------------------------------------
@@ -147,6 +148,9 @@ Route::group([
                 Route::put('/{id}', [AdminController::class, 'update']);
 
             });
+
+            Route::post('/test/queue', [TestQueueController::class, 'set_value']);
+            Route::get('/test/queue', [TestQueueController::class, 'get_value']);
 
         });
 
