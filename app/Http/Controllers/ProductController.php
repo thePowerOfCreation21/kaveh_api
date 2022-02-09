@@ -42,7 +42,7 @@ class ProductController extends Controller
 
     public function edit_by_id (Request $request, string $id)
     {
-        ProductActions::edit_by_request($request, $id);
+        (new ProductAction())->update_entity_by_request_and_id($request, $id);
 
         return response()->json([
             'message' => 'product updated successfully'

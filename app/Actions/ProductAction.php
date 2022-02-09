@@ -23,6 +23,14 @@ class ProductAction extends Action
             'type' => 'required|in:limited,unlimited',
             'stock' => 'required_if:type,==,limited|numeric|min:0|max:100000'
         ],
+        'update' => [
+            'title' => 'string|max:128',
+            'image' => 'file|mimes:png,jpg,jpeg,gif|max:10000',
+            'description' => 'string|max:500',
+            'price' => 'numeric|min:1|max:1000000',
+            'discount_percentage' => 'numeric|min:0|max:99',
+            'stock' => 'numeric|min:0|max:100000'
+        ],
         'get_query' => [
             'search' => 'string|max:128',
             'type' => 'in:limited,unlimited',
@@ -131,5 +139,45 @@ class ProductAction extends Action
         }
 
         return $product->delete();
+    }
+
+    /**
+     * @param array $update_data
+     * @param string $id
+     * @return Model
+     * @throws CustomException
+     */
+    public function update_by_id (array $update_data, string $id): Model
+    {
+        $product = $this->get_by_field('id', $id);
+
+        if (isset($update_data['image']) && is_file($product->image))
+        {
+            unlink($product->image);
+        }
+
+        if ($product->type == 'unlimited' && isset($update_data['stock']))
+        {
+            unset($update_data['stock']);
+        }
+
+        $product->update($update_data);
+
+        return $product;
+    }
+
+    /**
+     * @param Request $request
+     * @param string $id
+     * @param string|array $validation_role
+     * @return Model
+     * @throws CustomException
+     */
+    public function update_entity_by_request_and_id(Request $request, string $id, $validation_role = 'update'): Model
+    {
+        return $this->update_by_id(
+            $this->get_data_from_request($request, $validation_role),
+            $id
+        );
     }
 }
