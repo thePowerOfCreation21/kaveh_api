@@ -116,10 +116,10 @@ class ProductAction extends Action
 
     /**
      * @param string $id
-     * @return Model
+     * @return Product
      * @throws CustomException
      */
-    public function get_by_id(string $id): Model
+    public function get_by_id(string $id): Product
     {
         return parent::get_by_id($id);
     }

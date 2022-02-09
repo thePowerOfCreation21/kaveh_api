@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Abstracts\Action;
 use App\Exceptions\CustomException;
+use App\Models\Cart;
 use App\Models\User;
 use App\Services\PaginationService;
 use App\Services\SendSMSService;
@@ -536,6 +537,20 @@ class UserAction extends Action
         }
 
         return true;
+    }
+
+    public function get_user_cart (User $user)
+    {
+        $cart = $user->cart;
+
+        if (empty($cart))
+        {
+            $cart = Cart::create([
+                'user_id' => $user->id
+            ]);
+        }
+
+        return $cart;
     }
 }
 

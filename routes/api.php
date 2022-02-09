@@ -18,6 +18,7 @@ use App\Http\Controllers\NotificationFrameController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\InformativeProductController;
 use App\Http\Controllers\TestQueueController;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +119,14 @@ Route::group([
         ], function(){
 
             Route::get('/user/info', [UserController::class, 'get_user_from_request']);
+
+            Route::group([
+                'prefix' => '/cart'
+            ], function (){
+
+                Route::put('/product/{id}', [CartController::class, 'store_or_update_cart_product']);
+
+            });
 
         });
 

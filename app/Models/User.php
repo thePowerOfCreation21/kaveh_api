@@ -38,6 +38,11 @@ class User extends Model
         'is_blocked' => 'boolean'
     ];
 
+    public function cart ()
+    {
+        return $this->hasOne(Cart::class, 'user_id', 'id');
+    }
+
     public function notifications ()
     {
         $user_id = $this->id;

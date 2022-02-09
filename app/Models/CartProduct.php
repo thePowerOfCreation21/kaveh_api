@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CartProduct extends Model
 {
@@ -21,18 +21,18 @@ class CartProduct extends Model
     public $timestamps = false;
 
     /**
-     * @return HasOne
+     * @return BelongsTo
      */
-    public function cart (): HasOne
+    public function cart (): BelongsTo
     {
-        return $this->hasOne(Cart::class, 'cart_id', 'id');
+        return $this->belongsTo(Cart::class, 'cart_id', 'id');
     }
 
     /**
-     * @return HasOne
+     * @return BelongsTo
      */
-    public function product (): HasOne
+    public function product (): BelongsTo
     {
-        return $this->hasOne(Product::class, 'product_id', 'id');
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }

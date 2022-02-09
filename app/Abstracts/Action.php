@@ -224,8 +224,8 @@ abstract class Action
         if (empty($entity))
         {
             throw new CustomException(
-                "entity not found",
-                67, 404
+                "$this->model not found",
+                67, 404,
             );
         }
 
@@ -234,10 +234,10 @@ abstract class Action
 
     /**
      * @param string $id
-     * @return Model
+     * @return Model|Mixed
      * @throws CustomException
      */
-    protected function get_by_id (string $id): Model
+    protected function get_by_id (string $id)
     {
         return $this->get_entity(['id' => $id]);
     }
@@ -245,10 +245,10 @@ abstract class Action
     /**
      * @param string $field
      * @param string $value
-     * @return Model
+     * @return Model|Mixed
      * @throws CustomException
      */
-    protected function get_by_field (string $field, string $value): Model
+    protected function get_by_field (string $field, string $value)
     {
         $entity = $this->model::where($field, $value)->first();
 
