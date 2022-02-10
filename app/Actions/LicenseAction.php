@@ -13,7 +13,7 @@ class LicenseAction extends Action
 {
     protected $validation_roles = [
         'store' => [
-            'title' => 'required|string|max:255',
+            'title' => 'string|max:255',
             'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000'
         ],
         'update' => [
