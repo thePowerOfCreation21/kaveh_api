@@ -13,9 +13,11 @@ class NotificationFrameAction extends Action
 {
     protected $validation_roles = [
         'store' => [
+            'title' => 'string|max:255',
             'text' => 'required|string|max:1500'
         ],
         'update' => [
+            'title' => 'string|max:255',
             'text' => 'required|string|max:1500'
         ]
     ];

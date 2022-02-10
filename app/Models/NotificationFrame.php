@@ -11,7 +11,10 @@ class NotificationFrame extends Model
 
     protected $table = 'notification_frames';
 
-    protected $fillable = ['text'];
+    protected $fillable = [
+        'title',
+        'text'
+    ];
 
     public $timestamps = false;
 }

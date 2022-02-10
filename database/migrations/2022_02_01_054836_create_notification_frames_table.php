@@ -15,6 +15,7 @@ class CreateNotificationFramesTable extends Migration
     {
         Schema::create('notification_frames', function (Blueprint $table) {
             $table->id();
+            $table->string('title')->nullable();
             $table->string('text', 1500);
         });
     }
