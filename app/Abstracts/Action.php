@@ -27,12 +27,14 @@ abstract class Action
      */
     protected function get_data_from_request (Request $request, $validation_role, array $options = []): array
     {
-        return $request->validate(
+        $data = $request->validate(
             $this->get_validation_role(
                 $validation_role,
                 $options['throw_exception'] ?? true
             )
         );
+
+        return $this->manage_unusual_fields($data);
     }
 
     /**
@@ -55,7 +57,7 @@ abstract class Action
             switch ($unusual_field_type)
             {
                 case 'file':
-                    if (is_a($data[$unusual_field], UploadedFile::class) && !empty($data[$unusual_field]))
+                    if (isset($data[$unusual_field]) && is_a($data[$unusual_field], UploadedFile::class) && !empty($data[$unusual_field]))
                     {
                         $data[$unusual_field] = $this->upload_file(
                             $data[$unusual_field]
@@ -76,8 +78,6 @@ abstract class Action
     protected function store_by_request (Request $request, $validation_role = 'store'): Model
     {
         $data = $this->get_data_from_request($request, $validation_role);
-
-        $data = $this->manage_unusual_fields($data);
 
         $data = $this->change_request_data_before_store_or_update($data, $request);
 
