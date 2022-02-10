@@ -251,7 +251,9 @@ class UserAction extends Action
         }
 
         throw new CustomException(
-            "OTP is wrong or expired"
+            "OTP is wrong or expired",
+            103,
+            400
         );
     }
 
