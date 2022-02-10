@@ -72,10 +72,10 @@ abstract class Action
     /**
      * @param Request $request
      * @param string|array $validation_role
-     * @return Model
+     * @return Mixed|Model
      * @throws CustomException
      */
-    protected function store_by_request (Request $request, $validation_role = 'store'): Model
+    protected function store_by_request (Request $request, $validation_role = 'store')
     {
         $data = $this->get_data_from_request($request, $validation_role);
 
