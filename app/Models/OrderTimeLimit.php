@@ -26,6 +26,14 @@ class OrderTimeLimit extends KeyObjectConfig
     ];
 
     protected $default_values = [
+        'limited' => [
+            'from' => 0,
+            'to' => 1
+        ],
+        'unlimited' => [
+            'from' => 0,
+            'to' => 1
+        ],
         'limited.from' => 0,
         'limited.to' => 1,
         'unlimited.from' => 0,
@@ -39,6 +47,9 @@ class OrderTimeLimit extends KeyObjectConfig
      */
     public function before_saving_update (object $new_object): object
     {
+        $new_object->limited = (object) $new_object->limited;
+        $new_object->unlimited = (object) $new_object->unlimited;
+
         if ($new_object->limited->to < $new_object->limited->from)
         {
             throw new CustomException("limited.to should not be less than limited.from");
@@ -77,5 +88,15 @@ class OrderTimeLimit extends KeyObjectConfig
         }
 
         return $available_groups;
+    }
+
+    public function get(bool $forced_get_from_DB = false, bool $forced_fix_object = true)
+    {
+        $orderTimeLimit =  parent::get($forced_get_from_DB, $forced_fix_object);
+
+        $orderTimeLimit->limited = (object) $orderTimeLimit->limited;
+        $orderTimeLimit->unlimited = (object) $orderTimeLimit->unlimited;
+
+        return $orderTimeLimit;
     }
 }
