@@ -129,6 +129,7 @@ Route::group([
                 ], function (){
 
                     Route::get('/', [CartController::class, 'get_cart_products']);
+                    Route::delete('/', [CartController::class, 'empty_the_cart']);
                     Route::put('/product/{id}', [CartController::class, 'store_or_update_cart_product']);
                     Route::delete('/product/{id}', [CartController::class, 'delete_cart_product']);
 

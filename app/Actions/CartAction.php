@@ -45,6 +45,25 @@ class CartAction extends Action
         return $user;
     }
 
+    public function empty_the_cart_by_request (Request $request)
+    {
+        $user = $this->check_user($request->user());
+
+        return $this->empty_the_cart(
+            (new UserAction())->get_user_cart($user)
+        );
+    }
+
+    /**
+     * @param Cart $cart
+     * @return mixed
+     */
+    public function empty_the_cart (Cart $cart)
+    {
+        return CartProduct::where('cart_id', $cart->id)
+            ->delete();
+    }
+
     /**
      * @param Request $request
      * @param string $product_id
@@ -67,14 +86,23 @@ class CartAction extends Action
         );
     }
 
-    public function get_cart_products_by_request (Request $request)
+    /**
+     * @param Request $request
+     * @return array
+     * @throws CustomException
+     */
+    public function get_cart_products_by_request (Request $request): array
     {
         $user = $this->check_user($request->user());
         $cart = (new UserAction())->get_user_cart($user);
         return $this->get_cart_contents($cart);
     }
 
-    public function get_cart_contents (Cart $cart)
+    /**
+     * @param Cart $cart
+     * @return array
+     */
+    public function get_cart_contents (Cart $cart): array
     {
         $cart_contents = [];
         $cart_products = $cart->products;

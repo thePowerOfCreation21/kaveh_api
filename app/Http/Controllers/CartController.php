@@ -58,4 +58,13 @@ class CartController extends Controller
             (new CartAction())->get_cart_products_by_request($request)
         );
     }
+
+    public function empty_the_cart (Request $request)
+    {
+        (new CartAction())->empty_the_cart_by_request($request);
+
+        return response()->json([
+            'message' => 'cart is empty now'
+        ]);
+    }
 }
