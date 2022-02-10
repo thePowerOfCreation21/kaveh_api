@@ -118,16 +118,24 @@ Route::group([
             ]
         ], function(){
 
-            Route::get('/user/info', [UserController::class, 'get_user_from_request']);
-
             Route::group([
-                'prefix' => '/cart'
-            ], function (){
+                'prefix' => '/user'
+            ], function(){
 
-                Route::put('/product/{id}', [CartController::class, 'store_or_update_cart_product']);
-                Route::delete('/product/{id}', [CartController::class, 'delete_cart_product']);
+                Route::get('/info', [UserController::class, 'get_user_from_request']);
+
+                Route::group([
+                    'prefix' => '/cart'
+                ], function (){
+
+                    Route::get('/', [CartController::class, 'get_cart_products']);
+                    Route::put('/product/{id}', [CartController::class, 'store_or_update_cart_product']);
+                    Route::delete('/product/{id}', [CartController::class, 'delete_cart_product']);
+
+                });
 
             });
+
 
         });
 

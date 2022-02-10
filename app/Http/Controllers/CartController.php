@@ -47,4 +47,15 @@ class CartController extends Controller
             'message' => 'product deleted from cart successfully'
         ]);
     }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function get_cart_products (Request $request): JsonResponse
+    {
+        return response()->json(
+            (new CartAction())->get_cart_products_by_request($request)
+        );
+    }
 }

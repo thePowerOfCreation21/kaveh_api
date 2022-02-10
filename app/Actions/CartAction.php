@@ -7,6 +7,7 @@ use App\Exceptions\CustomException;
 use App\Models\Cart;
 use App\Models\CartProduct;
 use App\Models\Product;
+use App\Services\PaginationService;
 use Illuminate\Http\Request;
 use App\Models\User;
 
@@ -29,7 +30,7 @@ class CartAction extends Action
      * @throws CustomException
      *
      */
-    public function check_user ($user)
+    public function check_user ($user): User
     {
         if (empty($user))
         {
@@ -64,6 +65,30 @@ class CartAction extends Action
             (new ProductAction())->get_by_id($product_id),
             (new UserAction())->get_user_cart($user)
         );
+    }
+
+    public function get_cart_products_by_request (Request $request)
+    {
+        $user = $this->check_user($request->user());
+        $cart = (new UserAction())->get_user_cart($user);
+        return $this->get_cart_contents($cart);
+    }
+
+    public function get_cart_contents (Cart $cart)
+    {
+        $cart_contents = [];
+        $cart_products = $cart->products;
+
+        foreach ($cart_products AS $key => $cart_product)
+        {
+            $cart_contents[$key] = [
+                'quantity' => $cart_product->pivot->quantity,
+                'product' => $cart_product
+            ];
+            unset($cart_contents[$key]['product']->pivot);
+        }
+
+        return $cart_contents;
     }
 
     /**
