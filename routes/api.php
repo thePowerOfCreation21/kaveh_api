@@ -125,6 +125,7 @@ Route::group([
             ], function (){
 
                 Route::put('/product/{id}', [CartController::class, 'store_or_update_cart_product']);
+                Route::delete('/product/{id}', [CartController::class, 'delete_cart_product']);
 
             });
 

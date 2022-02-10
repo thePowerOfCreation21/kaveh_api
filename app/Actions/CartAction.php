@@ -24,6 +24,27 @@ class CartAction extends Action
     }
 
     /**
+     * @param $user
+     * @return User
+     * @throws CustomException
+     *
+     */
+    public function check_user ($user)
+    {
+        if (empty($user))
+        {
+            throw new CustomException("could not get user from request", 100, 500);
+        }
+
+        if (!is_a($user, User::class))
+        {
+            throw new CustomException("user should be constant of ".User::class, 101, 500);
+        }
+
+        return $user;
+    }
+
+    /**
      * @param Request $request
      * @param string $product_id
      * @param string|array $validation_role
@@ -36,23 +57,29 @@ class CartAction extends Action
         $validation_role = 'store_or_update_cart_product'
     )
     {
-        $user = $request->user();
-
-        if (empty($user))
-        {
-            throw new CustomException("could not get user from request", 100, 500);
-        }
-
-        if (!is_a($user, User::class))
-        {
-            throw new CustomException("user should be constant of ".User::class, 101, 500);
-        }
+        $user = $this->check_user($request->user());
 
         return $this->store_or_update_cart_product(
             $this->get_data_from_request($request, $validation_role),
             (new ProductAction())->get_by_id($product_id),
             (new UserAction())->get_user_cart($user)
         );
+    }
+
+    /**
+     * @param Request $request
+     * @param string $product_id
+     * @return mixed
+     * @throws CustomException
+     */
+    public function delete_cart_product_by_request_and_product_id (Request $request, string $product_id)
+    {
+        $user = $this->check_user($request->user());
+        $cart = (new UserAction())->get_user_cart($user);
+
+        return CartProduct::where('cart_id', $cart->id)
+            ->where('product_id', $product_id)
+            ->delete();
     }
 
     /**
