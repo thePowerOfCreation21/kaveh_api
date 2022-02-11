@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use function App\Helpers\convert_to_boolean;
 
 abstract class Action
 {
@@ -47,6 +48,8 @@ abstract class Action
     }
 
     /**
+     * list of unusual field types: file, boolean
+     *
      * @param array $data
      * @return array
      */
@@ -54,15 +57,23 @@ abstract class Action
     {
         foreach ($this->unusual_fields as $unusual_field => $unusual_field_type)
         {
+            if (!isset($data[$unusual_field]))
+            {
+                continue;
+            }
+
             switch ($unusual_field_type)
             {
                 case 'file':
-                    if (isset($data[$unusual_field]) && is_a($data[$unusual_field], UploadedFile::class) && !empty($data[$unusual_field]))
+                    if (is_a($data[$unusual_field], UploadedFile::class) && !empty($data[$unusual_field]))
                     {
                         $data[$unusual_field] = $this->upload_file(
                             $data[$unusual_field]
                         );
                     }
+                    break;
+                case 'boolean':
+                    $data[$unusual_field] = convert_to_boolean($data[$unusual_field]);
             }
         }
 
