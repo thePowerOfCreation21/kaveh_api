@@ -93,7 +93,17 @@ class CartAction extends Action
      */
     public function get_cart_products_by_request (Request $request): array
     {
-        $user = $this->check_user($request->user());
+        return $this->get_cart_contents_by_user(
+            $this->check_user($request->user())
+        );
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public function get_cart_contents_by_user (User $user): array
+    {
         $cart = (new UserAction())->get_user_cart($user);
         return $this->get_cart_contents($cart);
     }
