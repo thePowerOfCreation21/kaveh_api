@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Actions\DiscountCodeAction;
 use Illuminate\Http\Request;
-use App\Actions\DiscountCodeActions;
 
 class DiscountCodeController extends Controller
 {
