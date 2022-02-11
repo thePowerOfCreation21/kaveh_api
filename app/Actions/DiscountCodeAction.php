@@ -3,12 +3,73 @@
 namespace App\Actions;
 
 use App\Abstracts\Action;
+use App\Exceptions\CustomException;
+use App\Jobs\StoreDiscountUsers;
 use App\Models\DiscountCode;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 class DiscountCodeAction extends Action
 {
+    protected $validation_roles = [
+        'store' => [
+            'code' => 'required|string|max:25',
+            'amount' => 'required|numeric|min:1',
+            'type' => 'required|in:percent,price',
+            'users' => 'array|max:1000',
+            'users.*' => 'distinct|numeric|min:1',
+            'expiration_date' => 'date_format:Y-m-d H:i:s'
+        ]
+    ];
+
     public function __construct()
     {
         $this->model = DiscountCode::class;
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return Model|mixed
+     * @throws CustomException
+     */
+    public function store_by_request(Request $request, $validation_role = 'store')
+    {
+        return parent::store_by_request($request, $validation_role);
+    }
+
+    /**
+     * @param array $discount_data
+     * @return Model
+     * @throws CustomException
+     */
+    public function store(array $discount_data): Model
+    {
+        if ($discount_data['type'] == 'percent' && $discount_data['amount'] > 100)
+        {
+            throw new CustomException('amount of percent discount could not be more than 100', 54, 400);
+        }
+
+        if (DiscountCode::where('code', $discount_data['code'])->exists())
+        {
+            throw new CustomException('this code is already taken', 52, 400);
+        }
+
+        $discount_data['is_for_all_users'] = true;
+
+        if (isset($discount_data['users']))
+        {
+            $discount_data['is_for_all_users'] = false;
+            UserAction::check_if_users_exists($discount_data['users']);
+        }
+
+        $discountCode = DiscountCode::create($discount_data);
+
+        if (!$discount_data['is_for_all_users'])
+        {
+            StoreDiscountUsers::dispatch($discountCode->id, $discount_data['users']);
+        }
+
+        return $discountCode;
     }
 }
