@@ -3,6 +3,7 @@
 namespace App\Abstracts;
 
 use App\Exceptions\CustomException;
+use App\Models\User;
 use App\Services\PaginationService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -17,6 +18,28 @@ abstract class Action
     protected $validation_roles = [];
 
     protected $unusual_fields = [];
+
+    /**
+     * @param Request $request
+     * @return User|mixed
+     * @throws CustomException
+     */
+    protected function get_user_from_request (Request $request)
+    {
+        $user = $request->user();
+
+        if (empty($user))
+        {
+            throw new CustomException("could not get user from request", 100, 500);
+        }
+
+        if (!is_a($user, User::class))
+        {
+            throw new CustomException("user should be constant of ".User::class, 101, 500);
+        }
+
+        return $user;
+    }
 
     /**
      * @param Request $request

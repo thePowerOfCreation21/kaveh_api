@@ -36,7 +36,7 @@ class CustomDateCast implements CastsAttributes
     {
         if (!is_numeric($value))
         {
-            if (empty($value))
+            if (empty($value) || !is_string($value))
             {
                 $value = time();
             }

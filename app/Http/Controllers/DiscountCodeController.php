@@ -33,7 +33,7 @@ class DiscountCodeController extends Controller
     public function get_users (Request $request, string $id)
     {
         return response()->json(
-            (new DiscountCodeAction())->get_users_by_request_and_discount_code_id($request, $id)
+            (new DiscountCodeAction())->get_users_by_request_and_discount_id($request, $id)
         );
     }
 
@@ -44,5 +44,15 @@ class DiscountCodeController extends Controller
         return response()->json([
             'message' => 'discount deleted successfully'
         ]);
+    }
+
+    public function check_if_user_can_use_the_discount (Request $request)
+    {
+        $discountCode = (new DiscountCodeAction())->check_if_user_can_use_discount_by_request($request)
+            ->details->discountCode;
+
+        return response()->json(
+            $discountCode
+        );
     }
 }

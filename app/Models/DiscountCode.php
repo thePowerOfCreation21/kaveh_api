@@ -59,4 +59,9 @@ class DiscountCode extends Model
             });
         }
     }
+
+    public function isExpired ()
+    {
+        return $this->expiration_date->timestamp < time();
+    }
 }

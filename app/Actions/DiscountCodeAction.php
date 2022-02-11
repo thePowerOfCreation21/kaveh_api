@@ -7,6 +7,7 @@ use App\Exceptions\CustomException;
 use App\Jobs\StoreDiscountUsers;
 use App\Models\DiscountCode;
 use App\Models\DiscountCodeUsers;
+use App\Services\CustomResponse\CustomResponseService;
 use App\Services\PaginationService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -23,6 +24,9 @@ class DiscountCodeAction extends Action
             'users' => 'array|max:1000',
             'users.*' => 'distinct|numeric|min:1',
             'expiration_date' => 'date_format:Y-m-d H:i:s'
+        ],
+        'check_if_user_can_use_the_discount' => [
+            'code' => 'required|string|max:255'
         ],
         'get_query' => [
             'expired' => 'string|max:5'
@@ -74,14 +78,14 @@ class DiscountCodeAction extends Action
 
     /**
      * @param Request $request
-     * @param string $discount_code_id
-     * @param $validation_role
+     * @param string $discount_id
+     * @param string $validation_role
      * @return object
      * @throws CustomException
      */
-    public function get_users_by_request_and_discount_code_id (Request $request, string $discount_code_id, $validation_role = 'get_users_query')
+    public function get_users_by_request_and_discount_id (Request $request, string $discount_id, $validation_role = 'get_users_query')
     {
-        $discountCode = $this->get_by_id($discount_code_id);
+        $discountCode = $this->get_by_id($discount_id);
 
         return PaginationService::paginate_with_request(
             $request,
@@ -178,7 +182,7 @@ class DiscountCodeAction extends Action
      * @param $eloquent
      * @return Model|Builder
      */
-    public function discount_users_query_to_eloquent (DiscountCode $discountCode, array $query, $eloquent = null)
+    public function discount_users_query_to_eloquent (DiscountCode $discountCode, array $query = [], $eloquent = null)
     {
         if ($eloquent === null)
         {
@@ -197,6 +201,97 @@ class DiscountCodeAction extends Action
             }
         }
 
+        if (isset($query['user_id']))
+        {
+            $eloquent = $eloquent->where('users.id', $query['user_id']);
+        }
+
         return (new UserAction())->query_to_eloquent($query, $eloquent);
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return mixed
+     * @throws CustomException
+     */
+    public function check_if_user_can_use_discount_by_request (Request $request, $validation_role = 'check_if_user_can_use_the_discount')
+    {
+        $data = $this->get_data_from_request($request, $validation_role);
+
+        if (!isset($data['code']))
+        {
+            throw new CustomException('could not get code from request', 105, 500);
+        }
+
+        $discountCode = $this->get_by_field('code', $data['code']);
+
+        return $this->check_if_user_can_use_discount_by_discount_and_user_id(
+            $discountCode,
+            $this->get_user_from_request($request)->id
+        );
+    }
+
+    /**
+     * @param DiscountCode $discountCode
+     * @param string $user_id
+     * @param bool $throwException
+     * @return CustomResponseService|null
+     * @throws CustomException
+     */
+    public function check_if_user_can_use_discount_by_discount_and_user_id (DiscountCode $discountCode, string $user_id, bool $throwException = true): ?CustomResponseService
+    {
+        $discountUser = $this->discount_users_query_to_eloquent($discountCode, ['user_id' => $user_id])->first();
+
+        if (empty($discountUser))
+        {
+            return $this->throwExceptionOrReturn(
+                (new CustomResponseService())->setResult(false)
+                    ->details->setProperties([
+                        'code' => 1,
+                        'http_code' => 400,
+                        'message' => 'this user could not use this code'
+                    ]),
+                $throwException
+            );
+        }
+
+        if ($discountCode->isExpired())
+        {
+            return $this->throwExceptionOrReturn(
+                (new CustomResponseService())->setResult(false)
+                    ->details->setProperties([
+                        'code' => 2,
+                        'http_code' => 400,
+                        'message' => 'this discount has been expired'
+                    ]),
+                $throwException
+            );
+        }
+
+        if ($discountUser->is_used)
+        {
+            return $this->throwExceptionOrReturn(
+                (new CustomResponseService())->setResult(false)
+                    ->details->setProperties([
+                        'code' => 3,
+                        'http_code' => 400,
+                        'message' => 'this user already used this discount'
+                    ]),
+                $throwException
+            );
+        }
+
+        return (new CustomResponseService())->setResult(true)
+            ->details->setProperty('discountCode', $discountCode);
+    }
+
+    public function throwExceptionOrReturn (CustomResponseService $customResponse, bool $throwException = false)
+    {
+        if ($throwException)
+        {
+            $customResponse->throwException();
+        }
+        return $customResponse;
     }
 }

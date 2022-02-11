@@ -2,28 +2,39 @@
 
 namespace App\Helpers;
 
-function FileExtension($file_name,$input2=null)
+use App\Exceptions\CustomException;
+
+/**
+ * @param $file_name
+ * @return mixed|null
+ */
+function FileExtension($file_name)
 {
     $file_extension_array=explode(".",$file_name);
     $count=count($file_extension_array);
     $count--;
-    $file_extension=Sis($file_extension_array["$count"]);
-    return $file_extension;
+    return Sis($file_extension_array["$count"]);
 }
 
-function Sanitize($mixed)
+function Sanitize($mixed): ?string
 {
     $result = null;
-    $mixed_type = \gettype($mixed);
+    $mixed_type = gettype($mixed);
     $valid_types = ["string", "integer", "double"];
-    if (\in_array($mixed_type, $valid_types))
+    if (in_array($mixed_type, $valid_types))
     {
         $result = htmlentities($mixed, ENT_QUOTES, 'UTF-8');
     }
     return $result;
 }
 
-function Sis(&$input = null, $default = null,$not_be=[])
+/**
+ * @param null $input
+ * @param null $default
+ * @param array $not_be
+ * @return mixed|null
+ */
+function Sis(&$input = null, $default = null, array $not_be=[])
 {
     $ret = $default;
     if (isset($input))
@@ -40,7 +51,15 @@ function Sis(&$input = null, $default = null,$not_be=[])
     return $ret;
 }
 
-function UploadIt($file, $array_allowed_format=['png','jpg','jpeg'], $direction="uploads/", $change_file_name = true, $delete_if_duplicate = true)
+/**
+ * @param $file
+ * @param array $array_allowed_format
+ * @param string $direction
+ * @param bool $change_file_name
+ * @param bool $delete_if_duplicate
+ * @return string|null
+ */
+function UploadIt ($file, array $array_allowed_format=['png','jpg','jpeg'], string $direction="uploads/", bool $change_file_name = true, bool $delete_if_duplicate = true): ?string
 {
     $file_direction=null;
     $file_ext = FileExtension(Sis($file['name']));
@@ -68,7 +87,11 @@ function UploadIt($file, $array_allowed_format=['png','jpg','jpeg'], $direction=
     return $file_direction;
 }
 
-function time_to_custom_date ($time = 'current_time')
+/**
+ * @param string $time
+ * @return object
+ */
+function time_to_custom_date (string $time = 'current_time'): object
 {
     if (! is_numeric($time))
     {
@@ -83,7 +106,11 @@ function time_to_custom_date ($time = 'current_time')
     ];
 }
 
-function convert_to_boolean ($mixed)
+/**
+ * @param $mixed
+ * @return bool
+ */
+function convert_to_boolean ($mixed): bool
 {
     if (is_string($mixed))
     {
@@ -96,8 +123,32 @@ function convert_to_boolean ($mixed)
     }
 }
 
-function isAssoc(array $arr)
+/**
+ * @param array $arr
+ * @return bool
+ */
+function isAssoc(array $arr): bool
 {
     if (array() === $arr) return false;
     return array_keys($arr) !== range(0, count($arr) - 1);
+}
+
+/**
+ * @param $mixed
+ * @return array
+ * @throws CustomException
+ */
+function convertToArray ($mixed): array
+{
+    if (is_object($mixed))
+    {
+        $mixed = (array) $mixed;
+    }
+
+    if (!is_array($mixed))
+    {
+        throw new CustomException('value should be array or object');
+    }
+
+    return $mixed;
 }
