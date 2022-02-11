@@ -40,7 +40,7 @@ class DiscountCodeController extends Controller
 
     public function delete_by_id (string $id)
     {
-        DiscountCodeActions::delete_by_id($id);
+        (new DiscountCodeAction())->delete_by_id($id);
 
         return response()->json([
             'message' => 'discount deleted successfully'

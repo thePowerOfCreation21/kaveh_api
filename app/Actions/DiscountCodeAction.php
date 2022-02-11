@@ -6,6 +6,7 @@ use App\Abstracts\Action;
 use App\Exceptions\CustomException;
 use App\Jobs\StoreDiscountUsers;
 use App\Models\DiscountCode;
+use App\Models\DiscountCodeUsers;
 use App\Services\PaginationService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -134,6 +135,17 @@ class DiscountCodeAction extends Action
         }
 
         return $discountCode;
+    }
+
+    /**
+     * @param string $id
+     * @return bool|int|null
+     */
+    public function delete_by_id (string $id)
+    {
+        DiscountCodeUsers::where('discount_id', $id)->delete();
+
+        return DiscountCode::where('id', $id)->delete();
     }
 
     /**
