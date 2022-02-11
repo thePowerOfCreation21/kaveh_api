@@ -29,6 +29,7 @@ class ProductAction extends Action
             'description' => 'string|max:500',
             'price' => 'numeric|min:1|max:1000000',
             'discount_percentage' => 'numeric|min:0|max:99',
+            'type' => 'in:limited,unlimited',
             'stock' => 'numeric|min:0|max:100000'
         ],
         'get_query' => [
@@ -156,9 +157,9 @@ class ProductAction extends Action
             unlink($product->image);
         }
 
-        if ($product->type == 'unlimited' && isset($update_data['stock']))
+        if ($product->type == 'unlimited' && isset($update_data['type']) && $update_data['type'] == 'limited')
         {
-            unset($update_data['stock']);
+            $update_data['stock'] = $update_data['stock'] ?? max($product->getAttributes()['stock'], 0);
         }
 
         $product->update($update_data);

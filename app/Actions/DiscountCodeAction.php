@@ -24,6 +24,10 @@ class DiscountCodeAction extends Action
         ],
         'get_query' => [
             'expired' => 'string|max:5'
+        ],
+        'get_users_query' => [
+            'is_used' => 'string|max:5',
+            'search' => 'string|max:50'
         ]
     ];
 
