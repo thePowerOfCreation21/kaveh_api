@@ -27,7 +27,7 @@ class DiscountCodeController extends Controller
     public function get_by_id (string $id)
     {
         return response()->json(
-            DiscountCodeActions::get_by_id($id)
+            (new DiscountCodeAction())->get_by_id($id)
         );
     }
 

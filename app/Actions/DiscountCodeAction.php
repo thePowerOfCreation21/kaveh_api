@@ -66,6 +66,16 @@ class DiscountCodeAction extends Action
     }
 
     /**
+     * @param string $id
+     * @return Model|mixed
+     * @throws CustomException
+     */
+    public function get_by_id(string $id)
+    {
+        return parent::get_by_id($id);
+    }
+
+    /**
      * @param array $discount_data
      * @return Model
      * @throws CustomException
