@@ -71,7 +71,13 @@ class DiscountCodeAction extends Action
         return parent::get_by_request ($request, $query_validation_role, $eloquent, $order_by);
     }
 
-
+    /**
+     * @param Request $request
+     * @param string $discount_code_id
+     * @param $validation_role
+     * @return object
+     * @throws CustomException
+     */
     public function get_users_by_request_and_discount_code_id (Request $request, string $discount_code_id, $validation_role = 'get_users_query')
     {
         $discountCode = $this->get_by_id($discount_code_id);
