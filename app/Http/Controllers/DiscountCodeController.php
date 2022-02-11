@@ -20,7 +20,7 @@ class DiscountCodeController extends Controller
     public function get (Request $request)
     {
         return response()->json(
-            DiscountCodeActions::get_with_request($request)
+            (new DiscountCodeAction())->get_by_request($request)
         );
     }
 

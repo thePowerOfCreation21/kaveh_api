@@ -7,7 +7,9 @@ use App\Exceptions\CustomException;
 use App\Jobs\StoreDiscountUsers;
 use App\Models\DiscountCode;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use function App\Helpers\convert_to_boolean;
 
 class DiscountCodeAction extends Action
 {
@@ -19,7 +21,14 @@ class DiscountCodeAction extends Action
             'users' => 'array|max:1000',
             'users.*' => 'distinct|numeric|min:1',
             'expiration_date' => 'date_format:Y-m-d H:i:s'
+        ],
+        'get_query' => [
+            'expired' => 'string|max:5'
         ]
+    ];
+
+    protected $unusual_fields = [
+        'expired' => 'boolean'
     ];
 
     public function __construct()
@@ -33,9 +42,27 @@ class DiscountCodeAction extends Action
      * @return Model|mixed
      * @throws CustomException
      */
-    public function store_by_request(Request $request, $validation_role = 'store')
+    public function store_by_request (Request $request, $validation_role = 'store')
     {
         return parent::store_by_request($request, $validation_role);
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $query_validation_role
+     * @param $eloquent
+     * @param array $order_by
+     * @return object
+     * @throws CustomException
+     */
+    public function get_by_request (
+        Request $request,
+        $query_validation_role = 'get_query',
+        $eloquent = null,
+        array $order_by = ['id' => 'DESC']
+    ): object
+    {
+        return parent::get_by_request ($request, $query_validation_role, $eloquent, $order_by);
     }
 
     /**
@@ -43,7 +70,7 @@ class DiscountCodeAction extends Action
      * @return Model
      * @throws CustomException
      */
-    public function store(array $discount_data): Model
+    public function store (array $discount_data): Model
     {
         if ($discount_data['type'] == 'percent' && $discount_data['amount'] > 100)
         {
@@ -71,5 +98,29 @@ class DiscountCodeAction extends Action
         }
 
         return $discountCode;
+    }
+
+    /**
+     * @param array $query
+     * @param $eloquent
+     * @return Model|Builder|null
+     */
+    public function query_to_eloquent(array $query, $eloquent = null)
+    {
+        $eloquent = parent::query_to_eloquent($query, $eloquent);
+
+        if (isset($query['expired']))
+        {
+            if ($query['expired'])
+            {
+                $eloquent = $eloquent->whereDate('expiration_date', '<=', date('Y-m-d H:i:s'));
+            }
+            else
+            {
+                $eloquent = $eloquent->whereDate('expiration_date', '>', date('Y-m-d H:i:s'));
+            }
+        }
+
+        return $eloquent;
     }
 }
