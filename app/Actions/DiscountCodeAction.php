@@ -6,6 +6,7 @@ use App\Abstracts\Action;
 use App\Exceptions\CustomException;
 use App\Jobs\StoreDiscountUsers;
 use App\Models\DiscountCode;
+use App\Services\PaginationService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
@@ -27,12 +28,13 @@ class DiscountCodeAction extends Action
         ],
         'get_users_query' => [
             'is_used' => 'string|max:5',
-            'search' => 'string|max:50'
+            'search' => 'string|max:150'
         ]
     ];
 
     protected $unusual_fields = [
-        'expired' => 'boolean'
+        'expired' => 'boolean',
+        'is_used' => 'boolean'
     ];
 
     public function __construct()
@@ -67,6 +69,20 @@ class DiscountCodeAction extends Action
     ): object
     {
         return parent::get_by_request ($request, $query_validation_role, $eloquent, $order_by);
+    }
+
+
+    public function get_users_by_request_and_discount_code_id (Request $request, string $discount_code_id, $validation_role = 'get_users_query')
+    {
+        $discountCode = $this->get_by_id($discount_code_id);
+
+        return PaginationService::paginate_with_request(
+            $request,
+            $this->discount_users_query_to_eloquent(
+                $discountCode,
+                $this->get_data_from_request($request, $validation_role)
+            )
+        );
     }
 
     /**
@@ -136,5 +152,33 @@ class DiscountCodeAction extends Action
         }
 
         return $eloquent;
+    }
+
+    /**
+     * @param DiscountCode $discountCode
+     * @param array $query
+     * @param $eloquent
+     * @return Model|Builder
+     */
+    public function discount_users_query_to_eloquent (DiscountCode $discountCode, array $query, $eloquent = null)
+    {
+        if ($eloquent === null)
+        {
+            $eloquent = $discountCode->users();
+        }
+
+        if (isset($query['is_used']))
+        {
+            if ($query['is_used'])
+            {
+                $eloquent = $eloquent->where('is_used', $query['is_used']);
+            }
+            else
+            {
+                $eloquent = $eloquent->where('is_used', "=", null)->orWhere('is_used', false);
+            }
+        }
+
+        return (new UserAction())->query_to_eloquent($query, $eloquent);
     }
 }
