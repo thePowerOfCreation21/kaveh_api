@@ -119,11 +119,12 @@ class CartAction extends Action
 
         foreach ($cart_products AS $key => $cart_product)
         {
-            $cart_contents[$key] = [
+            $cart_contents[$key] = (object) [
                 'quantity' => $cart_product->pivot->quantity,
-                'product' => $cart_product
+                'amount' => $cart_product->price * $cart_product->pivot->quantity,
+                'product' => $cart_product,
             ];
-            unset($cart_contents[$key]['product']->pivot);
+            unset($cart_contents[$key]->product->pivot);
         }
 
         return $cart_contents;

@@ -18,8 +18,8 @@ class CreateOrdersTable extends Migration
             $table->string('user_id', 15);
             $table->integer('amount');
             $table->json('discount');
-            $table->json('products');
-            $table->date('receipt_at');
+            $table->json('contents');
+            $table->timestamp('receipt_at');
             $table->timestamps();
         });
     }

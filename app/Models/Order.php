@@ -16,14 +16,14 @@ class Order extends Model
         'user_id',
         'amount',
         'discount',
-        'products',
+        'contents',
         'receipt_at'
     ];
 
     protected $casts = [
         'receipt_at' => CustomDateCast::class,
         'discount' => 'object',
-        'products' => 'object'
+        'contents' => 'object'
     ];
 
     protected $hidden = [

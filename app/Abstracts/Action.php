@@ -120,9 +120,9 @@ abstract class Action
 
     /**
      * @param array $data
-     * @return Model
+     * @return Model|Mixed
      */
-    protected function store (array $data): Model
+    protected function store (array $data)
     {
         return $this->model::create($data);
     }

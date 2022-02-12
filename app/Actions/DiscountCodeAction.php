@@ -212,10 +212,10 @@ class DiscountCodeAction extends Action
     /**
      * @param Request $request
      * @param string|array $validation_role
-     * @return mixed
+     * @return CustomResponseService|null
      * @throws CustomException
      */
-    public function check_if_user_can_use_discount_by_request (Request $request, $validation_role = 'check_if_user_can_use_the_discount')
+    public function check_if_user_can_use_discount_by_request (Request $request, $validation_role = 'check_if_user_can_use_the_discount'): ?CustomResponseService
     {
         $data = $this->get_data_from_request($request, $validation_role);
 
@@ -229,6 +229,20 @@ class DiscountCodeAction extends Action
         return $this->check_if_user_can_use_discount_by_discount_and_user_id(
             $discountCode,
             $this->get_user_from_request($request)->id
+        );
+    }
+
+    /**
+     * @param string $discount_code
+     * @param string $user_id
+     * @return CustomResponseService|null
+     * @throws CustomException
+     */
+    public function check_if_user_can_be_discount_by_discount_code_and_user_id (string $discount_code, string $user_id): ?CustomResponseService
+    {
+        return $this->check_if_user_can_use_discount_by_discount_and_user_id(
+            $this->get_by_field('code', $discount_code),
+            $user_id
         );
     }
 

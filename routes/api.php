@@ -19,6 +19,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\InformativeProductController;
 use App\Http\Controllers\TestQueueController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -132,6 +133,14 @@ Route::group([
                     Route::delete('/', [CartController::class, 'empty_the_cart']);
                     Route::put('/product/{id}', [CartController::class, 'store_or_update_cart_product']);
                     Route::delete('/product/{id}', [CartController::class, 'delete_cart_product']);
+
+                });
+
+                Route::group([
+                    'prefix' => '/order'
+                ], function(){
+
+                    Route::post('/', [OrderController::class, 'store']);
 
                 });
 
