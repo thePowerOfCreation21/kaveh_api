@@ -306,6 +306,14 @@ Route::group([
         });
 
         Route::group([
+            'prefix' => '/order'
+        ], function(){
+
+            Route::get('/', [OrderController::class, 'get']);
+
+        });
+
+        Route::group([
             'middleware' => ['RequiredPrivilege:manage_users|manage_discounts|send_notifications'],
             'prefix' => '/user'
         ], function (){

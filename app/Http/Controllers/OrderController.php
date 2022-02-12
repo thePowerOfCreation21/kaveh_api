@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Actions\OrderAction;
+use App\Exceptions\CustomException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function store (Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function store (Request $request): JsonResponse
     {
         (new OrderAction())->store_by_request($request);
 
@@ -15,4 +22,6 @@ class OrderController extends Controller
             'message' => 'order added successfully'
         ]);
     }
+
+
 }
