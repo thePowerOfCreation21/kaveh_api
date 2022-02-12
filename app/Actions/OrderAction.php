@@ -37,20 +37,15 @@ class OrderAction extends Action
 
         $order_data = $this->process_cart_contents($order_data);
 
-        if (isset($order_data['discount_code']))
-        {
-            $order_data['discount'] = (new DiscountCodeAction())
-                ->check_if_user_can_be_discount_by_discount_code_and_user_id($order_data['discount_code'], $user->id)
-                ->details->discountCode;
-            unset($order_data['discount_code']);
-
-            $order_data['amount'] = $this->apply_discount_to_order_amount($order_data['amount'], $order_data['discount']);
-        }
-
-        return $this->model::create($order_data);
+        return $this->store($order_data);
     }
 
-    public function apply_discount_to_order_amount (int $orderAmount, DiscountCode $discountCode)
+    /**
+     * @param int $orderAmount
+     * @param DiscountCode $discountCode
+     * @return int
+     */
+    public function apply_discount_to_order_amount (int $orderAmount, DiscountCode $discountCode): int
     {
         if ($discountCode->type == 'percent')
         {
@@ -66,7 +61,12 @@ class OrderAction extends Action
         return max($orderAmount, 0);
     }
 
-    public function process_cart_contents (array $order_data)
+    /**
+     * @param array $order_data
+     * @return array
+     * @throws CustomException
+     */
+    public function process_cart_contents (array $order_data): array
     {
         $order_data['amount'] = $order_data['amount'] ?? 0;
         $order_data['contents'] = $order_data['contents'] ?? [];
@@ -133,6 +133,10 @@ class OrderAction extends Action
         return $order_data;
     }
 
+    /**
+     * @param array $order_data
+     * @return Model|mixed
+     */
     public function store(array $order_data)
     {
         foreach ($order_data['contents'] AS $order_content)
@@ -140,6 +144,18 @@ class OrderAction extends Action
             $order_content->product->update([
                 'stock' => max(($order_content->product->stock - $order_content->quantity), 0)
             ]);
+        }
+
+        if (isset($order_data['discount_code']))
+        {
+            $order_data['discount'] = (new DiscountCodeAction())
+                ->check_if_user_can_be_discount_by_discount_code_and_user_id($order_data['discount_code'], $order_data['user_id'])
+                ->details->discountCode;
+            unset($order_data['discount_code']);
+
+            $order_data['discount']->usedByUserId($order_data['user_id']);
+
+            $order_data['amount'] = $this->apply_discount_to_order_amount($order_data['amount'], $order_data['discount']);
         }
 
         (new CartAction())->empty_the_cart($order_data['cart']);

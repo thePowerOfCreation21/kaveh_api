@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Actions\DiscountCodeAction;
 use App\Pivots\DiscountUsersPivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -63,5 +64,10 @@ class DiscountCode extends Model
     public function isExpired ()
     {
         return $this->expiration_date->timestamp < time();
+    }
+
+    public function usedByUserId (string $userId)
+    {
+        return (new DiscountCodeAction())->used_by_user_id($this, $userId);
     }
 }

@@ -18,7 +18,7 @@ class CreateOrdersTable extends Migration
             $table->string('user_id', 15);
             $table->integer('amount');
             $table->json('discount');
-            $table->json('contents');
+            $table->json('contents')->nullable();
             $table->timestamp('receipt_at');
             $table->timestamps();
         });

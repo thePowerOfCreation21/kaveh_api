@@ -6,6 +6,8 @@ use App\Abstracts\Action;
 use App\Exceptions\CustomException;
 use App\Models\Cart;
 use App\Models\CartProduct;
+use App\Models\DiscountCode;
+use App\Models\DiscountCodeUsers;
 use App\Models\Product;
 use App\Services\PaginationService;
 use Illuminate\Http\Request;

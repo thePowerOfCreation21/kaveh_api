@@ -297,15 +297,37 @@ class DiscountCodeAction extends Action
         }
 
         return (new CustomResponseService())->setResult(true)
-            ->details->setProperty('discountCode', $discountCode);
+            ->details->setProperties([
+                'discountCode' => $discountCode,
+                'discountUser' => $discountUser
+            ]);
     }
 
-    public function throwExceptionOrReturn (CustomResponseService $customResponse, bool $throwException = false)
+    /**
+     * @param CustomResponseService $customResponse
+     * @param bool $throwException
+     * @return CustomResponseService
+     * @throws CustomException
+     */
+    public function throwExceptionOrReturn (CustomResponseService $customResponse, bool $throwException = false): CustomResponseService
     {
         if ($throwException)
         {
             $customResponse->throwException();
         }
         return $customResponse;
+    }
+
+    public function used_by_user_id (DiscountCode $discountCode, string $user_id)
+    {
+        DiscountCodeUsers::where('discount_id', $discountCode->id)
+            ->where('user_id', $user_id)
+            ->delete();
+
+        return DiscountCodeUsers::create([
+            'discount_id' => $discountCode->id,
+            'user_id' => $user_id,
+            'is_used' => true
+        ]);
     }
 }
