@@ -26,6 +26,7 @@ class RequiredPrivilege
             foreach ($or_privileges AS $or_privilege_key => $or_privilege)
             {
                 $privileges = explode('&', $or_privilege);
+                $has_privilege = true;
                 foreach ($privileges AS $privilege_key => $privilege)
                 {
                     if (!isset($user->privileges->$privilege) || !$user->privileges->$privilege)
@@ -38,8 +39,13 @@ class RequiredPrivilege
                                 'required_privilege' => $privilege
                             ], 403);
                         }
+                        $has_privilege = false;
                         break;
                     }
+                }
+                if ($has_privilege)
+                {
+                    break;
                 }
             }
         }
