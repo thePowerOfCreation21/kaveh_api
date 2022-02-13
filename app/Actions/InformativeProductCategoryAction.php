@@ -54,6 +54,18 @@ class InformativeProductCategoryAction extends Action
         return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
     }
 
+    public function get_by_id(string $id)
+    {
+        $category = $this->query_to_eloquent(['id' => $id], null, true)->first();
+
+        if (empty($category))
+        {
+            throw new CustomException("category not found", 110, 404);
+        }
+
+        return $category;
+    }
+
     /**
      * @param array $query
      * @param $eloquent
@@ -63,6 +75,11 @@ class InformativeProductCategoryAction extends Action
     public function query_to_eloquent(array $query, $eloquent = null, bool $with_products = false)
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
+
+        if ($with_products)
+        {
+            $eloquent = $eloquent->with('products');
+        }
 
         if (isset($query['search']))
         {

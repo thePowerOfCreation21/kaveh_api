@@ -23,10 +23,22 @@ class InformativeProductCategoryController extends Controller
         ]);
     }
 
-    public function get (Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get (Request $request): JsonResponse
     {
         return response()->json(
             (new InformativeProductCategoryAction())->get_by_request($request)
+        );
+    }
+
+    public function get_by_id (string $id)
+    {
+        return response()->json(
+            (new InformativeProductCategoryAction())->get_by_id($id)
         );
     }
 }

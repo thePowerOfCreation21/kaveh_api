@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InformativeProduct extends Model
 {
@@ -15,6 +16,7 @@ class InformativeProduct extends Model
         'title',
         'image',
         'price',
+        'category_id',
         'description'
     ];
 
@@ -22,4 +24,12 @@ class InformativeProduct extends Model
         'created_at',
         'updated_at'
     ];
+
+    /**
+     * @return BelongsTo
+     */
+    public function category (): BelongsTo
+    {
+        return $this->belongsTo(InformativeProductCategory::class, 'category_id', 'id');
+    }
 }

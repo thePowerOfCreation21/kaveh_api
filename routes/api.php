@@ -110,6 +110,7 @@ Route::group([
 ], function (){
 
     Route::get('/', [InformativeProductCategoryController::class, 'get']);
+    Route::get('/{id}', [InformativeProductCategoryController::class, 'get_by_id']);
 
 });
 

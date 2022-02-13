@@ -12,12 +12,14 @@ class InformativeProductAction extends Action
 {
     protected $validation_roles = [
         'store' => [
+            'category_id' => 'exists:informative_product_categories,id',
             'title' => 'required|string|max:128',
             'image' => 'required|file|mimes:png,jpg,jpeg|max:10000',
             'price' => 'required|integer|min:1|max:10000000',
             'description' => 'string|max:1500'
         ],
         'update' => [
+            'category_id' => 'exists:informative_product_categories,id',
             'title' => 'string|max:128',
             'image' => 'file|mimes:png,jpg,jpeg|max:10000',
             'price' => 'integer|min:1|max:10000000',
@@ -112,6 +114,8 @@ class InformativeProductAction extends Action
     public function query_to_eloquent(array $query, $eloquent = null)
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
+
+        $eloquent = $eloquent->with('category');
 
         if (isset($query['search']))
         {
