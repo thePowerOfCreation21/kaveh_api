@@ -19,7 +19,7 @@ class CreateInformativeProductsTable extends Migration
             $table->string('image', 255);
             $table->string('description', 1500)->nullable();
             $table->integer('price')->unsigned();
-            $table->string('category_id');
+            $table->string('category_id')->nullable();
             $table->timestamps();
         });
     }
