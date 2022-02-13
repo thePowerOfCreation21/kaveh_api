@@ -64,7 +64,7 @@ class OrderController extends Controller
      * @return JsonResponse
      * @throws CustomException
      */
-    public function get_user_orders (Request $request)
+    public function get_user_orders (Request $request): JsonResponse
     {
         return response()->json(
             (new OrderAction())->get_user_orders_by_request($request)
