@@ -6,6 +6,7 @@ use App\Abstracts\Action;
 use App\Exceptions\CustomException;
 use App\Jobs\SendSMSToUsers;
 use App\Jobs\StoreNotificationUsers;
+use App\Models\NotificationUser;
 use App\Services\PaginationService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -143,6 +144,8 @@ class NotificationAction extends Action
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
 
+        $eloquent = $eloquent->orderBy('id', 'DESC');
+
         if (isset($query['user_id']))
         {
             $userId = $query['user_id'];
@@ -174,7 +177,35 @@ class NotificationAction extends Action
         return $eloquent;
     }
 
-    public function get_user_notifications_by_request (Request $request, $validation_role = 'get_user_notifications_query')
+    /**
+     * @param Request $request
+     * @param string $notificationId
+     * @return mixed
+     * @throws CustomException
+     */
+    public function seen_by_request_and_notification_id (Request $request, string $notificationId)
+    {
+        $user = $this->get_user_from_request($request);
+        $notification = $this->get_by_field('id', $notificationId);
+
+        NotificationUser::where('user_id', $user->id)
+            ->where('notification_id', $notificationId)
+            ->delete();
+
+        return NotificationUser::create([
+            'notification_id' => $notification->id,
+            'user_id' => $user->id,
+            'is_seen' => true
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return object
+     * @throws CustomException
+     */
+    public function get_user_notifications_by_request (Request $request, $validation_role = 'get_user_notifications_query'): object
     {
         $user = $this->get_user_from_request($request);
         $query = ['user_id' => $user->id];

@@ -52,4 +52,13 @@ class NotificationController extends Controller
             (new NotificationAction())->get_user_notifications_by_request($request)
         );
     }
+
+    public function seen_by_user (Request $request, string $notificationId)
+    {
+        (new NotificationAction())->seen_by_request_and_notification_id($request, $notificationId);
+
+        return response()->json([
+            'message' => 'action done successfully'
+        ]);
+    }
 }
