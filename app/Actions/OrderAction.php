@@ -158,7 +158,7 @@ class OrderAction extends Action
     /**
      * @param array $query
      * @param null $eloquent
-     * @param bool $with_users
+     * @param bool $with_user
      * @return Model|Builder|null
      */
     public function query_to_eloquent(array $query, $eloquent = null, bool $with_user = true)
