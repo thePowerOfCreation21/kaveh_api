@@ -1,25 +1,26 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AboutUsController;
-use App\Http\Controllers\GalleryImageController;
-use App\Http\Controllers\ContactUsContentController;
-use App\Http\Controllers\ContactUsMessageController;
-use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\BranchController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\BranchController;
+use App\Http\Controllers\AboutUsController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\LicenseController;
+use App\Http\Controllers\TestQueueController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\GalleryImageController;
 use App\Http\Controllers\DiscountCodeController;
 use App\Http\Controllers\CommonQuestionController;
 use App\Http\Controllers\OrderTimeLimitController;
-use App\Http\Controllers\LicenseController;
+use App\Http\Controllers\ContactUsContentController;
+use App\Http\Controllers\ContactUsMessageController;
 use App\Http\Controllers\NotificationFrameController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\InformativeProductController;
-use App\Http\Controllers\TestQueueController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\OrderController;
+use App\Http\Controllers\InformativeProductCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -259,6 +260,14 @@ Route::group([
                 Route::post('/', [InformativeProductController::class, 'store']);
                 Route::put('/{id}', [InformativeProductController::class, 'update_by_id']);
                 Route::delete('/{id}', [InformativeProductController::class, 'delete_by_id']);
+
+            });
+
+            Route::group([
+                'prefix' => '/informative_product_category'
+            ], function(){
+
+                Route::post('/', [InformativeProductCategoryController::class, 'store']);
 
             });
 
