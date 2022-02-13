@@ -19,7 +19,6 @@ class CreateOrdersTable extends Migration
             $table->integer('amount');
             $table->json('discount')->nullable();
             $table->json('contents');
-            $table->timestamp('receipt_at');
             $table->timestamps();
         });
     }

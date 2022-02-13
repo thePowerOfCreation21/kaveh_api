@@ -20,12 +20,16 @@ class OrderAction extends Action
             'discount_code' => 'string|max:255'
         ],
         'get_query' => [
-            'receipt_at_from' => 'integer|min:1|max:9999999999',
-            'receipt_at_to' => 'integer|min:1|max:9999999999',
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
-            'product_id' => 'integer|min:1|max:99999999999'
+            'product_id' => 'integer|min:1|max:99999999999',
+            'user_id' => 'integer|min:1|max:99999999999',
+            'todays_orders' => 'in:true,false'
         ]
+    ];
+
+    protected $unusual_fields = [
+        'todays_orders' => 'boolean'
     ];
 
     public function __construct()
@@ -62,16 +66,6 @@ class OrderAction extends Action
 
         $eloquent = $eloquent->with('user');
 
-        if (isset($query['receipt_at_from']))
-        {
-            $eloquent = $eloquent->whereDate('receipt_at', '>=', date("Y-m-d", $query['receipt_at_from']));
-        }
-
-        if (isset($query['receipt_at_to']))
-        {
-            $eloquent = $eloquent->whereDate('receipt_at', '<=', date("Y-m-d", $query['receipt_at_to']));
-        }
-
         if (isset($query['created_at_from']))
         {
             $eloquent = $eloquent->whereDate('created_at', '>=', date("Y-m-d", $query['created_at_from']));
@@ -84,15 +78,27 @@ class OrderAction extends Action
 
         if (isset($query['product_id']))
         {
-            /*
-            $eloquent = $eloquent->whereJsonContains('contents', [
-                'product' => [
-                    'id' => '1'
-                ]
-            ]);
-            */
-
             $eloquent = $eloquent->whereRaw("JSON_EXTRACT(contents, '$[*].product.id') = '[{$query['product_id']}]'");
+        }
+
+        if (isset($query['user_id']))
+        {
+            $eloquent = $eloquent->where('user_id', $query['user_id']);
+        }
+
+        if (isset($query['todays_orders']) && $query['todays_orders'])
+        {
+            $today_time = time() - strtotime('today');
+            $end_of_order_range = (new OrderTimeLimit())->get_end_of_order_range();
+
+            if ($today_time > $end_of_order_range)
+            {
+                $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d'));
+            }
+            else
+            {
+                $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d', strtotime('-1 days')));
+            }
         }
 
         return $eloquent;
@@ -234,8 +240,6 @@ class OrderAction extends Action
 
         (new CartAction())->empty_the_cart($order_data['cart']);
         unset($order_data['cart']);
-
-        $order_data['receipt_at'] = 'tomorrow';
 
         return $this->model::create($order_data);
     }

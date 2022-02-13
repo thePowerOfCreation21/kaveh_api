@@ -99,4 +99,10 @@ class OrderTimeLimit extends KeyObjectConfig
 
         return $orderTimeLimit;
     }
+
+    public function get_end_of_order_range ()
+    {
+        $orderTimeLimit = $this->get();
+        return max($orderTimeLimit->limited->to, $orderTimeLimit->unlimited->to);
+    }
 }

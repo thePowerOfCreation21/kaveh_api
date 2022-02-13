@@ -22,7 +22,6 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'receipt_at' => CustomDateCast::class,
         'created_at' => CustomDateCast::class,
         'discount' => 'object',
         'contents' => 'object',
