@@ -308,6 +308,7 @@ Route::group([
             ], function(){
 
                 Route::get('/', [OrderController::class, 'get']);
+                Route::get('/{id}', [OrderController::class, 'get_by_id']);
 
 
             });

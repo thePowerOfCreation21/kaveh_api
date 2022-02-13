@@ -284,7 +284,7 @@ abstract class Action
      */
     protected function get_by_field (string $field, string $value)
     {
-        $entity = $this->model::where($field, $value)->first();
+        $entity = $this->query_to_eloquent([])->where($field, $value)->first();
 
         if (empty($entity))
         {

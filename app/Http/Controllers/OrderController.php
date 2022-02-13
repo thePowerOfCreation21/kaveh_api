@@ -34,4 +34,11 @@ class OrderController extends Controller
             (new OrderAction())->get_by_request($request)
         );
     }
+
+    public function get_by_id (string $id)
+    {
+        return response()->json(
+            (new OrderAction())->get_by_id($id)
+        );
+    }
 }

@@ -37,6 +37,11 @@ class OrderAction extends Action
         $this->model = Order::class;
     }
 
+    public function get_by_id(string $id)
+    {
+        return parent::get_by_id($id);
+    }
+
     /**
      * @param Request $request
      * @param string|array $query_validation_role
