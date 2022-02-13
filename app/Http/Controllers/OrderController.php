@@ -70,4 +70,15 @@ class OrderController extends Controller
             (new OrderAction())->get_user_orders_by_request($request)
         );
     }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function get_user_product_stats (Request $request): JsonResponse
+    {
+        return response()->json(
+            (new OrderAction())->get_user_product_stats_by_request($request)
+        );
+    }
 }

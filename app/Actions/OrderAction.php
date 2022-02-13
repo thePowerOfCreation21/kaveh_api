@@ -32,6 +32,10 @@ class OrderAction extends Action
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
             'product_id' => 'integer|min:1|max:99999999999',
+        ],
+        'get_user_product_stats' => [
+            'created_at_from' => 'integer|min:1|max:9999999999',
+            'created_at_to' => 'integer|min:1|max:9999999999',
         ]
     ];
 
@@ -89,11 +93,26 @@ class OrderAction extends Action
     public function get_user_orders_by_request (Request $request, $validation_role = 'get_user_orders_query'): object
     {
         $user = $this->get_user_from_request($request);
-        $query = $this->get_data_from_request($request, $validation_role);
+        $query['user_id'] = $user->id;
+        $query = array_merge($query, $this->get_data_from_request($request, $validation_role));
         return PaginationService::paginate_with_request(
             $request,
             $this->query_to_eloquent($query, null, false)
         );
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return array
+     * @throws CustomException
+     */
+    public function get_user_product_stats_by_request (Request $request, $validation_role = 'get_user_product_stats'): array
+    {
+        $user = $this->get_user_from_request($request);
+        $query['user_id'] = $user->id;
+        $query = array_merge($query, $this->get_data_from_request($request, $validation_role));
+        return $this->get_product_stats($query);
     }
 
     /**
@@ -142,15 +161,15 @@ class OrderAction extends Action
      * @param bool $with_users
      * @return Model|Builder|null
      */
-    public function query_to_eloquent(array $query, $eloquent = null, bool $with_users = true)
+    public function query_to_eloquent(array $query, $eloquent = null, bool $with_user = true)
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
 
         $eloquent = $eloquent->with('contents');
 
-        if ($with_users)
+        if ($with_user)
         {
-            $eloquent = $eloquent->with('users');
+            $eloquent = $eloquent->with('user');
         }
 
         if (isset($query['created_at_from']))

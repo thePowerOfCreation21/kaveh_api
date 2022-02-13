@@ -153,6 +153,7 @@ Route::group([
 
                     Route::post('/', [OrderController::class, 'store']);
                     Route::get('/', [OrderController::class, 'get_user_orders']);
+                    Route::get('/product_stats', [OrderController::class, 'get_user_product_stats']);
 
                 });
 
