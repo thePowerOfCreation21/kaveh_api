@@ -75,17 +75,25 @@ abstract class Action
      *
      * @param array $data
      * @return array
+     * @throws CustomException
      */
     protected function manage_unusual_fields (array $data): array
     {
-        foreach ($this->unusual_fields as $unusual_field => $unusual_field_type)
+        foreach ($this->unusual_fields as $unusual_field => $unusual_field_options)
         {
+            $unusual_field_options = explode(':', $unusual_field_options);
+
+            $unusual_field_options = [
+                'type' => $unusual_field_options[0],
+                'configs' => $unusual_field_options[1] ?? null,
+            ];
+
             if (!isset($data[$unusual_field]))
             {
                 continue;
             }
 
-            switch ($unusual_field_type)
+            switch ($unusual_field_options['type'])
             {
                 case 'file':
                     if (is_a($data[$unusual_field], UploadedFile::class) && !empty($data[$unusual_field]))
@@ -97,10 +105,33 @@ abstract class Action
                     break;
                 case 'boolean':
                     $data[$unusual_field] = convert_to_boolean($data[$unusual_field]);
+                    break;
+                case 'regex':
+                    $data[$unusual_field] = $this->check_regex($data[$unusual_field], $unusual_field_options['configs'], $unusual_field);
             }
+
         }
 
         return $data;
+    }
+
+    /**
+     * @param string $string
+     * @param string $regex
+     * @param string|null $field_name
+     * @return string
+     * @throws CustomException
+     */
+    public function check_regex (string $string, string $regex, string $field_name = null): string
+    {
+        preg_match($regex, $string, $matches);
+
+        if (empty($matches))
+        {
+            throw new CustomException("could not match $field_name with required regex pattern", 30, 400);
+        }
+
+        return $matches[0];
     }
 
     /**

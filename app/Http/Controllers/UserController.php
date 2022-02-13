@@ -101,4 +101,13 @@ class UserController extends Controller
             'message' => 'password changed successfully'
         ]);
     }
+
+    public function update_by_request (Request $request)
+    {
+        (new UserAction())->update_user_by_request($request);
+
+        return response()->json([
+            'message' => 'updated successfully'
+        ]);
+    }
 }

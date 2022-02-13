@@ -47,6 +47,10 @@ class UserAction extends Action
             'password' => 'string|min:6|max:100',
             'area' => 'string|max:255'
         ],
+        'update_by_user' => [
+            'second_phone_number' => 'regex:/09\d{9}/',
+            'card_number' => 'numeric|min:1000000000000000|max:9999999999999999'
+        ],
         'block_user' => [
             'reason_for_blocking' => 'required|string|max:255'
         ],
@@ -56,6 +60,11 @@ class UserAction extends Action
         'get_notifications_query' => [
             'is_seen' => 'in:true,false'
         ]
+    ];
+
+    protected $unusual_fields = [
+        'phone_number' => 'regex:/09\d{9}/',
+        'second_phone_number' => 'regex:/09\d{9}/',
     ];
 
     public function __construct()
@@ -375,13 +384,18 @@ class UserAction extends Action
         );
     }
 
+    /**
+     * @param array $update_data
+     * @param Model $user
+     * @return Model
+     * @throws CustomException
+     */
     public function update_by_model (array $update_data, Model $user): Model
     {
         isset($update_data['password']) && ($update_data['password'] = Hash::make($update_data['password']));
 
         if (isset($update_data['phone_number']))
         {
-            $update_data['phone_number'] = $this->check_phone_number($update_data['phone_number']);
 
             if (
                 User::where('id', '!=', $user->id)
@@ -396,6 +410,15 @@ class UserAction extends Action
         $user->update($update_data);
 
         return $user;
+    }
+
+    public function update_user_by_request(Request $request,  $validation_role = 'update_by_user')
+    {
+        $user = $this->get_user_from_request($request);
+        return $this->update_by_model(
+            $this->get_data_from_request($request, $validation_role),
+            $user
+        );
     }
 
     /**
@@ -454,7 +477,6 @@ class UserAction extends Action
      */
     public function store (array $data): Model
     {
-        $data['phone_number'] = $this->check_phone_number($data['phone_number']);
 
         if (
             User::where('phone_number', $data['phone_number'])->exists()
@@ -466,23 +488,6 @@ class UserAction extends Action
         !empty($data['password']) && $data['password'] = Hash::make($data['password']);
 
         return $this->model::create($data);
-    }
-
-    /**
-     * @param string $phone_number
-     * @return string
-     * @throws CustomException
-     */
-    public function check_phone_number (string $phone_number): string
-    {
-        preg_match("/09\d{9}/", $phone_number, $phone_numbers);
-
-        if (empty($phone_numbers))
-        {
-            throw new CustomException('could not match phone number with required regex pattern', 30, 400);
-        }
-
-        return $phone_numbers[0];
     }
 
     /**

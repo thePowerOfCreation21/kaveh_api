@@ -134,6 +134,7 @@ Route::group([
             ], function(){
 
                 Route::get('/info', [UserController::class, 'get_user_from_request']);
+                Route::put('/info', [UserController::class, 'update_by_request']);
 
                 Route::group([
                     'prefix' => '/cart'
