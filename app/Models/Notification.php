@@ -25,6 +25,7 @@ class Notification extends Model
     protected $casts = [
         'is_for_all_users' => 'boolean',
         'created_at' => CustomDateCast::class,
+        'is_seen' => 'boolean'
     ];
 
     public function users()

@@ -157,6 +157,8 @@ Route::group([
 
                 });
 
+                Route::get('/notifications', [NotificationController::class, 'get_user_notifications']);
+
                 Route::get('/discount/check', [DiscountCodeController::class, 'check_if_user_can_use_the_discount']);
 
             });

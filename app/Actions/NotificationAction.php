@@ -30,7 +30,15 @@ class NotificationAction extends Action
         'get_users_query' => [
             'is_seen' => 'in:true,false',
             'search' => 'string|max:100'
+        ],
+        'get_user_notifications_query' => [
+            'type' => 'in:message,toast',
+            'is_seen' => 'in:true,false'
         ]
+    ];
+
+    protected $unusual_fields = [
+        'is_seen' => 'boolean'
     ];
 
     public function __construct()
@@ -135,6 +143,24 @@ class NotificationAction extends Action
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
 
+        if (isset($query['user_id']))
+        {
+            $userId = $query['user_id'];
+            $eloquent = $eloquent->selectRaw("notifications.*, notification_users.is_seen")
+                ->leftJoin('notification_users', function ($join){
+                    $join->on('notifications.id', 'notification_users.notification_id');
+                })
+                ->where(function($q) use ($userId){
+                    $q->where("notifications.is_for_all_users", true)
+                        ->orWhere("notification_users.user_id", $userId);
+                });
+
+            if (isset($query['is_seen']))
+            {
+                $eloquent = $eloquent->where('notification_users.is_seen', $query['is_seen']);
+            }
+        }
+
         if (isset($query['type']))
         {
             $eloquent = $eloquent->where('type', $query['type']);
@@ -145,17 +171,18 @@ class NotificationAction extends Action
             $eloquent = $eloquent->where('text', 'LIKE', "%{$query['search']}%");
         }
 
-        if (isset($query['user_id']))
-        {
-            $eloquent = $eloquent->select("notifications.*")
-                ->leftJoin('notification_users', function ($join){
-                    $join->on('notifications.id', 'notification_users.notification_id');
-                })
-                ->where("notifications.is_for_all_users", true)
-                ->orWhere("notification_users.user_id", $query['user_id']);
-        }
-
         return $eloquent;
+    }
+
+    public function get_user_notifications_by_request (Request $request, $validation_role = 'get_user_notifications_query')
+    {
+        $user = $this->get_user_from_request($request);
+        $query = ['user_id' => $user->id];
+        $query = array_merge($query, $this->get_data_from_request($request, $validation_role));
+        return PaginationService::paginate_with_request(
+            $request,
+            $this->query_to_eloquent($query)
+        );
     }
 
     /**
