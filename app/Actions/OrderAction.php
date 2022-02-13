@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderTimeLimit;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 
 class OrderAction extends Action
@@ -17,12 +18,84 @@ class OrderAction extends Action
     protected $validation_roles = [
         'store' => [
             'discount_code' => 'string|max:255'
+        ],
+        'get_query' => [
+            'receipt_at_from' => 'integer|min:1|max:9999999999',
+            'receipt_at_to' => 'integer|min:1|max:9999999999',
+            'created_at_from' => 'integer|min:1|max:9999999999',
+            'created_at_to' => 'integer|min:1|max:9999999999',
+            'product_id' => 'integer|min:1|max:99999999999'
         ]
     ];
 
     public function __construct()
     {
         $this->model = Order::class;
+    }
+
+    /**
+     * @param Request $request
+     * @param string|array $query_validation_role
+     * @param $eloquent
+     * @param array $order_by
+     * @return object
+     * @throws CustomException
+     */
+    public function get_by_request(
+        Request $request,
+        $query_validation_role = 'get_query',
+        $eloquent = null,
+        array $order_by = ['id' => 'DESC']
+    ): object
+    {
+        return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+    }
+
+    /**
+     * @param array $query
+     * @param $eloquent
+     * @return Model|Builder|null
+     */
+    public function query_to_eloquent(array $query, $eloquent = null)
+    {
+        $eloquent = parent::query_to_eloquent($query, $eloquent);
+
+        $eloquent = $eloquent->with('user');
+
+        if (isset($query['receipt_at_from']))
+        {
+            $eloquent = $eloquent->whereDate('receipt_at', '>=', date("Y-m-d", $query['receipt_at_from']));
+        }
+
+        if (isset($query['receipt_at_to']))
+        {
+            $eloquent = $eloquent->whereDate('receipt_at', '<=', date("Y-m-d", $query['receipt_at_to']));
+        }
+
+        if (isset($query['created_at_from']))
+        {
+            $eloquent = $eloquent->whereDate('created_at', '>=', date("Y-m-d", $query['created_at_from']));
+        }
+
+        if (isset($query['created_at_to']))
+        {
+            $eloquent = $eloquent->whereDate('created_at', '<=', date("Y-m-d", $query['created_at_to']));
+        }
+
+        if (isset($query['product_id']))
+        {
+            /*
+            $eloquent = $eloquent->whereJsonContains('contents', [
+                'product' => [
+                    'id' => '1'
+                ]
+            ]);
+            */
+
+            $eloquent = $eloquent->whereRaw("JSON_EXTRACT(contents, '$[*].product.id') = '[{$query['product_id']}]'");
+        }
+
+        return $eloquent;
     }
 
     public function store_by_request(Request $request, $validation_role = 'store')
@@ -136,6 +209,7 @@ class OrderAction extends Action
     /**
      * @param array $order_data
      * @return Model|mixed
+     * @throws CustomException
      */
     public function store(array $order_data)
     {

@@ -303,14 +303,14 @@ Route::group([
 
             });
 
-        });
+            Route::group([
+                'prefix' => '/order'
+            ], function(){
 
-        Route::group([
-            'prefix' => '/order'
-        ], function(){
+                Route::get('/', [OrderController::class, 'get']);
 
-            Route::get('/', [OrderController::class, 'get']);
 
+            });
 
         });
 

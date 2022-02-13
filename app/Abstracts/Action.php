@@ -35,7 +35,7 @@ abstract class Action
 
         if (!is_a($user, User::class))
         {
-            throw new CustomException("user should be constant of ".User::class, 101, 500);
+            throw new CustomException("user should be instance of ".User::class, 101, 500);
         }
 
         return $user;
@@ -273,7 +273,7 @@ abstract class Action
      */
     protected function get_by_id (string $id)
     {
-        return $this->get_entity(['id' => $id]);
+        return $this->get_by_field('id', $id);
     }
 
     /**

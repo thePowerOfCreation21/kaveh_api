@@ -23,5 +23,15 @@ class OrderController extends Controller
         ]);
     }
 
-
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get (Request $request): JsonResponse
+    {
+        return response()->json(
+            (new OrderAction())->get_by_request($request)
+        );
+    }
 }
