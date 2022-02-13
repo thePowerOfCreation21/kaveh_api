@@ -31,4 +31,22 @@ class InformativeProductCategoryAction extends Action
     {
         return parent::store_by_request($request, $validation_role);
     }
+
+    /**
+     * @param Request $request
+     * @param string|array $query_validation_role
+     * @param $eloquent
+     * @param array $order_by
+     * @return object
+     * @throws CustomException
+     */
+    public function get_by_request(
+        Request $request,
+        $query_validation_role = 'get_query',
+        $eloquent = null,
+        array $order_by = ['id' => 'DESC']
+    ): object
+    {
+        return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+    }
 }

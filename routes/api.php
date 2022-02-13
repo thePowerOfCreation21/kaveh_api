@@ -106,6 +106,14 @@ Route::group([
 });
 
 Route::group([
+    'prefix' => '/informative_product_category'
+], function (){
+
+    Route::get('/', [InformativeProductCategoryController::class, 'get']);
+
+});
+
+Route::group([
     'middleware' => ['auth:sanctum']
 ], function(){
 
