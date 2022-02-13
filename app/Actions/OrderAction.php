@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\DiscountCode;
 use App\Models\Order;
 use App\Models\OrderTimeLimit;
+use App\Services\PaginationService;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
@@ -26,6 +27,11 @@ class OrderAction extends Action
             'product_id' => 'integer|min:1|max:99999999999',
             'user_id' => 'integer|min:1|max:99999999999',
             'todays_orders' => 'in:true,false'
+        ],
+        'get_user_orders_query' => [
+            'created_at_from' => 'integer|min:1|max:9999999999',
+            'created_at_to' => 'integer|min:1|max:9999999999',
+            'product_id' => 'integer|min:1|max:99999999999',
         ]
     ];
 
@@ -61,15 +67,40 @@ class OrderAction extends Action
         return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
     }
 
-
-    public function get_product_stats_by_request (Request $request, $validation_role = 'get_query')
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return array
+     * @throws CustomException
+     */
+    public function get_product_stats_by_request (Request $request, $validation_role = 'get_query'): array
     {
         return $this->get_product_stats(
             $this->get_data_from_request($request, $validation_role)
         );
     }
 
-    public function get_product_stats (array $query)
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return object
+     * @throws CustomException
+     */
+    public function get_user_orders_by_request (Request $request, $validation_role = 'get_user_orders_query'): object
+    {
+        $user = $this->get_user_from_request($request);
+        $query = $this->get_data_from_request($request, $validation_role);
+        return PaginationService::paginate_with_request(
+            $request,
+            $this->query_to_eloquent($query, null, false)
+        );
+    }
+
+    /**
+     * @param array $query
+     * @return array
+     */
+    public function get_product_stats (array $query): array
     {
         $stats = [];
         $temp_stats = [];
@@ -107,16 +138,20 @@ class OrderAction extends Action
 
     /**
      * @param array $query
-     * @param $eloquent
+     * @param null $eloquent
+     * @param bool $with_users
      * @return Model|Builder|null
      */
-    public function query_to_eloquent(array $query, $eloquent = null)
+    public function query_to_eloquent(array $query, $eloquent = null, bool $with_users = true)
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
 
-        $eloquent = $eloquent
-            ->with('user')
-            ->with('contents');
+        $eloquent = $eloquent->with('contents');
+
+        if ($with_users)
+        {
+            $eloquent = $eloquent->with('users');
+        }
 
         if (isset($query['created_at_from']))
         {

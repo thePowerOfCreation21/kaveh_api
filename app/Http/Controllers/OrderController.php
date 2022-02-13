@@ -47,10 +47,27 @@ class OrderController extends Controller
         );
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
     public function get_product_stats (Request $request)
     {
         return response()->json(
             (new OrderAction())->get_product_stats_by_request($request)
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get_user_orders (Request $request)
+    {
+        return response()->json(
+            (new OrderAction())->get_user_orders_by_request($request)
         );
     }
 }

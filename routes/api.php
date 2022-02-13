@@ -141,6 +141,7 @@ Route::group([
                 ], function(){
 
                     Route::post('/', [OrderController::class, 'store']);
+                    Route::get('/', [OrderController::class, 'get_user_orders']);
 
                 });
 
