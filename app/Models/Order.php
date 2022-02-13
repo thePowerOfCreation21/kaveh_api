@@ -17,14 +17,12 @@ class Order extends Model
         'user_id',
         'amount',
         'discount',
-        'contents',
         'receipt_at'
     ];
 
     protected $casts = [
         'created_at' => CustomDateCast::class,
         'discount' => 'object',
-        'contents' => 'object',
     ];
 
     protected $hidden = [
@@ -44,5 +42,10 @@ class Order extends Model
             'card_number',
             'is_blocked'
         ]);
+    }
+
+    public function contents ()
+    {
+        return $this->hasMany(OrderContent::class, 'order_id', 'id');
     }
 }

@@ -12,6 +12,7 @@ use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
+use App\Models\OrderContent;
 
 class OrderAction extends Action
 {
@@ -22,7 +23,6 @@ class OrderAction extends Action
         'get_query' => [
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
-            'product_id' => 'integer|min:1|max:99999999999',
             'user_id' => 'integer|min:1|max:99999999999',
             'todays_orders' => 'in:true,false'
         ]
@@ -69,7 +69,9 @@ class OrderAction extends Action
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
 
-        $eloquent = $eloquent->with('user');
+        $eloquent = $eloquent
+            ->with('user')
+            ->with('contents');
 
         if (isset($query['created_at_from']))
         {
@@ -79,11 +81,6 @@ class OrderAction extends Action
         if (isset($query['created_at_to']))
         {
             $eloquent = $eloquent->whereDate('created_at', '<=', date("Y-m-d", $query['created_at_to']));
-        }
-
-        if (isset($query['product_id']))
-        {
-            $eloquent = $eloquent->whereRaw("JSON_EXTRACT(contents, '$[*].product.id') = '[{$query['product_id']}]'");
         }
 
         if (isset($query['user_id']))
@@ -197,7 +194,9 @@ class OrderAction extends Action
                 continue;
             }
 
-            $order_data['contents'][] = $cart_content;
+            $cart_content->product_id = $cart_content->product->id;
+
+            $order_data['contents'][] = (array) $cart_content;
 
             $order_data['amount'] += $cart_content->amount;
         }
@@ -226,8 +225,8 @@ class OrderAction extends Action
     {
         foreach ($order_data['contents'] AS $order_content)
         {
-            $order_content->product->update([
-                'stock' => max(($order_content->product->stock - $order_content->quantity), 0)
+            $order_content['product']->update([
+                'stock' => max(($order_content['product']['stock'] - $order_content['quantity']), 0)
             ]);
         }
 
@@ -246,6 +245,19 @@ class OrderAction extends Action
         (new CartAction())->empty_the_cart($order_data['cart']);
         unset($order_data['cart']);
 
-        return $this->model::create($order_data);
+        $order = $this->model::create($order_data);
+
+        $this->store_contents($order->id, $order_data['contents']);
+
+        return $order;
+    }
+
+    public function store_contents (string $orderId, array $contents)
+    {
+        foreach ($contents AS $content)
+        {
+            $content['order_id'] = $orderId;
+            OrderContent::create($content);
+        }
     }
 }
