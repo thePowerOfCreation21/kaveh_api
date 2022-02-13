@@ -6,6 +6,7 @@ use App\Abstracts\Action;
 use App\Exceptions\CustomException;
 use App\Models\InformativeProductCategory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 
 class InformativeProductCategoryAction extends Action
@@ -13,6 +14,9 @@ class InformativeProductCategoryAction extends Action
     protected $validation_roles = [
         'store' => [
             'title' => 'required|string|max:255'
+        ],
+        'get_query' => [
+            'search' => 'string|max:255'
         ]
     ];
 
@@ -48,5 +52,23 @@ class InformativeProductCategoryAction extends Action
     ): object
     {
         return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+    }
+
+    /**
+     * @param array $query
+     * @param $eloquent
+     * @param bool $with_products
+     * @return Model|Builder|null
+     */
+    public function query_to_eloquent(array $query, $eloquent = null, bool $with_products = false)
+    {
+        $eloquent = parent::query_to_eloquent($query, $eloquent);
+
+        if (isset($query['search']))
+        {
+            $eloquent = $eloquent->where('title', 'LIKE', "%{$query['search']}%");
+        }
+
+        return $eloquent;
     }
 }
