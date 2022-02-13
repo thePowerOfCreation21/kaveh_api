@@ -20,7 +20,6 @@ class CreateOrderContentsTable extends Migration
             $table->integer('amount');
             $table->string('product_id', 15);
             $table->json('product');
-            $table->timestamps();
         });
     }
 
