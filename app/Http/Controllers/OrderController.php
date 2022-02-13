@@ -35,10 +35,22 @@ class OrderController extends Controller
         );
     }
 
-    public function get_by_id (string $id)
+    /**
+     * @param string $id
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get_by_id (string $id): JsonResponse
     {
         return response()->json(
             (new OrderAction())->get_by_id($id)
+        );
+    }
+
+    public function get_product_stats (Request $request)
+    {
+        return response()->json(
+            (new OrderAction())->get_product_stats_by_request($request)
         );
     }
 }

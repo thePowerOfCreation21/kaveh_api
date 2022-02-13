@@ -24,6 +24,11 @@ class OrderContent extends Model
         'product' => 'object'
     ];
 
+    protected $hidden = [
+        'id',
+        'order_id'
+    ];
+
     public $timestamps = false;
 
     /**

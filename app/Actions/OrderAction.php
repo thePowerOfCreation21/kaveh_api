@@ -61,6 +61,50 @@ class OrderAction extends Action
         return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
     }
 
+
+    public function get_product_stats_by_request (Request $request, $validation_role = 'get_query')
+    {
+        return $this->get_product_stats(
+            $this->get_data_from_request($request, $validation_role)
+        );
+    }
+
+    public function get_product_stats (array $query)
+    {
+        $stats = [];
+        $temp_stats = [];
+        $orders = $this->query_to_eloquent($query)->get();
+
+        foreach ($orders AS $order)
+        {
+            foreach ($order->contents AS $order_content)
+            {
+                if (!isset($temp_stats[$order_content['product']->id]))
+                {
+                    $temp_stats[$order_content['product']->id] = [
+                        'quantity' => $order_content['quantity'],
+                        'amount' => $order_content['amount'],
+                        'product' => $order_content['product'],
+                    ];
+                }
+                else
+                {
+                    $temp_stats[$order_content['product']->id] = [
+                        'quantity' => $temp_stats[$order_content['product']->id] + $order_content['quantity'],
+                        'amount' => $temp_stats[$order_content['product']->id] + $order_content['amount'],
+                    ];
+                }
+            }
+        }
+
+        foreach ($temp_stats AS $stat)
+        {
+            $stats[] = $stat;
+        }
+
+        return $stats;
+    }
+
     /**
      * @param array $query
      * @param $eloquent
@@ -116,6 +160,12 @@ class OrderAction extends Action
         return $eloquent;
     }
 
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return Model|mixed
+     * @throws CustomException
+     */
     public function store_by_request(Request $request, $validation_role = 'store')
     {
         $order_data = $this->get_data_from_request($request, $validation_role);
@@ -262,6 +312,11 @@ class OrderAction extends Action
         return $order;
     }
 
+    /**
+     * @param string $orderId
+     * @param array $contents
+     * @return void
+     */
     public function store_contents (string $orderId, array $contents)
     {
         foreach ($contents AS $content)
