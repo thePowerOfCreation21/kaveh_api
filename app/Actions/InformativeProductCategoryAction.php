@@ -15,6 +15,9 @@ class InformativeProductCategoryAction extends Action
         'store' => [
             'title' => 'required|string|max:255'
         ],
+        'update' => [
+            'title' => 'required|string|max:255'
+        ],
         'get_query' => [
             'search' => 'string|max:255'
         ]
@@ -34,6 +37,11 @@ class InformativeProductCategoryAction extends Action
     public function store_by_request(Request $request, $validation_role = 'store')
     {
         return parent::store_by_request($request, $validation_role);
+    }
+
+    public function update_entity_by_request_and_id(Request $request, string $id)
+    {
+        return parent::update_entity_by_request_and_id($request, $id);
     }
 
     /**

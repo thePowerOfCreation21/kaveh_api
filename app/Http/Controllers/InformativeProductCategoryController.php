@@ -35,10 +35,29 @@ class InformativeProductCategoryController extends Controller
         );
     }
 
-    public function get_by_id (string $id)
+    /**
+     * @param string $id
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get_by_id (string $id): JsonResponse
     {
         return response()->json(
             (new InformativeProductCategoryAction())->get_by_id($id)
         );
+    }
+
+    /**
+     * @param string $id
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function update_by_id (Request $request, string $id): JsonResponse
+    {
+        (new InformativeProductCategoryAction())->update_entity_by_request_and_id($request, $id);
+
+        return response()->json([
+            'message' => 'updated successfully'
+        ]);
     }
 }
