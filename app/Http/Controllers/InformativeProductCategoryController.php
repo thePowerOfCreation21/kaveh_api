@@ -48,6 +48,7 @@ class InformativeProductCategoryController extends Controller
     }
 
     /**
+     * @param Request $request
      * @param string $id
      * @return JsonResponse
      * @throws CustomException
@@ -58,6 +59,19 @@ class InformativeProductCategoryController extends Controller
 
         return response()->json([
             'message' => 'updated successfully'
+        ]);
+    }
+
+    /**
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function delete_by_id (string $id): JsonResponse
+    {
+        (new InformativeProductCategoryAction())->delete_by_id($id);
+
+        return response()->json([
+            'message' => 'deleted successfully'
         ]);
     }
 }

@@ -278,6 +278,7 @@ Route::group([
 
                 Route::post('/', [InformativeProductCategoryController::class, 'store']);
                 Route::put('/{id}', [InformativeProductCategoryController::class, 'update_by_id']);
+                Route::delete('/{id}', [InformativeProductCategoryController::class, 'delete_by_id']);
 
             });
 
