@@ -23,6 +23,7 @@ class OrderAction extends Action
         'get_query' => [
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
+            'product_id' => 'integer|min:1|max:99999999999',
             'user_id' => 'integer|min:1|max:99999999999',
             'todays_orders' => 'in:true,false'
         ]
@@ -81,6 +82,15 @@ class OrderAction extends Action
         if (isset($query['created_at_to']))
         {
             $eloquent = $eloquent->whereDate('created_at', '<=', date("Y-m-d", $query['created_at_to']));
+        }
+
+        if (isset($query['product_id']))
+        {
+            $product_id = $query['product_id'];
+            // $eloquent = $eloquent->whereRaw("JSON_EXTRACT(contents, '$[*].product.id') = '[{$query['product_id']}]'");
+            $eloquent = $eloquent->whereHas('contents', function ($q) use ($product_id){
+                $q->where('product_id', $product_id);
+            });
         }
 
         if (isset($query['user_id']))
