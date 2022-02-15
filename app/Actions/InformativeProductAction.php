@@ -109,11 +109,11 @@ class InformativeProductAction extends Action
      * @param null $eloquent
      * @return mixed|null
      */
-    public function query_to_eloquent(array $query, $eloquent = null)
+    public function query_to_eloquent(array $query, $this_eloquent = null)
     {
-        $eloquent = parent::query_to_eloquent($query, $eloquent);
+        $eloquent = parent::query_to_eloquent($query, $this_eloquent);
 
-        if (is_null($eloquent))
+        if (is_null($this_eloquent))
         {
             $eloquent = $eloquent->with('category');
 
