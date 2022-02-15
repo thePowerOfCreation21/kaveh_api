@@ -113,11 +113,14 @@ class InformativeProductAction extends Action
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
 
-        $eloquent = $eloquent->with('category');
-
-        if (isset($query['search']))
+        if (is_null($eloquent))
         {
-            $eloquent = $eloquent->where('title', 'LIKE', "%{$query['search']}%");
+            $eloquent = $eloquent->with('category');
+
+            if (isset($query['search']))
+            {
+                $eloquent = $eloquent->where('title', 'LIKE', "%{$query['search']}%");
+            }
         }
 
         return $eloquent;

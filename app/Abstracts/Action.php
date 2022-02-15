@@ -264,7 +264,7 @@ abstract class Action
      */
     protected function query_to_eloquent (array $query, $eloquent = null)
     {
-        if ($eloquent === null)
+        if (is_null($eloquent))
         {
             $eloquent = new $this->model();
         }
@@ -304,7 +304,18 @@ abstract class Action
      */
     protected function get_by_id (string $id)
     {
-        return $this->get_by_field('id', $id);
+        $entity = $this->model::where('id', $id)->first();
+
+        if (empty($entity))
+        {
+            throw new CustomException(
+                "could not find $this->model with id $id",
+                84,
+                404
+            );
+        }
+
+        return $entity;
     }
 
     /**
@@ -359,6 +370,7 @@ abstract class Action
     {
         $data = $this->get_data_from_request($request, $validation_role);
         $data = $this->change_request_data_before_store_or_update($data, $request, $eloquent);
+
         return $this->update($data, $query, $eloquent);
     }
 
@@ -382,6 +394,7 @@ abstract class Action
     protected function update_entity_by_request_and_id (Request $request, string $id)
     {
         $entity = $this->get_by_id($id);
+
         return $this->update_by_request($request, [], $entity);
     }
 }
