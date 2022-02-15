@@ -15,7 +15,6 @@ class InformativeProduct extends Model
     protected $fillable = [
         'title',
         'image',
-        'price',
         'category_id',
         'description'
     ];
