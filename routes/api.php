@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\RulesController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\ArticleController;
@@ -40,6 +41,8 @@ Route::get('/about_us', [AboutUsController::class, 'get']);
 Route::get('/contact_us_content', [ContactUsContentController::class, 'get']);
 
 Route::post('/contact_us_message', [ContactUsMessageController::class, 'store']);
+
+Route::get('/rules', [RulesController::class, 'get']);
 
 Route::group([
     'prefix' => '/user'
