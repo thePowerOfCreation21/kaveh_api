@@ -222,6 +222,8 @@ Route::group([
 
             Route::put('/rules', [RulesController::class, 'update']);
 
+            Route::put('/privacy', [PrivacyController::class, 'update']);
+
             Route::group([
                 'prefix' => 'gallery_image'
             ], function(){

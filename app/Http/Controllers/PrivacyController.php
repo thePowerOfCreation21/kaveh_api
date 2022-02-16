@@ -19,4 +19,18 @@ class PrivacyController extends Controller
             (new Privacy())->get()
         );
     }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function update (Request $request): JsonResponse
+    {
+        (new Privacy())->update_by_request($request);
+
+        return response()->json([
+            'message' => 'updated successfully'
+        ]);
+    }
 }
