@@ -19,4 +19,18 @@ class RulesController extends Controller
             (new Rules())->get()
         );
     }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function update (Request $request): JsonResponse
+    {
+        (new Rules())->update_by_request($request);
+
+        return response()->json([
+            'message' => 'updated successfully'
+        ]);
+    }
 }

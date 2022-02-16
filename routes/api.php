@@ -217,6 +217,8 @@ Route::group([
 
             Route::put('/contact_us_content', [ContactUsContentController::class, 'update']);
 
+            Route::put('/rules', [RulesController::class, 'update']);
+
             Route::group([
                 'prefix' => 'gallery_image'
             ], function(){
