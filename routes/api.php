@@ -11,6 +11,7 @@ use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\LicenseController;
+use App\Http\Controllers\PrivacyController;
 use App\Http\Controllers\TestQueueController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\GalleryImageController;
@@ -43,6 +44,8 @@ Route::get('/contact_us_content', [ContactUsContentController::class, 'get']);
 Route::post('/contact_us_message', [ContactUsMessageController::class, 'store']);
 
 Route::get('/rules', [RulesController::class, 'get']);
+
+Route::get('/privacy', [PrivacyController::class, 'get']);
 
 Route::group([
     'prefix' => '/user'
