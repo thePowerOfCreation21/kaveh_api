@@ -106,7 +106,7 @@ class InformativeProductAction extends Action
 
     /**
      * @param array $query
-     * @param null $eloquent
+     * @param null $this_eloquent
      * @return mixed|null
      */
     public function query_to_eloquent(array $query, $this_eloquent = null)
