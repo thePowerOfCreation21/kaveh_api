@@ -23,7 +23,7 @@ class DiscountCodeAction extends Action
             'type' => 'required|in:percent,price',
             'users' => 'array|max:1000',
             'users.*' => 'distinct|numeric|min:1',
-            'expiration_date' => 'date_format:Y-m-d H:i:s'
+            'expiration_date' => 'required|date_format:Y-m-d H:i:s'
         ],
         'check_if_user_can_use_the_discount' => [
             'code' => 'required|string|max:255'
