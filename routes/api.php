@@ -169,6 +169,7 @@ Route::group([
 
                     Route::get('/', [NotificationController::class, 'get_user_notifications']);
                     Route::post('/{id}/seen', [NotificationController::class, 'seen_by_user']);
+                    Route::post('/seen', [NotificationController::class, 'seen_user_notifications']);
 
                 });
 

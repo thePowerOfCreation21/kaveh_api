@@ -23,6 +23,9 @@ class NotificationAction extends Action
             'users' => 'array|max:1000',
             'users.*' => 'numeric|max:25'
         ],
+        'seen' => [
+            'type' => 'in:message,toast'
+        ],
         'get_query' => [
             'type' => 'in:message,toast',
             'search' => 'string|max:100',
@@ -179,8 +182,40 @@ class NotificationAction extends Action
 
     /**
      * @param Request $request
+     * @param string|array $validation_role
+     * @return void
+     * @throws CustomException
+     */
+    public function seen_by_request (Request $request, $validation_role = 'seen')
+    {
+        $user = $this->get_user_from_request($request);
+        $notifications = $this->query_to_eloquent(
+            $this->get_data_from_request($request, $validation_role)
+        )->get();
+
+        $this->seen_by_user_id_and_notifications($user->id, $notifications);
+    }
+
+    /**
+     * @param $notifications
+     * @return array
+     */
+    public function get_ids ($notifications)
+    {
+        $ids = [];
+
+        foreach ($notifications AS $notification)
+        {
+            $ids[] = $notification->id;
+        }
+
+        return $ids;
+    }
+
+    /**
+     * @param Request $request
      * @param string $notificationId
-     * @return mixed
+     * @return void
      * @throws CustomException
      */
     public function seen_by_request_and_notification_id (Request $request, string $notificationId)
@@ -188,15 +223,37 @@ class NotificationAction extends Action
         $user = $this->get_user_from_request($request);
         $notification = $this->get_by_field('id', $notificationId);
 
-        NotificationUser::where('user_id', $user->id)
-            ->where('notification_id', $notificationId)
+        $this->seen_by_user_id_and_notifications($user->id, $notification);
+    }
+
+    /**
+     * @param string $userId
+     * @param $notifications
+     * @return void
+     */
+    public function seen_by_user_id_and_notifications (string $userId, $notifications)
+    {
+        if (!isset($notifications->id))
+        {
+            $notificationsId = $this->get_ids($notifications);
+        }
+        else
+        {
+            $notificationsId = [$notifications->id];
+        }
+
+        NotificationUser::where('user_id', $userId)
+            ->whereIn('notification_id', $notificationsId)
             ->delete();
 
-        return NotificationUser::create([
-            'notification_id' => $notification->id,
-            'user_id' => $user->id,
-            'is_seen' => true
-        ]);
+        foreach ($notificationsId AS $notificationId)
+        {
+            NotificationUser::create([
+                'notification_id' => $notificationId,
+                'user_id' => $userId,
+                'is_seen' => true
+            ]);
+        }
     }
 
     /**
