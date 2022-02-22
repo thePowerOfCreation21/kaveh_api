@@ -43,13 +43,13 @@ class OrderTimeLimit extends KeyObjectConfig
     /**
      * @param object $new_object
      * @return object
-     * @throws CustomException
      */
     public function before_saving_update (object $new_object): object
     {
         $new_object->limited = (object) $new_object->limited;
         $new_object->unlimited = (object) $new_object->unlimited;
 
+        /*
         if ($new_object->limited->to < $new_object->limited->from)
         {
             throw new CustomException("limited.to should not be less than limited.from");
@@ -59,6 +59,7 @@ class OrderTimeLimit extends KeyObjectConfig
         {
             throw new CustomException("unlimited.to should not be less than unlimited.from");
         }
+        */
 
         return $new_object;
     }
@@ -81,7 +82,11 @@ class OrderTimeLimit extends KeyObjectConfig
 
         foreach ($orderTimeLimit as $group => $time_limit)
         {
-            if ($time > $time_limit->from && $time < $time_limit->to)
+            if ($time_limit->from > $time_limit->to && ($time > $time_limit->from || $time < $time_limit->from))
+            {
+                $available_groups[] = $group;
+            }
+            else if ($time > $time_limit->from && $time < $time_limit->to)
             {
                 $available_groups[] = $group;
             }
@@ -90,7 +95,13 @@ class OrderTimeLimit extends KeyObjectConfig
         return $available_groups;
     }
 
-    public function get(bool $forced_get_from_DB = false, bool $forced_fix_object = true)
+    /**
+     * @param bool $forced_get_from_DB
+     * @param bool $forced_fix_object
+     * @return object|null
+     * @throws CustomException
+     */
+    public function get (bool $forced_get_from_DB = false, bool $forced_fix_object = true): ?object
     {
         $orderTimeLimit =  parent::get($forced_get_from_DB, $forced_fix_object);
 
@@ -100,6 +111,10 @@ class OrderTimeLimit extends KeyObjectConfig
         return $orderTimeLimit;
     }
 
+    /**
+     * @return mixed
+     * @throws CustomException
+     */
     public function get_end_of_order_range ()
     {
         $orderTimeLimit = $this->get();
