@@ -22,6 +22,7 @@ class OrderAction extends Action
             'discount_code' => 'string|max:255'
         ],
         'get_query' => [
+            'search' => 'integer|min:1|max:100000000999',
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
             'product_id' => 'integer|min:1|max:99999999999',
@@ -170,6 +171,11 @@ class OrderAction extends Action
         if ($with_user)
         {
             $eloquent = $eloquent->with('user');
+        }
+
+        if (isset($query['search']))
+        {
+            $eloquent = $eloquent->where('id', ($query['search'] - 1000));
         }
 
         if (isset($query['created_at_from']))
