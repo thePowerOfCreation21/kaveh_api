@@ -53,6 +53,7 @@ class OrderAction extends Action
     {
         $order = Order::where('id', $id)
             ->with('contents')
+            ->with('user')
             ->first();
 
         if (empty($order))
