@@ -339,9 +339,12 @@ class OrderAction extends Action
     {
         foreach ($order_data['contents'] AS $order_content)
         {
-            $order_content['product']->update([
-                'stock' => max(($order_content['product']['stock'] - $order_content['quantity']), 0)
-            ]);
+            if ($order_content['product']->type == 'limited')
+            {
+                $order_content['product']->update([
+                    'stock' => max(($order_content['product']['stock'] - $order_content['quantity']), 0)
+                ]);
+            }
         }
 
         if (isset($order_data['discount_code']))
