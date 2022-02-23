@@ -51,7 +51,16 @@ class OrderAction extends Action
 
     public function get_by_id(string $id)
     {
-        return parent::get_by_id($id);
+        $order = Order::where('id', $id)
+            ->with('contents')
+            ->first();
+
+        if (empty($order))
+        {
+            throw new CustomException("order not found", 84, 404);
+        }
+
+        return $order;
     }
 
     /**
@@ -141,11 +150,9 @@ class OrderAction extends Action
                 }
                 else
                 {
-                    $temp_stats[$order_content['product']->id] = [
-                        'times_ordered' => $temp_stats[$order_content['product']->id]['times_ordered'] + 1,
-                        'quantity' => $temp_stats[$order_content['product']->id] + $order_content['quantity'],
-                        'amount' => $temp_stats[$order_content['product']->id] + $order_content['amount']
-                    ];
+                    $temp_stats[$order_content['product']->id]['times_ordered']++;
+                    $temp_stats[$order_content['product']->id]['quantity'] += $order_content['quantity'];
+                    $temp_stats[$order_content['product']->id]['amount'] += $order_content['amount'];
                 }
             }
         }
@@ -163,6 +170,7 @@ class OrderAction extends Action
      * @param null $eloquent
      * @param bool $with_user
      * @return Model|Builder|null
+     * @throws CustomException
      */
     public function query_to_eloquent(array $query, $eloquent = null, bool $with_user = true)
     {
