@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\CustomDateCast;
 use App\Casts\OrderIdCast;
+use App\Casts\OrderProductsQuantityCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,12 +23,14 @@ class Order extends Model
     ];
 
     protected $appends = [
-        'order_id'
+        'order_id',
+        'products_quantity'
     ];
 
     protected $casts = [
         'created_at' => CustomDateCast::class,
         'order_id' => OrderIdCast::class,
+        'products_quantity' => OrderProductsQuantityCast::class,
         'discount' => 'object',
     ];
 
