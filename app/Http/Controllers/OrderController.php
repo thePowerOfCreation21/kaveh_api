@@ -52,7 +52,7 @@ class OrderController extends Controller
      * @return JsonResponse
      * @throws CustomException
      */
-    public function get_product_stats (Request $request)
+    public function get_product_stats (Request $request): JsonResponse
     {
         return response()->json(
             (new OrderAction())->get_product_stats_by_request($request)

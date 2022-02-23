@@ -133,6 +133,7 @@ class OrderAction extends Action
                 if (!isset($temp_stats[$order_content['product']->id]))
                 {
                     $temp_stats[$order_content['product']->id] = [
+                        'times_ordered' => 1,
                         'quantity' => $order_content['quantity'],
                         'amount' => $order_content['amount'],
                         'product' => $order_content['product'],
@@ -141,8 +142,9 @@ class OrderAction extends Action
                 else
                 {
                     $temp_stats[$order_content['product']->id] = [
+                        'times_ordered' => $temp_stats[$order_content['product']->id]['times_ordered'] + 1,
                         'quantity' => $temp_stats[$order_content['product']->id] + $order_content['quantity'],
-                        'amount' => $temp_stats[$order_content['product']->id] + $order_content['amount'],
+                        'amount' => $temp_stats[$order_content['product']->id] + $order_content['amount']
                     ];
                 }
             }
