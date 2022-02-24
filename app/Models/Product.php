@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Casts\ProductStockCast;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'products';
 
@@ -19,11 +20,10 @@ class Product extends Model
         'price',
         'discount_percentage',
         'type',
-        'stock'
     ];
 
     protected $casts = [
-        'stock' => ProductStockCast::class
+        'stock' => ProductStockCast::class,
     ];
 
     public function getOriginalStock ()
