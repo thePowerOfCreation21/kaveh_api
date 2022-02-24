@@ -20,6 +20,8 @@ class StatsAction
                         SELECT
                             COUNT(`id`)
                         FROM `products`
+                        WHERE
+                            `deleted_at` IS NULL
                     ) AS `products_count`,
                     (
                         SELECT
