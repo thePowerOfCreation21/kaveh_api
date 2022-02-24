@@ -118,6 +118,7 @@ class CartAction extends Action
     {
         $cart_contents = [];
         $cart_products = $cart->products;
+        $total_price = 0;
 
         foreach ($cart_products AS $key => $cart_product)
         {
@@ -127,9 +128,14 @@ class CartAction extends Action
                 'product' => $cart_product,
             ];
             unset($cart_contents[$key]->product->pivot);
+
+            $total_price += $cart_contents[$key]->amount;
         }
 
-        return $cart_contents;
+        return [
+            'total_price' => $total_price,
+            'cart_contents' => $cart_contents
+        ];
     }
 
     /**
