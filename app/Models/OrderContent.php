@@ -19,10 +19,6 @@ class OrderContent extends Model
         'amount',
     ];
 
-    protected $casts = [
-        'product' => 'object'
-    ];
-
     protected $hidden = [
         'id',
         'order_id'
