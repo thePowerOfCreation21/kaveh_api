@@ -177,7 +177,7 @@ class OrderAction extends Action
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
 
-        $eloquent = $eloquent->with('contents');
+        $eloquent = $eloquent->with('contents.product');
 
         if ($with_user)
         {

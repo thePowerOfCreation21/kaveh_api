@@ -17,7 +17,6 @@ class OrderContent extends Model
         'product_id',
         'quantity',
         'amount',
-        'product',
     ];
 
     protected $casts = [
@@ -37,5 +36,13 @@ class OrderContent extends Model
     public function order (): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function product (): BelongsTo
+    {
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 }
