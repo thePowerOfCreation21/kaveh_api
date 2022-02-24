@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RulesController;
+use App\Http\Controllers\StatsController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\ArticleController;
@@ -191,6 +192,8 @@ Route::group([
     {
 
         Route::get('/admin/info', [AdminController::class, 'get_info']);
+
+        Route::get('/stats', [StatsController::class, 'get']);
 
         Route::group([
             'middleware' => ['ShouldBePrimary']
