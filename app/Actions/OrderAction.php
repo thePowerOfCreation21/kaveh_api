@@ -186,7 +186,7 @@ class OrderAction extends Action
 
         if (isset($query['search']))
         {
-            $eloquent = $eloquent->where('id', ($query['search'] - 1000));
+            $eloquent = $eloquent->whereRaw("(`id`+1000) LIKE '%{$query['search']}%'");
         }
 
         if (isset($query['created_at_from']))
