@@ -25,7 +25,7 @@ class OrderAction extends Action
             'search' => 'integer|min:1|max:100000000999',
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
-            'product_id' => 'integer|min:1|max:99999999999',
+            'product_id' => 'string|max:150',
             'user_id' => 'integer|min:1|max:99999999999',
             'todays_orders' => 'in:true,false'
         ],
@@ -201,10 +201,10 @@ class OrderAction extends Action
 
         if (isset($query['product_id']))
         {
-            $product_id = $query['product_id'];
+            $product_id = explode(',', $query['product_id']);
             // $eloquent = $eloquent->whereRaw("JSON_EXTRACT(contents, '$[*].product.id') = '[{$query['product_id']}]'");
             $eloquent = $eloquent->whereHas('contents', function ($q) use ($product_id){
-                $q->where('product_id', $product_id);
+                $q->whereIn('product_id', $product_id);
             });
         }
 
