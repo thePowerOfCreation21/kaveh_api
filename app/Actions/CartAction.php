@@ -102,9 +102,9 @@ class CartAction extends Action
 
     /**
      * @param User $user
-     * @return array
+     * @return object
      */
-    public function get_cart_contents_by_user (User $user): array
+    public function get_cart_contents_by_user (User $user): object
     {
         $cart = (new UserAction())->get_user_cart($user);
         return $this->get_cart_contents($cart);
@@ -112,9 +112,9 @@ class CartAction extends Action
 
     /**
      * @param Cart $cart
-     * @return array
+     * @return object
      */
-    public function get_cart_contents (Cart $cart): array
+    public function get_cart_contents (Cart $cart): object
     {
         $cart_contents = [];
         $cart_products = $cart->products;
@@ -132,7 +132,7 @@ class CartAction extends Action
             $total_price += $cart_contents[$key]->amount;
         }
 
-        return [
+        return (object) [
             'total_price' => $total_price,
             'cart_contents' => $cart_contents
         ];

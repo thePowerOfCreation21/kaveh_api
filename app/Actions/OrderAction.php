@@ -297,7 +297,7 @@ class OrderAction extends Action
             );
         }
 
-        $cart_contents = (new CartAction())->get_cart_contents($order_data['cart']);
+        $cart_contents = (new CartAction())->get_cart_contents($order_data['cart'])->cart_contents;
 
         if (empty($cart_contents))
         {
