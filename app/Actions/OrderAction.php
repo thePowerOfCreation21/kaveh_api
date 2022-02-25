@@ -23,6 +23,7 @@ class OrderAction extends Action
         ],
         'get_query' => [
             'search' => 'integer|min:1|max:100000000999',
+            'created_at' => 'integer|min:1|max:9999999999',
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
             'product_id' => 'string|max:150',
@@ -30,11 +31,13 @@ class OrderAction extends Action
             'todays_orders' => 'in:true,false'
         ],
         'get_user_orders_query' => [
+            'created_at' => 'integer|min:1|max:9999999999',
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
             'product_id' => 'integer|min:1|max:99999999999',
         ],
         'get_user_product_stats' => [
+            'created_at' => 'integer|min:1|max:9999999999',
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
         ]
@@ -192,6 +195,11 @@ class OrderAction extends Action
         if (isset($query['search']))
         {
             $eloquent = $eloquent->whereRaw("(`id`+1000) LIKE '%{$query['search']}%'");
+        }
+
+        if (isset($query['created_at']))
+        {
+            $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d', $query['created_at']));
         }
 
         if (isset($query['created_at_from']))
