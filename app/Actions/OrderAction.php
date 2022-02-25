@@ -55,7 +55,7 @@ class OrderAction extends Action
     public function get_by_id(string $id)
     {
         $order = Order::where('id', $id)
-            ->with('contents')
+            ->with('contents.product')
             ->with('user')
             ->first();
 
