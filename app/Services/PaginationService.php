@@ -21,12 +21,12 @@ class PaginationService
     {
         $request->validate([
             'skip' => 'numeric|min:0',
-            'limit' => 'numeric|min:0|max:50',
+            'limit' => 'numeric|min:0|max:100',
         ]);
 
         return [
             'skip' => !empty($request->input('skip')) ? $request->input('skip') : 0,
-            'limit' => !empty($request->input('limit')) ? $request->input('limit') : 50,
+            'limit' => !empty($request->input('limit')) ? $request->input('limit') : 100,
         ];
     }
 
