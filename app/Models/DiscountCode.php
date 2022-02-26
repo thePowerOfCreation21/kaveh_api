@@ -31,7 +31,8 @@ class DiscountCode extends Model
 
     protected $casts = [
         'expiration_date' => CustomDateCast::class,
-        'is_for_all_users' => 'boolean'
+        'is_for_all_users' => 'boolean',
+        'amount' => 'integer'
     ];
 
     public function users()
