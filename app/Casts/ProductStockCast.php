@@ -21,6 +21,10 @@ class ProductStockCast implements CastsAttributes
         {
             $value = '∞';
         }
+        else
+        {
+            $value = (int) $value;
+        }
         return $value;
     }
 
