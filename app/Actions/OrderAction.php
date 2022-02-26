@@ -143,7 +143,7 @@ class OrderAction extends Action
         {
             foreach ($order->contents AS $order_content)
             {
-                if (empty($order_content->product))
+                if (empty($order_content->product) || (isset($query['product_id']) && !in_array($order_content->product->id, explode(',', $query['product_id']))))
                 {
                     continue;
                 }
