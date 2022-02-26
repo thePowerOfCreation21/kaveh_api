@@ -24,6 +24,7 @@ class Product extends Model
 
     protected $casts = [
         'stock' => ProductStockCast::class,
+        'price' => 'integer'
     ];
 
     public function getOriginalStock ()
