@@ -19,6 +19,11 @@ class OrderContent extends Model
         'amount',
     ];
 
+    protected $casts = [
+        'quantity' => 'integer',
+        'amount' => 'integer'
+    ];
+
     protected $hidden = [
         'id',
         'order_id'

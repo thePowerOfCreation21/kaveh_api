@@ -32,6 +32,7 @@ class Order extends Model
         'order_id' => OrderIdCast::class,
         'products_quantity' => OrderProductsQuantityCast::class,
         'discount' => 'object',
+        'amount' => 'integer'
     ];
 
     protected $hidden = [

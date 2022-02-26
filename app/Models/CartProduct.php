@@ -18,6 +18,10 @@ class CartProduct extends Model
         'quantity'
     ];
 
+    protected $casts = [
+        'quantity' => 'integer'
+    ];
+
     public $timestamps = false;
 
     /**
