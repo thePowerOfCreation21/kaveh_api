@@ -90,10 +90,10 @@ class CartAction extends Action
 
     /**
      * @param Request $request
-     * @return array
+     * @return object
      * @throws CustomException
      */
-    public function get_cart_products_by_request (Request $request): array
+    public function get_cart_products_by_request (Request $request): object
     {
         return $this->get_cart_contents_by_user(
             $this->check_user($request->user())
