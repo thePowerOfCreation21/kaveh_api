@@ -28,12 +28,16 @@ class AdminAction extends Action
         $this->validation_roles['store'] = [
             'user_name' => 'required|max:25',
             'password' => 'required|min:6',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'privileges' => 'array|max:'.count(Admin::$privileges_list)
         ];
 
         $this->validation_roles['update'] = [
             'user_name' => 'string|max:25',
             'password' => 'string',
+            'first_name' => 'string|max:255',
+            'last_name' => 'string|max:255',
             'privileges' => 'array|max:'.count(Admin::$privileges_list),
         ];
 
@@ -205,7 +209,12 @@ class AdminAction extends Action
 
         if (isset($query['search']))
         {
-            $eloquent = $eloquent->where('user_name', 'LIKE', "%{$query['search']}%");
+            $eloquent = $eloquent->where(function ($q) use ($query){
+                $q
+                    ->where('user_name', 'LIKE', "%{$query['search']}%")
+                    ->orWhere('first_name', 'LIKE', "%{$query['search']}%")
+                    ->orWhere('last_name', 'LIKE', "%{$query['search']}%");
+            });
         }
 
         return $eloquent;
