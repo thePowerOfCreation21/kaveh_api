@@ -22,7 +22,7 @@ class OrderAction extends Action
             'discount_code' => 'string|max:255'
         ],
         'get_query' => [
-            'search' => 'integer|min:1|max:100000000999',
+            'search' => 'string|min:1|max:150',
             'created_at' => 'integer|min:1|max:9999999999',
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
@@ -31,12 +31,14 @@ class OrderAction extends Action
             'todays_orders' => 'in:true,false'
         ],
         'get_user_orders_query' => [
+            'search' => 'string|min:1|max:150',
             'created_at' => 'integer|min:1|max:9999999999',
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
             'product_id' => 'integer|min:1|max:99999999999',
         ],
         'get_user_product_stats' => [
+            'search' => 'string|min:1|max:150',
             'created_at' => 'integer|min:1|max:9999999999',
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
@@ -132,6 +134,7 @@ class OrderAction extends Action
     /**
      * @param array $query
      * @return array
+     * @throws CustomException
      */
     public function get_product_stats (array $query): array
     {
@@ -194,7 +197,15 @@ class OrderAction extends Action
 
         if (isset($query['search']))
         {
-            $eloquent = $eloquent->whereRaw("(`id`+1000) LIKE '%{$query['search']}%'");
+            $eloquent = $eloquent->where(function ($q) use ($query){
+                $q
+                    ->whereRaw("(`id`+1000) LIKE '%{$query['search']}%'")
+                    ->orWhereHas('contents', function($order_contents_query) use ($query){
+                        $order_contents_query->whereHas('product', function($order_contents_product_query) use ($query){
+                            $order_contents_product_query->where('title', 'LIKE', "%{$query['search']}%");
+                        });
+                    });
+            });
         }
 
         if (isset($query['created_at']))
