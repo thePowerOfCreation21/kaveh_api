@@ -19,7 +19,7 @@ class ProductAction extends Action
             'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000',
             'description' => 'string|max:500',
             'price' => 'required|numeric|min:1|max:1000000',
-            'discount_percentage' => 'numeric|min:0|max:99',
+            'discount_percentage' => 'numeric|min:0|max:100',
             'type' => 'required|in:limited,unlimited',
             'stock' => 'required_if:type,==,limited|numeric|min:0|max:100000'
         ],
@@ -27,6 +27,7 @@ class ProductAction extends Action
             'title' => 'string|max:128',
             'image' => 'file|mimes:png,jpg,jpeg,gif|max:10000',
             'description' => 'string|max:500',
+            'before_discount_price' => 'integer|min:1|max:1000000',
             'price' => 'numeric|min:1|max:1000000',
             'discount_percentage' => 'numeric|min:0|max:99',
             'type' => 'in:limited,unlimited',
@@ -46,6 +47,17 @@ class ProductAction extends Action
     public function __construct()
     {
         $this->model = Product::class;
+    }
+
+    public function store(array $data)
+    {
+        if (isset($data['discount_percentage']))
+        {
+            $data['before_discount_price'] = $data['price'];
+            $data['price'] = $data['before_discount_price'] - (($data['before_discount_price'] / 100) * $data['discount_percentage']);
+        }
+
+        return parent::store($data);
     }
 
     /**
@@ -160,6 +172,18 @@ class ProductAction extends Action
         if ($product->type == 'unlimited' && isset($update_data['type']) && $update_data['type'] == 'limited')
         {
             $update_data['stock'] = $update_data['stock'] ?? max($product->getAttributes()['stock'], 0);
+        }
+
+        if (isset($data['discount_percentage']))
+        {
+            $data['before_discount_price'] = $data['before_discount_price'] ?? $product->before_discount_price;
+
+            if ($data['before_discount_price'] < 1)
+            {
+                $data['before_discount_price'] = $data['price'] ?? $product->price;
+            }
+
+            $data['price'] = $data['before_discount_price'] - (($data['before_discount_price'] / 100) * $data['discount_percentage']);
         }
 
         $product->update($update_data);

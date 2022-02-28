@@ -17,6 +17,7 @@ class Product extends Model
         'title',
         'image',
         'description',
+        'before_discount_price',
         'price',
         'discount_percentage',
         'type',
