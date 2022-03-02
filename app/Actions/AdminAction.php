@@ -88,6 +88,8 @@ class AdminAction extends Action
     {
         $data = $this->get_data_from_request($request, $validation_role);
 
+        $data['password'] = Hash::make($data['password']);
+
         $data['privileges'] = Admin::fix_privileges(
             (object) (!isset($data['privileges']) ? [] : $data['privileges'])
         );
