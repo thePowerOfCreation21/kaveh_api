@@ -39,6 +39,7 @@ class Admin extends Model
         'get_stats',
         'manage_settings',
         'get_orders',
+        'get_todays_orders',
         'manage_order_time_limit',
         'manage_products',
         'manage_discounts',
