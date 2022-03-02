@@ -77,6 +77,7 @@ Route::group([
     'middleware' => 'auth:sanctum'
 ], function(){
     Route::get('/product', [ProductController::class, 'get']);
+    Route::get('/product/{id}', [ProductController::class, 'get_by_id']);
 
     Route::group([
         'middleware' => 'AllowedUserClass:App\Models\User'
@@ -153,7 +154,6 @@ Route::group([
             'middleware' => 'RequiredPrivilege:manage_products'
         ], function(){
             Route::post('/product', [ProductController::class, 'store']);
-            Route::get('/product/{id}', [ProductController::class, 'get_by_id']);
             Route::delete('/product/{id}', [ProductController::class, 'delete_by_id']);
             Route::put('/product/{id}', [ProductController::class, 'edit_by_id']);
         });
