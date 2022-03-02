@@ -30,6 +30,14 @@ class OrderAction extends Action
             'user_id' => 'integer|min:1|max:99999999999',
             'todays_orders' => 'in:true,false'
         ],
+        'get_todays_orders' => [
+            'search' => 'string|min:1|max:150',
+            'created_at' => 'integer|min:1|max:9999999999',
+            'created_at_from' => 'integer|min:1|max:9999999999',
+            'created_at_to' => 'integer|min:1|max:9999999999',
+            'product_id' => 'string|max:150',
+            'user_id' => 'integer|min:1|max:99999999999',
+        ],
         'get_user_orders_query' => [
             'search' => 'string|min:1|max:150',
             'created_at' => 'integer|min:1|max:9999999999',
@@ -42,7 +50,7 @@ class OrderAction extends Action
             'created_at' => 'integer|min:1|max:9999999999',
             'created_at_from' => 'integer|min:1|max:9999999999',
             'created_at_to' => 'integer|min:1|max:9999999999',
-        ]
+        ],
     ];
 
     protected $unusual_fields = [
@@ -85,6 +93,14 @@ class OrderAction extends Action
     ): object
     {
         return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+    }
+
+    public function get_todays_orders_by_request (Request $request, $validation_role = 'get_todays_orders')
+    {
+        return PaginationService::paginate_with_request(
+            $request,
+            $this->query_to_eloquent(array_merge(['todays_orders' => true], $this->get_data_from_request($request, $validation_role)))
+        );
     }
 
     /**
