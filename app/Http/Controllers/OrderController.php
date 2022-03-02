@@ -38,12 +38,23 @@ class OrderController extends Controller
     /**
      * @param Request $request
      * @return JsonResponse
-     * @throws CustomException
      */
     public function get_todays_orders (Request $request): JsonResponse
     {
         return response()->json(
             (new OrderAction())->get_todays_orders_by_request($request)
+        );
+    }
+
+    /**
+     * @param string $id
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get_todays_order_by_id (string $id): JsonResponse
+    {
+        return response()->json(
+            (new OrderAction())->get_todays_order_by_id($id)
         );
     }
 
@@ -86,6 +97,7 @@ class OrderController extends Controller
     /**
      * @param Request $request
      * @return JsonResponse
+     * @throws CustomException
      */
     public function get_user_product_stats (Request $request): JsonResponse
     {

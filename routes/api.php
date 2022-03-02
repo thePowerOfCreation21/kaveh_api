@@ -117,6 +117,8 @@ Route::group([
         Route::get('/admin/info', [AdminController::class, 'get_info']);
 
         Route::get('/order/todays_orders', [OrderController::class, 'get_todays_orders']);
+        Route::get('/order/todays_orders/{id}', [OrderController::class, 'get_todays_order_by_id']);
+
         Route::get('/order/product_stats', [OrderController::class, 'get_product_stats']);
 
         Route::get('/stats', [StatsController::class, 'get'])->middleware('RequiredPrivilege:get_stats');

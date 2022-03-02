@@ -62,6 +62,11 @@ class OrderAction extends Action
         $this->model = Order::class;
     }
 
+    /**
+     * @param string $id
+     * @return Model|mixed
+     * @throws CustomException
+     */
     public function get_by_id(string $id)
     {
         $order = Order::where('id', $id)
@@ -72,6 +77,25 @@ class OrderAction extends Action
         if (empty($order))
         {
             throw new CustomException("order not found", 84, 404);
+        }
+
+        return $order;
+    }
+
+    /**
+     * @param string $id
+     * @return CustomException|Model|Builder|object
+     * @throws CustomException
+     */
+    public function get_todays_order_by_id (string $id)
+    {
+        $order = $this->query_to_eloquent(['todays_orders' => true])
+            ->where('id', $id)
+            ->first();
+
+        if (empty($order))
+        {
+            throw new CustomException('today\'s order with this id not found', 170, 404);
         }
 
         return $order;
@@ -95,6 +119,12 @@ class OrderAction extends Action
         return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
     }
 
+    /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return object
+     * @throws CustomException
+     */
     public function get_todays_orders_by_request (Request $request, $validation_role = 'get_todays_orders')
     {
         return PaginationService::paginate_with_request(
