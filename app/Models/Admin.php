@@ -36,12 +36,15 @@ class Admin extends Model
     ];
 
     public static $privileges_list = [
-        'manage_guest_side',
-        'manage_users',
+        'get_stats',
+        'manage_settings',
+        'get_orders',
+        'manage_order_time_limit',
         'manage_products',
-        'manage_orders',
         'manage_discounts',
-        'send_notifications'
+        'send_notifications',
+        'get_users',
+        'manage_users'
     ];
 
     public static function fix_privileges (object $temp_privileges, $privileges = null)

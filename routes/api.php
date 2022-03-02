@@ -48,86 +48,41 @@ Route::get('/rules', [RulesController::class, 'get']);
 
 Route::get('/privacy', [PrivacyController::class, 'get']);
 
+Route::post('/user/login', [UserController::class, 'login']);
+Route::post('/user/login/otp', [UserController::class, 'login_with_OTP']);
+Route::post('/user/forgot_password', [UserController::class, 'forgot_password']);
+
+Route::get('/gallery_image', [GalleryImageController::class, 'get_all']);
+Route::get('/gallery_image/{id}', [GalleryImageController::class, 'get_by_id']);
+
+Route::get('/article', [ArticleController::class, 'get']);
+Route::get('/article/{id}', [ArticleController::class, 'get_by_id']);
+
+Route::get('/branch', [BranchController::class, 'get']);
+Route::get('/branch/{id}', [BranchController::class, 'get_by_id']);
+
+Route::get('/common_question', [CommonQuestionController::class, 'get']);
+Route::get('/common_question/{id}', [CommonQuestionController::class, 'get_by_id']);
+
+Route::get('/license', [LicenseController::class, 'get']);
+Route::get('/license/{id}', [LicenseController::class, 'get_by_id']);
+
+Route::get('/informative_product', [InformativeProductController::class, 'get']);
+Route::get('/informative_product/{id}', [InformativeProductController::class, 'get_by_id']);
+
+Route::get('/informative_product_category', [InformativeProductCategoryController::class, 'get']);
+Route::get('/informative_product_category/{id}', [InformativeProductCategoryController::class, 'get_by_id']);
+
 Route::group([
-    'prefix' => '/user'
-], function (){
-
-    Route::post('/login', [UserController::class, 'login']);
-    Route::post('/login/otp', [UserController::class, 'login_with_OTP']);
-    Route::post('/forgot_password', [UserController::class, 'forgot_password']);
-
-});
-
-Route::group([
-    'prefix' => '/gallery_image'
+    'middleware' => 'auth:sanctum'
 ], function(){
-
-    Route::get('/', [GalleryImageController::class, 'get_all']);
-    Route::get('/{id}', [GalleryImageController::class, 'get_by_id']);
-
-});
-
-Route::group([
-    'prefix' => '/article'
-], function(){
-
-    Route::get('/', [ArticleController::class, 'get']);
-    Route::get('/{id}', [ArticleController::class, 'get_by_id']);
-
-});
-
-Route::group([
-    'prefix' => '/branch'
-], function(){
-
-    Route::get('/', [BranchController::class, 'get']);
-    Route::get('/{id}', [BranchController::class, 'get_by_id']);
-
-});
-
-Route::group([
-    'prefix' => '/common_question'
-], function (){
-
-    Route::get('/', [CommonQuestionController::class, 'get']);
-    Route::get('/{id}', [CommonQuestionController::class, 'get_by_id']);
-
-});
-
-Route::group([
-    'prefix' => '/license'
-], function (){
-
-    Route::get('/', [LicenseController::class, 'get']);
-    Route::get('/{id}', [LicenseController::class, 'get_by_id']);
-
-});
-
-Route::group([
-    'prefix' => '/informative_product'
-], function (){
-
-    Route::get('/', [InformativeProductController::class, 'get']);
-    Route::get('/{id}', [InformativeProductController::class, 'get_by_id']);
-
-});
-
-Route::group([
-    'prefix' => '/informative_product_category'
-], function (){
-
-    Route::get('/', [InformativeProductCategoryController::class, 'get']);
-    Route::get('/{id}', [InformativeProductCategoryController::class, 'get_by_id']);
-
-});
-
-Route::group([
-    'middleware' => ['auth:sanctum']
-], function(){
+    Route::get('/product', [ProductController::class, 'get']);
 
     Route::group([
-        'middleware' => ['AllowedUserClass:App\Models\User']
+        'middleware' => 'AllowedUserClass:App\Models\User'
     ], function(){
+        Route::put('/user/password', [UserController::class, 'change_password'])
+            ->middleware(['CheckIfUserIsBlocked']);
 
         Route::group([
             'middleware' => [
@@ -135,282 +90,156 @@ Route::group([
                 'CheckIfShouldChangePassword',
             ]
         ], function(){
+            Route::get('/user', [UserController::class, 'get_user_from_request']);
+            Route::put('/user', [UserController::class, 'update_by_request']);
 
-            Route::group([
-                'prefix' => '/user'
-            ], function(){
+            Route::get('/user/cart', [CartController::class, 'get_cart_products']);
+            Route::delete('/user/cart', [CartController::class, 'empty_the_cart']);
+            Route::put('/user/cart/product/{id}', [CartController::class, 'store_or_update_cart_product']);
+            Route::delete('/user/cart/product/{id}', [CartController::class, 'delete_cart_product']);
 
-                Route::get('/info', [UserController::class, 'get_user_from_request']);
-                Route::put('/info', [UserController::class, 'update_by_request']);
+            Route::post('/user/order', [OrderController::class, 'store']);
+            Route::get('/user/order', [OrderController::class, 'get_user_orders']);
+            Route::get('/user/order/product_stats', [OrderController::class, 'get_user_product_stats']);
 
-                Route::group([
-                    'prefix' => '/cart'
-                ], function (){
+            Route::get('/user/notification', [NotificationController::class, 'get_user_notifications']);
+            Route::post('/user/notification/{id}/seen', [NotificationController::class, 'seen_by_user']);
+            Route::post('/user/notification/seen', [NotificationController::class, 'seen_user_notifications']);
 
-                    Route::get('/', [CartController::class, 'get_cart_products']);
-                    Route::delete('/', [CartController::class, 'empty_the_cart']);
-                    Route::put('/product/{id}', [CartController::class, 'store_or_update_cart_product']);
-                    Route::delete('/product/{id}', [CartController::class, 'delete_cart_product']);
-
-                });
-
-                Route::group([
-                    'prefix' => '/order'
-                ], function(){
-
-                    Route::post('/', [OrderController::class, 'store']);
-                    Route::get('/', [OrderController::class, 'get_user_orders']);
-                    Route::get('/product_stats', [OrderController::class, 'get_user_product_stats']);
-
-                });
-
-                Route::group([
-                    'prefix' => 'notification'
-                ], function(){
-
-                    Route::get('/', [NotificationController::class, 'get_user_notifications']);
-                    Route::post('/{id}/seen', [NotificationController::class, 'seen_by_user']);
-                    Route::post('/seen', [NotificationController::class, 'seen_user_notifications']);
-
-                });
-
-                Route::get('/discount/check', [DiscountCodeController::class, 'check_if_user_can_use_the_discount']);
-
-            });
-
-
+            Route::get('/user/discount/check', [DiscountCodeController::class, 'check_if_user_can_use_the_discount']);
         });
-
-        Route::put('/user/password', [UserController::class, 'change_password'])
-            ->middleware(['CheckIfUserIsBlocked']);
-
     });
 
     Route::group([
-        'middleware' => ['AllowedUserClass:App\Models\Admin']
-    ],function()
-    {
-
+        'middleware' => 'AllowedUserClass:App\Models\Admin'
+    ], function(){
         Route::get('/admin/info', [AdminController::class, 'get_info']);
 
-        Route::get('/stats', [StatsController::class, 'get']);
+        Route::get('/order/product_stats', [OrderController::class, 'get_product_stats']);
+
+        Route::get('/stats', [StatsController::class, 'get'])->middleware('RequiredPrivilege:get_stats');
 
         Route::group([
-            'middleware' => ['ShouldBePrimary']
+            'middleware' => 'RequiredPrivilege:get_users|manage_users|send_notifications|manage_discounts'
         ], function(){
-
-            Route::group([
-                'prefix' => 'admin'
-            ], function(){
-
-                Route::post('register', [AdminController::class, 'register']);
-                Route::get('/', [AdminController::class, 'get_all']);
-                Route::get('/{id}', [AdminController::class, 'get_by_id']);
-                Route::delete('/{id}', [AdminController::class, 'delete']);
-                Route::put('/{id}', [AdminController::class, 'update']);
-
-            });
-
-            Route::post('/test/queue', [TestQueueController::class, 'set_value']);
-            Route::get('/test/queue', [TestQueueController::class, 'get_value']);
-
+            Route::get('/user', [UserController::class, 'get']);
+            Route::get('/user/{id}', [UserController::class, 'get_by_id']);
         });
 
         Route::group([
-            'middleware' => ['RequiredPrivilege:manage_guest_side']
+            'middleware' => 'RequiredPrivilege:manage_users'
         ], function(){
+            Route::post('/user', [UserController::class, 'add']);
+            Route::put('/user/{id}', [UserController::class, 'update_by_id']);
+            Route::put('/user/{id}/block', [UserController::class, 'block_user_by_id']);
+            Route::put('/user/{id}/unblock', [UserController::class, 'unblock_user_by_id']);
+        });
 
+        Route::group([
+            'middleware' => 'ShouldBePrimary'
+        ], function(){
+            Route::post('/admin/register', [AdminController::class, 'register']);
+            Route::get('/admin', [AdminController::class, 'get_all']);
+            Route::get('/admin/{id}', [AdminController::class, 'get_by_id']);
+            Route::delete('/admin/{id}', [AdminController::class, 'delete']);
+            Route::put('/admin/{id}', [AdminController::class, 'update']);
+
+            Route::post('/test/queue', [TestQueueController::class, 'set_value']);
+            Route::get('/test/queue', [TestQueueController::class, 'get_value']);
+        });
+
+        Route::group([
+            'middleware' => 'RequiredPrivilege:manage_products'
+        ], function(){
+            Route::post('/product', [ProductController::class, 'store']);
+            Route::get('/product/{id}', [ProductController::class, 'get_by_id']);
+            Route::delete('/product/{id}', [ProductController::class, 'delete_by_id']);
+            Route::put('/product/{id}', [ProductController::class, 'edit_by_id']);
+        });
+
+        Route::group([
+            'middleware' => 'RequiredPrivilege:manage_discounts'
+        ], function(){
+            Route::post('/discount', [DiscountCodeController::class, 'store']);
+            Route::get('/discount', [DiscountCodeController::class, 'get']);
+            Route::get('/discount/{id}', [DiscountCodeController::class, 'get_by_id']);
+            Route::delete('/discount/{id}', [DiscountCodeController::class, 'delete_by_id']);
+            Route::get('/discount/{id}/users', [DiscountCodeController::class, 'get_users']);
+        });
+
+        Route::group([
+            'middleware' => 'RequiredPrivilege:send_notifications'
+        ], function(){
+            Route::post('/notification', [NotificationController::class, 'send']);
+            Route::get('/notification', [NotificationController::class, 'get']);
+            Route::get('/notification/{id}', [NotificationController::class, 'get_by_id']);
+            Route::delete('/notification/{id}', [NotificationController::class, 'delete_by_id']);
+            Route::get('/notification/{id}/user', [NotificationController::class, 'get_users']);
+            Route::get('/notification/user/{id}', [UserController::class, 'get_notifications_by_id']);
+
+            Route::post('/notification/frame', [NotificationFrameController::class, 'store']);
+            Route::get('/notification/frame', [NotificationFrameController::class, 'get']);
+            Route::get('/notification/frame/{id}', [NotificationFrameController::class, 'get_by_id']);
+            Route::put('/notification/frame/{id}', [NotificationFrameController::class, 'update_by_id']);
+            Route::delete('/notification/frame/{id}', [NotificationFrameController::class, 'delete_by_id']);
+        });
+
+        Route::group([
+            'middleware' => 'RequiredPrivilege:get_orders'
+        ], function(){
+            Route::get('/order', [OrderController::class, 'get']);
+            Route::get('/order/{id}', [OrderController::class, 'get_by_id']);
+        });
+
+        Route::group([
+            'middleware' => 'RequiredPrivilege:manage_order_time_limit'
+        ], function(){
+            Route::get('/order_time_limit', [OrderTimeLimitController::class, 'get']);
+            Route::get('/order_time_limit/available_groups', [OrderTimeLimitController::class, 'get_available_groups']);
+            Route::put('/order_time_limit', [OrderTimeLimitController::class, 'update']);
+        });
+
+        Route::group([
+            'middleware' => 'RequiredPrivilege:manage_settings'
+        ], function(){
             Route::put('/about_us', [AboutUsController::class, 'update']);
-
-            Route::put('/contact_us_content', [ContactUsContentController::class, 'update']);
 
             Route::put('/rules', [RulesController::class, 'update']);
 
             Route::put('/privacy', [PrivacyController::class, 'update']);
 
-            Route::group([
-                'prefix' => 'gallery_image'
-            ], function(){
+            Route::put('/contact_us_content', [ContactUsContentController::class, 'update']);
 
-                Route::post('/', [GalleryImageController::class, 'store']);
-                Route::delete('/{id}', [GalleryImageController::class, 'delete']);
-                Route::put('/{id}', [GalleryImageController::class, 'update']);
+            Route::get('/contact_us_message', [ContactUsMessageController::class, 'get_all']);
+            Route::delete('/contact_us_message/{id}', [ContactUsMessageController::class, 'delete_by_id']);
 
-            });
+            Route::post('/gallery_image', [GalleryImageController::class, 'store']);
+            Route::delete('/gallery_image/{id}', [GalleryImageController::class, 'delete']);
+            Route::put('/gallery_image/{id}', [GalleryImageController::class, 'update']);
 
-            Route::group([
-                'prefix' => '/contact_us_message'
-            ], function (){
+            Route::post('/branch', [BranchController::class, 'store']);
+            Route::delete('/branch/{id}', [BranchController::class, 'delete_by_id']);
+            Route::put('/branch/{id}', [BranchController::class, 'update']);
 
-                Route::get('/', [ContactUsMessageController::class, 'get_all']);
-                Route::delete('/{id}', [ContactUsMessageController::class, 'delete_by_id']);
+            Route::post('/common_question', [CommonQuestionController::class, 'store']);
+            Route::put('/common_question/{id}', [CommonQuestionController::class, 'edit_by_id']);
+            Route::delete('/common_question/{id}', [CommonQuestionController::class, 'delete_by_id']);
 
-            });
+            Route::post('/article', [ArticleController::class, 'store']);
+            Route::delete('/article/{id}', [ArticleController::class, 'delete_by_id']);
+            Route::put('/article/{id}', [ArticleController::class, 'update_by_id']);
 
-            Route::group([
-                'prefix' => '/article'
-            ], function(){
+            Route::post('/informative_product', [InformativeProductController::class, 'store']);
+            Route::put('/informative_product/{id}', [InformativeProductController::class, 'update_by_id']);
+            Route::delete('/informative_product/{id}', [InformativeProductController::class, 'delete_by_id']);
 
-                Route::post('/', [ArticleController::class, 'store']);
-                Route::delete('/{id}', [ArticleController::class, 'delete_by_id']);
-                Route::put('/{id}', [ArticleController::class, 'update_by_id']);
+            Route::post('/informative_product_category', [InformativeProductCategoryController::class, 'store']);
+            Route::put('/informative_product_category/{id}', [InformativeProductCategoryController::class, 'update_by_id']);
+            Route::delete('/informative_product_category/{id}', [InformativeProductCategoryController::class, 'delete_by_id']);
 
-            });
-
-            Route::group([
-                'prefix' => '/branch'
-            ], function(){
-
-                Route::post('/', [BranchController::class, 'store']);
-                Route::delete('/{id}', [BranchController::class, 'delete_by_id']);
-                Route::put('/{id}', [BranchController::class, 'update']);
-
-            });
-
-            Route::group([
-                'prefix' => '/common_question',
-            ], function (){
-
-                Route::post('/', [CommonQuestionController::class, 'store']);
-                Route::put('/{id}', [CommonQuestionController::class, 'edit_by_id']);
-                Route::delete('/{id}', [CommonQuestionController::class, 'delete_by_id']);
-
-            });
-
-            Route::group([
-                'prefix' => '/license'
-            ], function (){
-
-                Route::post('/', [LicenseController::class, 'store']);
-                Route::put('/{id}', [LicenseController::class, 'update_by_id']);
-                Route::delete('/{id}', [LicenseController::class, 'delete_by_id']);
-
-            });
-
-            Route::group([
-                'prefix' => '/informative_product'
-            ], function(){
-
-                Route::post('/', [InformativeProductController::class, 'store']);
-                Route::put('/{id}', [InformativeProductController::class, 'update_by_id']);
-                Route::delete('/{id}', [InformativeProductController::class, 'delete_by_id']);
-
-            });
-
-            Route::group([
-                'prefix' => '/informative_product_category'
-            ], function(){
-
-                Route::post('/', [InformativeProductCategoryController::class, 'store']);
-                Route::put('/{id}', [InformativeProductCategoryController::class, 'update_by_id']);
-                Route::delete('/{id}', [InformativeProductCategoryController::class, 'delete_by_id']);
-
-            });
-
+            Route::post('/license', [LicenseController::class, 'store']);
+            Route::put('/license/{id}', [LicenseController::class, 'update_by_id']);
+            Route::delete('/license/{id}', [LicenseController::class, 'delete_by_id']);
         });
-
-        Route::group([
-            'middleware' => ['RequiredPrivilege:send_notifications'],
-            'prefix' => '/notification'
-        ], function (){
-
-            Route::group([
-                'prefix' => '/frame'
-            ], function (){
-
-                Route::post('/', [NotificationFrameController::class, 'store']);
-                Route::get('/', [NotificationFrameController::class, 'get']);
-                Route::get('/{id}', [NotificationFrameController::class, 'get_by_id']);
-                Route::put('/{id}', [NotificationFrameController::class, 'update_by_id']);
-                Route::delete('/{id}', [NotificationFrameController::class, 'delete_by_id']);
-
-            });
-
-            Route::post('/', [NotificationController::class, 'send']);
-            Route::get('/', [NotificationController::class, 'get']);
-            Route::get('/{id}', [NotificationController::class, 'get_by_id']);
-            Route::delete('/{id}', [NotificationController::class, 'delete_by_id']);
-            Route::get('/{id}/user', [NotificationController::class, 'get_users']);
-            Route::get('/user/{id}', [UserController::class, 'get_notifications_by_id']);
-
-        });
-
-        Route::group([
-            'middleware' => ['RequiredPrivilege:manage_orders']
-        ], function (){
-
-            Route::group([
-                'prefix' => '/order_time_limit'
-            ], function (){
-
-                Route::get('/', [OrderTimeLimitController::class, 'get']);
-                Route::get('/available_groups', [OrderTimeLimitController::class, 'get_available_groups']);
-                Route::put('/', [OrderTimeLimitController::class, 'update']);
-
-            });
-
-            Route::group([
-                'prefix' => '/order'
-            ], function(){
-
-                Route::get('/', [OrderController::class, 'get']);
-                Route::get('/product_stats', [OrderController::class, 'get_product_stats']);
-                Route::get('/{id}', [OrderController::class, 'get_by_id']);
-
-
-            });
-
-        });
-
-        Route::group([
-            'middleware' => ['RequiredPrivilege:manage_users|manage_discounts|send_notifications'],
-            'prefix' => '/user'
-        ], function (){
-
-            Route::get('/', [UserController::class, 'get']);
-            Route::get('/{id}', [UserController::class, 'get_by_id']);
-
-        });
-
-        Route::group([
-            'middleware' => ['RequiredPrivilege:manage_users'],
-            'prefix' => '/user'
-        ], function(){
-
-            Route::post('/', [UserController::class, 'add']);
-            Route::put('/{id}', [UserController::class, 'update_by_id']);
-            Route::put('/{id}/block', [UserController::class, 'block_user_by_id']);
-            Route::put('/{id}/unblock', [UserController::class, 'unblock_user_by_id']);
-
-        });
-
-        Route::group([
-            'middleware' => ['RequiredPrivilege:manage_products'],
-            'prefix' => '/product'
-        ], function(){
-
-            Route::post('/', [ProductController::class, 'store']);
-            Route::get('/{id}', [ProductController::class, 'get_by_id']);
-            Route::delete('/{id}', [ProductController::class, 'delete_by_id']);
-            Route::put('/{id}', [ProductController::class, 'edit_by_id']);
-
-        });
-
-        Route::group([
-            'middleware' => ['RequiredPrivilege:manage_discounts'],
-            'prefix' => '/discount'
-        ], function(){
-
-            Route::post('/', [DiscountCodeController::class, 'store']);
-            Route::get('/', [DiscountCodeController::class, 'get']);
-            Route::get('/{id}', [DiscountCodeController::class, 'get_by_id']);
-            Route::delete('/{id}', [DiscountCodeController::class, 'delete_by_id']);
-            Route::get('/{id}/users', [DiscountCodeController::class, 'get_users']);
-
-        });
-
     });
-
-    Route::get('/product', [ProductController::class, 'get']);
-
 });
