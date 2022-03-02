@@ -34,7 +34,7 @@ class RequiredPrivilege
                         if ($or_privilege_key == $last_index_of_or_privileges)
                         {
                             return response([
-                                'code' => 4,
+                                'code' => 69,
                                 'message' => 'you do not have permission to access this part of api',
                                 'required_privilege' => $privilege
                             ], 403);
