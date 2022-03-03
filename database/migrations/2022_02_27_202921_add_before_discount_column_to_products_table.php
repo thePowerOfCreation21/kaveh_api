@@ -14,7 +14,7 @@ class AddBeforeDiscountColumnToProductsTable extends Migration
     public function up()
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->integer('before_discount_price');
+            $table->integer('before_discount_price')->nullable();
         });
     }
 
