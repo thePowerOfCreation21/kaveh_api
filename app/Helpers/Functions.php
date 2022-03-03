@@ -16,6 +16,7 @@ function FileExtension($file_name)
     return Sis($file_extension_array["$count"]);
 }
 
+// thank you mr. Jahanbazi
 function Sanitize($mixed): ?string
 {
     $result = null;

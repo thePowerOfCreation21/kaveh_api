@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use App\Models\OrderContent;
+use function App\Helpers\Sanitize;
 
 class OrderAction extends Action
 {
@@ -243,13 +244,13 @@ class OrderAction extends Action
 
         if (isset($query['search']))
         {
+            $query['search'] = Sanitize($query['search']);
             $eloquent = $eloquent->where(function ($q) use ($query){
                 $q
                     ->whereRaw("(`id`+1000) LIKE '%{$query['search']}%'")
-                    ->orWhereHas('contents', function($order_contents_query) use ($query){
-                        $order_contents_query->whereHas('product', function($order_contents_product_query) use ($query){
-                            $order_contents_product_query->where('title', 'LIKE', "%{$query['search']}%");
-                        });
+                    ->orWhereHas('user', function($order_user_query) use ($query){
+                        $order_user_query
+                            ->whereRaw("(CONCAT(name, ' ', last_name)) LIKE '%{$query['search']}%'");
                     });
             });
         }
