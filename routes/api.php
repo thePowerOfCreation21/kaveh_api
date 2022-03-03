@@ -170,18 +170,18 @@ Route::group([
         Route::group([
             'middleware' => 'RequiredPrivilege:send_notifications'
         ], function(){
+            Route::post('/notification/frame', [NotificationFrameController::class, 'store']);
+            Route::get('/notification/frame', [NotificationFrameController::class, 'get']);
+            Route::get('/notification/frame/{id}', [NotificationFrameController::class, 'get_by_id']);
+            Route::put('/notification/frame/{id}', [NotificationFrameController::class, 'update_by_id']);
+            Route::delete('/notification/frame/{id}', [NotificationFrameController::class, 'delete_by_id']);
+
             Route::post('/notification', [NotificationController::class, 'send']);
             Route::get('/notification', [NotificationController::class, 'get']);
             Route::get('/notification/{id}', [NotificationController::class, 'get_by_id']);
             Route::delete('/notification/{id}', [NotificationController::class, 'delete_by_id']);
             Route::get('/notification/{id}/user', [NotificationController::class, 'get_users']);
             Route::get('/notification/user/{id}', [UserController::class, 'get_notifications_by_id']);
-
-            Route::post('/notification/frame', [NotificationFrameController::class, 'store']);
-            Route::get('/notification/frame', [NotificationFrameController::class, 'get']);
-            Route::get('/notification/frame/{id}', [NotificationFrameController::class, 'get_by_id']);
-            Route::put('/notification/frame/{id}', [NotificationFrameController::class, 'update_by_id']);
-            Route::delete('/notification/frame/{id}', [NotificationFrameController::class, 'delete_by_id']);
         });
 
         Route::group([
