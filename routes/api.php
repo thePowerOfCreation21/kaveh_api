@@ -191,11 +191,12 @@ Route::group([
             Route::get('/order/todays_orders/{id}', [OrderController::class, 'get_todays_order_by_id']);
         });
 
+        Route::get('/order/{id}', [OrderController::class, 'get_by_id'])->middleware('RequiredPrivilege:get_orders|get_todays_orders');
+
         Route::group([
             'middleware' => 'RequiredPrivilege:get_orders'
         ], function(){
             Route::get('/order', [OrderController::class, 'get']);
-            Route::get('/order/{id}', [OrderController::class, 'get_by_id']);
         });
 
         Route::group([
