@@ -65,6 +65,7 @@ class AdminAction extends Action
         array $order_by = ['id' => 'DESC']
     ): object
     {
+        $eloquent = Admin::where('is_primary', false);
         return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
     }
 
