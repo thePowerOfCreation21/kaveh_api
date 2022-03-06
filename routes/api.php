@@ -91,7 +91,8 @@ Route::group([
                 'CheckIfShouldChangePassword',
             ]
         ], function(){
-            Route::get('/user', [UserController::class, 'get_user_from_request']);
+            Route::get('/user/info', [UserController::class, 'get_user_from_request']);
+
             Route::put('/user', [UserController::class, 'update_by_request']);
 
             Route::get('/user/cart', [CartController::class, 'get_cart_products']);
