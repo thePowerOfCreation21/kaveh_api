@@ -92,6 +92,7 @@ Route::group([
             ]
         ], function(){
             Route::get('/user/info', [UserController::class, 'get_user_from_request']);
+            Route::put('/user/info', [UserController::class, 'update_by_request']);
 
             Route::put('/user', [UserController::class, 'update_by_request']);
 
