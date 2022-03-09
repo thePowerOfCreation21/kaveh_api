@@ -96,6 +96,19 @@ class OrderController extends Controller
 
     /**
      * @param Request $request
+     * @param string $id
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get_user_order_by_id (Request $request, string $id): JsonResponse
+    {
+        return response()->json(
+            (new OrderAction())->get_user_order_by_request_and_id($request, $id)
+        );
+    }
+
+    /**
+     * @param Request $request
      * @return JsonResponse
      * @throws CustomException
      */

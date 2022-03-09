@@ -166,6 +166,29 @@ class OrderAction extends Action
 
     /**
      * @param Request $request
+     * @param string $id
+     * @return object
+     * @throws CustomException
+     */
+    public function get_user_order_by_request_and_id (Request $request, string $id): object
+    {
+        $user = $this->get_user_from_request($request);
+
+        $order = $this->query_to_eloquent([
+            'user_id' => $user->id,
+            'id' => $id
+        ])->first();
+
+        if (empty($order))
+        {
+            throw new CustomException('not found', 300, 404);
+        }
+
+        return $order;
+    }
+
+    /**
+     * @param Request $request
      * @param string|array $validation_role
      * @return array
      * @throws CustomException

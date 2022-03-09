@@ -103,6 +103,7 @@ Route::group([
 
             Route::post('/user/order', [OrderController::class, 'store']);
             Route::get('/user/order', [OrderController::class, 'get_user_orders']);
+            Route::get('/user/order/{id}', [OrderController::class, 'get_user_order_by_id']);
             Route::get('/user/order/product_stats', [OrderController::class, 'get_user_product_stats']);
 
             Route::get('/user/notification', [NotificationController::class, 'get_user_notifications']);
