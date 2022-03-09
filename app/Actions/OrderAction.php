@@ -160,7 +160,7 @@ class OrderAction extends Action
         $query = array_merge($query, $this->get_data_from_request($request, $validation_role));
         return PaginationService::paginate_with_request(
             $request,
-            $this->query_to_eloquent($query, null, false)
+            $this->query_to_eloquent($query)
         );
     }
 
