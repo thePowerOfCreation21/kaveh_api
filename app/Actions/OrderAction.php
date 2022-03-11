@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\DiscountCode;
 use App\Models\Order;
 use App\Models\OrderTimeLimit;
+use App\Models\Product;
 use App\Services\PaginationService;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
@@ -456,8 +457,8 @@ class OrderAction extends Action
         {
             if ($order_content['product']->type == 'limited')
             {
-                $order_content['product']->update([
-                    'stock' => max(($order_content['product']['stock'] - $order_content['quantity']), 0)
+                Product::where('id', $order_content['product']->id)->update([
+                    'stock' => max(($order_content['product']->stock - $order_content['quantity']), 0)
                 ]);
             }
         }
