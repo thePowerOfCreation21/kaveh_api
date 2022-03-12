@@ -51,9 +51,10 @@ class ProductAction extends Action
 
     public function store(array $data)
     {
+        $data['before_discount_price'] = $data['price'];
+
         if (isset($data['discount_percentage']))
         {
-            $data['before_discount_price'] = $data['price'];
             $data['price'] = $data['before_discount_price'] - (($data['before_discount_price'] / 100) * $data['discount_percentage']);
         }
 
