@@ -332,8 +332,7 @@ class OrderAction extends Action
                         ->whereDate('created_at', '<', date('Y-m-d H:i:s', (strtotime('today') + $order_time_limit->limited->to)));
                 }
             }
-
-            if ($current_time > max($order_time_limit->limited->to, $order_time_limit->unlimited->to))
+            else if ($current_time > max($order_time_limit->limited->to, $order_time_limit->unlimited->to))
             {
                 $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d'));
             }
