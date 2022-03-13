@@ -314,10 +314,26 @@ class OrderAction extends Action
 
         if (isset($query['todays_orders']) && $query['todays_orders'])
         {
-            $today_time = time() - strtotime('today');
-            $end_of_order_range = (new OrderTimeLimit())->get_end_of_order_range();
+            $current_time = time() - strtotime('today');
+            $order_time_limit = (new OrderTimeLimit())->get();
 
-            if ($today_time > $end_of_order_range)
+            if ($current_time > min($order_time_limit->limited->from, $order_time_limit->unlimited->from) || $current_time < $order_time_limit->limited->to)
+            {
+                if ($current_time < min($order_time_limit->limited->from, $order_time_limit->unlimited->from))
+                {
+                    $eloquent = $eloquent
+                        ->whereDate('created_at', '>', date('Y-m-d H:i:s', (strtotime('-1 days') + min($order_time_limit->limited->from, $order_time_limit->unlimited->from))))
+                        ->whereDate('created_at', '<', date('Y-m-d H:i:s', (strtotime('today') + $order_time_limit->limited->to)));
+                }
+                else
+                {
+                    $eloquent = $eloquent
+                        ->whereDate('created_at', '>', date('Y-m-d H:i:s', (strtotime('today') + min($order_time_limit->limited->from, $order_time_limit->unlimited->from))))
+                        ->whereDate('created_at', '<', date('Y-m-d H:i:s', (strtotime('today') + $order_time_limit->limited->to)));
+                }
+            }
+
+            if ($current_time > max($order_time_limit->limited->to, $order_time_limit->unlimited->to))
             {
                 $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d'));
             }
