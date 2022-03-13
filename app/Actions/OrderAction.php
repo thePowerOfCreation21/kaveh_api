@@ -332,13 +332,32 @@ class OrderAction extends Action
                         ->whereDate('created_at', '<', date('Y-m-d H:i:s', (strtotime('today') + $order_time_limit->limited->to)));
                 }
             }
-            else if ($current_time > max($order_time_limit->limited->to, $order_time_limit->unlimited->to))
+
+            if ($current_time > max($order_time_limit->limited->to, $order_time_limit->unlimited->to))
             {
-                $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d'));
+                if ($order_time_limit->limited->from > $order_time_limit->limited->to || $order_time_limit->unlimited->from > $order_time_limit->unlimited->to)
+                {
+                    $eloquent = $eloquent
+                        ->whereDate('created_at', '>', date('Y-m-d H:i:s', ( strtotime('-1 days') + min($order_time_limit->limited->from, $order_time_limit->unlimited->from))))
+                        ->whereDate('created_at', '<', date('Y-m-d H:i:s', ( strtotime('today') + min($order_time_limit->limited->to, $order_time_limit->unlimited->to))));
+                }
+                else
+                {
+                    $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d', strtotime('today')));
+                }
             }
             else
             {
-                $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d', strtotime('-1 days')));
+                if ($order_time_limit->limited->from > $order_time_limit->limited->to || $order_time_limit->unlimited->from > $order_time_limit->unlimited->to)
+                {
+                    $eloquent = $eloquent
+                        ->whereDate('created_at', '>', date('Y-m-d H:i:s', ( strtotime('-2 days') + min($order_time_limit->limited->from, $order_time_limit->unlimited->from))))
+                        ->whereDate('created_at', '<', date('Y-m-d H:i:s', ( strtotime('-1 days') + min($order_time_limit->limited->to, $order_time_limit->unlimited->to))));
+                }
+                else
+                {
+                    $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d', strtotime('-1 days')));
+                }
             }
         }
 
