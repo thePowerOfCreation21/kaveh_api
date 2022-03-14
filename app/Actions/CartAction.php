@@ -120,6 +120,7 @@ class CartAction extends Action
         $cart_products = $cart->products;
         $total_price = 0;
         $total_quantity = 0;
+        $total_type = 0;
 
         foreach ($cart_products AS $key => $cart_product)
         {
@@ -132,11 +133,13 @@ class CartAction extends Action
 
             $total_price += $cart_contents[$key]->amount;
             $total_quantity += $cart_contents[$key]->quantity;
+            $total_type++;
         }
 
         return (object) [
             'total_price' => $total_price,
             'total_quantity' => $total_quantity,
+            'total_type' => $total_type,
             'cart_contents' => $cart_contents
         ];
     }
