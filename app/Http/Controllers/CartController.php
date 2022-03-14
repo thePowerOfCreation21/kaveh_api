@@ -59,12 +59,27 @@ class CartController extends Controller
         );
     }
 
-    public function empty_the_cart (Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function empty_the_cart (Request $request): JsonResponse
     {
         (new CartAction())->empty_the_cart_by_request($request);
 
         return response()->json([
             'message' => 'cart is empty now'
         ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function get_cart_total_type (Request $request): JsonResponse
+    {
+        return response()->json(
+            (new CartAction())->get_cart_total_type_by_request($request)
+        );
     }
 }

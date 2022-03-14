@@ -100,6 +100,13 @@ class CartAction extends Action
         );
     }
 
+    public function get_cart_total_type_by_request (Request $request)
+    {
+        return $this->get_cart_total_type_by_user(
+            $this->get_user_from_request($request)
+        );
+    }
+
     /**
      * @param User $user
      * @return object
@@ -108,6 +115,17 @@ class CartAction extends Action
     {
         $cart = (new UserAction())->get_user_cart($user);
         return $this->get_cart_contents($cart);
+    }
+
+    /**
+     * @param User $user
+     * @return int
+     */
+    public function get_cart_total_type_by_user (User $user)
+    {
+        return $this->get_cart_total_type(
+            (new UserAction())->get_user_cart($user)
+        );
     }
 
     /**
@@ -142,6 +160,15 @@ class CartAction extends Action
             'total_type' => $total_type,
             'cart_contents' => $cart_contents
         ];
+    }
+
+    /**
+     * @param Cart $cart
+     * @return int
+     */
+    public function get_cart_total_type (Cart $cart)
+    {
+        return $cart->products()->count();
     }
 
     /**

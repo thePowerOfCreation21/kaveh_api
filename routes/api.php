@@ -97,6 +97,7 @@ Route::group([
             Route::put('/user', [UserController::class, 'update_by_request']);
 
             Route::get('/user/cart', [CartController::class, 'get_cart_products']);
+            Route::get('/user/cart/total_type', [CartController::class, 'get_cart_total_type']);
             Route::delete('/user/cart', [CartController::class, 'empty_the_cart']);
             Route::put('/user/cart/product/{id}', [CartController::class, 'store_or_update_cart_product']);
             Route::delete('/user/cart/product/{id}', [CartController::class, 'delete_cart_product']);
