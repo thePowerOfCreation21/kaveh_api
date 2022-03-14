@@ -392,6 +392,11 @@ class UserAction extends Action
      */
     public function update_by_model (array $update_data, Model $user): Model
     {
+        if (isset($update_data['password']))
+        {
+            $update_data['password'] = Hash::make($update_data['password']);
+            $update_data['should_change_password'] = false;
+        }
         isset($update_data['password']) && ($update_data['password'] = Hash::make($update_data['password']));
 
         if (isset($update_data['phone_number']))
