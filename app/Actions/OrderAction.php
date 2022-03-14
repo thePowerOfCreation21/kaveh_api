@@ -115,7 +115,7 @@ class OrderAction extends Action
         Request $request,
         $query_validation_role = 'get_query',
         $eloquent = null,
-        array $order_by = ['id' => 'DESC']
+        array $order_by = []
     ): object
     {
         return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
@@ -361,7 +361,7 @@ class OrderAction extends Action
             }
         }
 
-        return $eloquent;
+        return $eloquent->orderBy('id', 'DESC');
     }
 
     /**
