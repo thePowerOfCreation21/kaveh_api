@@ -21,6 +21,7 @@ class Product extends Model
         'price',
         'discount_percentage',
         'type',
+        'stock'
     ];
 
     protected $casts = [
