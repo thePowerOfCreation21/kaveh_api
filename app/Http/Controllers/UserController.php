@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Actions\UserAction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Actions\UserActions;
 
@@ -67,8 +68,16 @@ class UserController extends Controller
 
     public function login (Request $request)
     {
+        try{
+            $token = (new UserAction())->login_with_OTP_by_request($request);
+        }
+        catch (\Exception $exception)
+        {
+            $token = (new UserAction())->login_by_request($request);
+        }
+
         return response()->json([
-            'token' => (new UserAction())->login_by_request($request)->plainTextToken
+            'token' => $token->plainTextToken
         ]);
     }
 
