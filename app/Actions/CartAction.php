@@ -229,8 +229,9 @@ class CartAction extends Action
             return $cartProduct->delete();
         }
 
-        if ($data['quantity'] > $product->stock)
+        if ($product->type == 'limited' && $data['quantity'] > $product->stock)
         {
+
             throw new CustomException('quantity value is greater than product stock', 96, 400);
         }
 
@@ -253,7 +254,7 @@ class CartAction extends Action
             throw new CustomException('trying to store product with negative or 0 quantity (product already is not in cart)', 95, 400);
         }
 
-        if ($data['quantity'] > $product->stock)
+        if ($product->type == 'limited' && $data['quantity'] > $product->stock)
         {
             throw new CustomException('quantity value is greater than product stock', 96, 400);
         }
