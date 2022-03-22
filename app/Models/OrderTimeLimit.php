@@ -75,7 +75,7 @@ class OrderTimeLimit extends KeyObjectConfig
 
         if ($time === null)
         {
-            $time = time() - strtotime('today');
+            $time = (time() - strtotime('today')) + 3600;
         }
 
         $orderTimeLimit = $this->get();
