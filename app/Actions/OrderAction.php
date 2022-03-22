@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use App\Models\OrderContent;
 use function App\Helpers\get_daily_time;
 use function App\Helpers\Sanitize;
+use function App\Helpers\str_to_daily_time;
 
 class OrderAction extends Action
 {
@@ -316,8 +317,19 @@ class OrderAction extends Action
         if (isset($query['todays_orders']) && $query['todays_orders'])
         {
             $current_time = get_daily_time();
-            $order_time_limit = (new OrderTimeLimit())->get();
+            $order_time_limit = new OrderTimeLimit();
 
+            if ($current_time > $order_time_limit->get_min_from())
+            {
+                $eloquent = $eloquent->whereDate('created_at', '>=', date('Y-m-d', str_to_daily_time('today') + $order_time_limit->get_min_from()));
+            }
+            else
+            {
+                $eloquent = $eloquent->whereDate('created_at', '<', date('Y-m-d', str_to_daily_time('today') + $order_time_limit->get_min_from()));
+                $eloquent = $eloquent->whereDate('created_at', '>', date('Y-m-d', str_to_daily_time('-1 days') + $order_time_limit->get_min_from()));
+            }
+
+            /*
             if ($current_time > min($order_time_limit->limited->from, $order_time_limit->unlimited->from) || $current_time < $order_time_limit->limited->to)
             {
                 if ($current_time < min($order_time_limit->limited->from, $order_time_limit->unlimited->from))
@@ -360,6 +372,7 @@ class OrderAction extends Action
                     $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d', strtotime('-1 days')));
                 }
             }
+            */
         }
 
         return $eloquent->orderBy('id', 'DESC');

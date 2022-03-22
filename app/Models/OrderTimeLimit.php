@@ -116,6 +116,46 @@ class OrderTimeLimit extends KeyObjectConfig
      * @return mixed
      * @throws CustomException
      */
+    public function get_min_from ()
+    {
+        $orderTimeLimit = $this->get();
+        return min($orderTimeLimit->limited->from, $orderTimeLimit->unlimited->from);
+    }
+
+    /**
+     * @return mixed
+     * @throws CustomException
+     */
+    public function get_max_from ()
+    {
+        $orderTimeLimit = $this->get();
+        return max($orderTimeLimit->limited->from, $orderTimeLimit->unlimited->from);
+    }
+
+    /**
+     * @return mixed
+     * @throws CustomException
+     */
+    public function get_min_to ()
+    {
+        $orderTimeLimit = $this->get();
+        return min($orderTimeLimit->limited->to, $orderTimeLimit->unlimited->to);
+    }
+
+    /**
+     * @return mixed
+     * @throws CustomException
+     */
+    public function get_max_to ()
+    {
+        $orderTimeLimit = $this->get();
+        return max($orderTimeLimit->limited->to, $orderTimeLimit->unlimited->to);
+    }
+
+    /**
+     * @return mixed
+     * @throws CustomException
+     */
     public function get_end_of_order_range ()
     {
         $orderTimeLimit = $this->get();

@@ -159,5 +159,38 @@ function convertToArray ($mixed): array
  */
 function get_daily_time ()
 {
-    return (time() - strtotime('today')) + 3600;
+    $time = (time() - strtotime('today'));
+    if (date('H', strtotime('today')) == '01')
+    {
+        $time += 3600;
+    }
+    return $time;
+}
+
+/**
+ * @param string $str
+ * @return false|int
+ */
+function str_to_daily_time (string $str)
+{
+    $time = strtotime(date('Y/m/j', strtotime($str)));
+    if (date('H', $time) == '01')
+    {
+        $time -= 3600;
+    }
+    return $time;
+}
+
+/**
+ * @param int $a
+ * @param int $b
+ * @return int
+ */
+function get_remainder (int $a, int $b): int
+{
+    while ($a > $b)
+    {
+        $a -= $b;
+    }
+    return $a;
 }
