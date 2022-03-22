@@ -17,7 +17,7 @@ class CartAction extends Action
 {
     protected $validation_roles = [
         'store_or_update_cart_product' => [
-            'quantity' => 'required|integer'
+            'quantity' => 'required|integer|max:10000'
         ]
     ];
 
@@ -229,11 +229,7 @@ class CartAction extends Action
             return $cartProduct->delete();
         }
 
-        if ($product->type == 'limited' && $data['quantity'] > $product->stock)
-        {
-
-            throw new CustomException('quantity value is greater than product stock', 96, 400);
-        }
+        $this->check_product_stock($data['quantity'], $product);
 
         $cartProduct->update($data);
 
@@ -254,10 +250,7 @@ class CartAction extends Action
             throw new CustomException('trying to store product with negative or 0 quantity (product already is not in cart)', 95, 400);
         }
 
-        if ($product->type == 'limited' && $data['quantity'] > $product->stock)
-        {
-            throw new CustomException('quantity value is greater than product stock', 96, 400);
-        }
+        $this->check_product_stock($data['quantity'], $product);
 
         return CartProduct::create(array_merge(
             [
@@ -266,5 +259,26 @@ class CartAction extends Action
             ],
             $data
         ));
+    }
+
+    /**
+     * @param int $quantity
+     * @param Product $product
+     * @return bool
+     * @throws CustomException
+     */
+    public function check_product_stock (int $quantity, Product $product): bool
+    {
+        if ($quantity > 10000)
+        {
+            throw new CustomException('max quantity is 10,000. (even for unlimited products)', 97, 400);
+        }
+
+        if ($product->type == 'limited' && $quantity > $product->stock)
+        {
+            throw new CustomException('quantity value is greater than product stock', 96, 400);
+        }
+
+        return true;
     }
 }
