@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use App\Models\OrderContent;
+use function App\Helpers\get_daily_time;
 use function App\Helpers\Sanitize;
 
 class OrderAction extends Action
@@ -314,7 +315,7 @@ class OrderAction extends Action
 
         if (isset($query['todays_orders']) && $query['todays_orders'])
         {
-            $current_time = time() - strtotime('today');
+            $current_time = get_daily_time();
             $order_time_limit = (new OrderTimeLimit())->get();
 
             if ($current_time > min($order_time_limit->limited->from, $order_time_limit->unlimited->from) || $current_time < $order_time_limit->limited->to)

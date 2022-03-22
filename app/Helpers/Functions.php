@@ -153,3 +153,11 @@ function convertToArray ($mixed): array
 
     return $mixed;
 }
+
+/**
+ * @return false|int
+ */
+function get_daily_time ()
+{
+    return (time() - strtotime('today')) + 3600;
+}

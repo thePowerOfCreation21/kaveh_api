@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Abstracts\KeyObjectConfig;
 use App\Exceptions\CustomException;
+use function App\Helpers\get_daily_time;
 
 class OrderTimeLimit extends KeyObjectConfig
 {
@@ -75,7 +76,7 @@ class OrderTimeLimit extends KeyObjectConfig
 
         if ($time === null)
         {
-            $time = (time() - strtotime('today')) + 3600;
+            $time = get_daily_time();
         }
 
         $orderTimeLimit = $this->get();
