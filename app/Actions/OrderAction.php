@@ -321,12 +321,39 @@ class OrderAction extends Action
 
             if ($current_time > $order_time_limit->get_min_from())
             {
+                /*
+                dd(date('Y/m/d H:i:s', str_to_daily_time('today') + $order_time_limit->get_min_from()));
+                $eloquent = $eloquent->whereTime('created_at', '>=', str_to_daily_time('today') + $order_time_limit->get_min_from());
                 $eloquent = $eloquent->whereDate('created_at', '>=', date('Y-m-d', str_to_daily_time('today') + $order_time_limit->get_min_from()));
+                */
+                $eloquent = $eloquent->where(function ($q) use ($order_time_limit){
+                    $time = str_to_daily_time('today') + $order_time_limit->get_min_from();
+                    $q
+                        ->whereDate('created_at', '>=', date('Y-m-d', $time))
+                        ->whereTime('created_at', '>=', date('H:i:s', $time));
+                });
             }
             else
             {
+                $eloquent = $eloquent->where(function ($q) use ($order_time_limit){
+                    $q
+                        ->where(function ($q2) use ($order_time_limit){
+                            $time = str_to_daily_time('today') + $order_time_limit->get_min_from();
+                            $q2
+                                ->whereDate('created_at', '<', date('Y-m-d', $time))
+                                ->whereTime('created_at', '<', date('H:i:s', $time));
+                        })
+                        ->where(function ($q2) use ($order_time_limit){
+                            $time = str_to_daily_time('-1 days') + $order_time_limit->get_min_from();
+                            $q2
+                                ->whereDate('created_at', '>=', date('Y-m-d', $time))
+                                ->whereTime('created_at', '>=', date('H:i:s', $time));
+                        });
+                });
+                /*
                 $eloquent = $eloquent->whereDate('created_at', '<', date('Y-m-d', str_to_daily_time('today') + $order_time_limit->get_min_from()));
                 $eloquent = $eloquent->whereDate('created_at', '>', date('Y-m-d', str_to_daily_time('-1 days') + $order_time_limit->get_min_from()));
+                */
             }
 
             /*
