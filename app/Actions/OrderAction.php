@@ -448,6 +448,11 @@ class OrderAction extends Action
 
         $available_groups = (new OrderTimeLimit())->get_available_groups();
 
+        if (empty($available_groups))
+        {
+            throw new CustomException('you can not order now, (because of order time limit)', 110, 400);
+        }
+
         $problems = [];
 
         foreach ($cart_contents AS $cart_content)
@@ -455,7 +460,7 @@ class OrderAction extends Action
             if (!in_array($cart_content->product->type, $available_groups))
             {
                 $problems[] = [
-                    'code' => 1,
+                    'code' => $cart_content->product->type == 'limited' ? 1 : 3,
                     'message' => 'could not order this product because of order time limit',
                     'product' => $cart_content->product,
                 ];
