@@ -222,7 +222,14 @@ class CartAction extends Action
             $product = $cartProduct->product;
         }
 
-        $data['quantity'] = $cartProduct->quantity + $data['quantity'];
+        if ($data['quantity'] < 0)
+        {
+            $data['quantity'] = min($product->stock, $cartProduct->quantity + $data['quantity']);
+        }
+        else
+        {
+            $data['quantity'] = $cartProduct->quantity + $data['quantity'];
+        }
 
         if ($data['quantity'] <= 0)
         {
