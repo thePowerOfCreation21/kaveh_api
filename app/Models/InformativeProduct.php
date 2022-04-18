@@ -25,33 +25,6 @@ class InformativeProduct extends Model
         'updated_at'
     ];
 
-    public static function TimedRandoms ()
-    {
-        if ((new RandomInformativeProductUpdateTime())->is_time_to_update())
-        {
-            self::updateTimedRandoms();
-        }
-
-        return self::where('is_in_index', true);
-    }
-
-    public static function updateTimedRandoms ()
-    {
-        self::query()->update([
-            'is_in_index' => false
-        ]);
-
-        self::inRandomOrder()
-            ->limit(4)
-            ->update([
-                'is_in_index' => true
-            ]);
-
-        (new RandomInformativeProductUpdateTime())->update((object) [
-            'time' => date('Y-m-d H:i:s')
-        ]);
-    }
-
     /**
      * @return BelongsTo
      */

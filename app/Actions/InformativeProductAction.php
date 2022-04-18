@@ -5,6 +5,7 @@ namespace App\Actions;
 use App\Abstracts\Action;
 use App\Exceptions\CustomException;
 use App\Models\InformativeProduct;
+use App\Models\RandomInformativeProductUpdateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
@@ -24,8 +25,13 @@ class InformativeProductAction extends Action
             'description' => 'string|max:1500'
         ],
         'get_query' => [
+            'timed_randoms' => 'in:1,0,true,false',
             'search' => 'string|max:100'
         ]
+    ];
+
+    protected $unusual_fields = [
+        'timed_randoms' => 'boolean'
     ];
 
     public function __construct()
@@ -108,6 +114,7 @@ class InformativeProductAction extends Action
      * @param array $query
      * @param null $this_eloquent
      * @return mixed|null
+     * @throws CustomException
      */
     public function query_to_eloquent(array $query, $this_eloquent = null)
     {
@@ -120,6 +127,18 @@ class InformativeProductAction extends Action
             if (isset($query['search']))
             {
                 $eloquent = $eloquent->where('title', 'LIKE', "%{$query['search']}%");
+            }
+        }
+
+        if (isset($query['timed_randoms']))
+        {
+            if ($query['timed_randoms'])
+            {
+                $eloquent = $this->addTimedRandomsToEloquent($eloquent);
+            }
+            else
+            {
+                $eloquent = $eloquent->where('is_in_index', false);
             }
         }
 
@@ -141,5 +160,41 @@ class InformativeProductAction extends Action
         }
 
         return $entity->delete();
+    }
+
+    /**
+     * @param $eloquent
+     * @return mixed
+     * @throws CustomException
+     */
+    public function addTimedRandomsToEloquent ($eloquent)
+    {
+        if ((new RandomInformativeProductUpdateTime())->is_time_to_update())
+        {
+            $this->updateTimedRandoms();
+        }
+
+        return $eloquent->where('is_in_index', true);
+    }
+
+    /**
+     * @return void
+     * @throws CustomException
+     */
+    public function updateTimedRandoms ()
+    {
+        $this->model::query()->update([
+            'is_in_index' => false
+        ]);
+
+        $this->model::inRandomOrder()
+            ->limit(4)
+            ->update([
+                'is_in_index' => true
+            ]);
+
+        (new RandomInformativeProductUpdateTime())->update((object) [
+            'time' => date('Y-m-d H:i:s')
+        ]);
     }
 }
