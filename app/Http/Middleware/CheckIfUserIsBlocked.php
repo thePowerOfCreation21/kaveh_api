@@ -23,7 +23,7 @@ class CheckIfUserIsBlocked
                 'code' => 90,
                 'message' => 'your account has been blocked',
                 'reason_for_blocking' => $user->reason_for_blocking
-            ], 404);
+            ], 403);
         }
         return $next($request);
     }
