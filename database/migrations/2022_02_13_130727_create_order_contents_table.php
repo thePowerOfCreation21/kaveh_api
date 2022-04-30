@@ -17,7 +17,7 @@ class CreateOrderContentsTable extends Migration
             $table->id();
             $table->string('order_id', 15);
             $table->integer('quantity');
-            $table->integer('amount');
+            $table->bigInteger('amount');
             $table->string('product_id', 15);
             $table->json('product');
         });
