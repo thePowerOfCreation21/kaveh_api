@@ -267,10 +267,13 @@ class NotificationAction extends Action
         $user = $this->get_user_from_request($request);
         $query = ['user_id' => $user->id];
         $query = array_merge($query, $this->get_data_from_request($request, $validation_role));
-        return PaginationService::paginate_with_request(
+        $eloquent = $this->query_to_eloquent($query);
+        $result = PaginationService::paginate_with_request(
             $request,
-            $this->query_to_eloquent($query)
+            $eloquent
         );
+        $this->seen_by_user_id_and_notifications($user->id, $eloquent->get());
+        return $result;
     }
 
     /**
