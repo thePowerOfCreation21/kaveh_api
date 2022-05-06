@@ -277,6 +277,20 @@ class NotificationAction extends Action
     }
 
     /**
+     * @param Request $request
+     * @param string|array $validation_role
+     * @return int
+     * @throws CustomException
+     */
+    public function get_user_notifications_count_by_request (Request $request, $validation_role = 'get_user_notifications_query'): int
+    {
+        $user = $this->get_user_from_request($request);
+        $query = ['user_id' => $user->id];
+        $query = array_merge($query, $this->get_data_from_request($request, $validation_role));
+        return $this->query_to_eloquent($query)->count();
+    }
+
+    /**
      * get notification users by request and notification id
      *
      * @param Request $request

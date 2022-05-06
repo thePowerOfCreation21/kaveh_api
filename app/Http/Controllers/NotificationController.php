@@ -87,6 +87,18 @@ class NotificationController extends Controller
 
     /**
      * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get_user_notifications_count(Request $request)
+    {
+        return response()->json(
+            (new NotificationAction())->get_user_notifications_count_by_request($request)
+        );
+    }
+
+    /**
+     * @param Request $request
      * @param string $notificationId
      * @return JsonResponse
      * @throws CustomException

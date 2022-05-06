@@ -108,6 +108,7 @@ Route::group([
             Route::get('/user/order/product_stats', [OrderController::class, 'get_user_product_stats']);
 
             Route::get('/user/notification', [NotificationController::class, 'get_user_notifications']);
+            Route::get('/user/notification/count', [NotificationController::class, 'get_user_notifications_count']);
             Route::post('/user/notification/{id}/seen', [NotificationController::class, 'seen_by_user']);
             Route::post('/user/notification/seen', [NotificationController::class, 'seen_user_notifications']);
 
