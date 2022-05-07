@@ -175,6 +175,11 @@ class ProductAction extends Action
             $update_data['stock'] = $update_data['stock'] ?? max($product->getAttributes()['stock'], 0);
         }
 
+        if (isset($update_data['price']))
+        {
+            $update_data['before_discount_price'] = $update_data['price'];
+        }
+
         if (isset($update_data['discount_percentage']))
         {
             $update_data['before_discount_price'] = $data['before_discount_price'] ?? $product->before_discount_price;
