@@ -182,7 +182,7 @@ class ProductAction extends Action
 
         if (isset($update_data['discount_percentage']))
         {
-            $update_data['before_discount_price'] = $data['before_discount_price'] ?? $product->before_discount_price;
+            $update_data['before_discount_price'] = $update_data['before_discount_price'] ?? $data['before_discount_price'] ?? $product->before_discount_price;
 
             if ($update_data['before_discount_price'] < 1)
             {
