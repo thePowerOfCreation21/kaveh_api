@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-use App\Abstracts\Action;
+use App\Services\Action;
 use App\Exceptions\CustomException;
 use App\Models\OrderTimeLimit;
 use App\Models\Product;

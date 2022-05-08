@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Abstracts;
+namespace App\Services;
 
 use App\Exceptions\CustomException;
 use App\Models\User;

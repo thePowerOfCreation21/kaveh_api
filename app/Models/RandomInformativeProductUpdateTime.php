@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Abstracts\KeyObjectConfig;
+use App\Services\KeyObjectConfig;
 use App\Exceptions\CustomException;
 
 class RandomInformativeProductUpdateTime extends KeyObjectConfig

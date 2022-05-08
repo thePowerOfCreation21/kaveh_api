@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Actions\DiscountCodeAction;
-use App\Pivots\DiscountUsersPivot;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Casts\CustomDateCast;
