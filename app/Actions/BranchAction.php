@@ -3,27 +3,26 @@
 namespace App\Actions;
 
 use App\Exceptions\CustomException;
-use App\Models\Article;
+use App\Models\Branch;
 use App\Services\Action;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
-class ArticleAction extends Action
+class BranchAction extends Action
 {
     protected array $validation_roles = [
-        'get_query' => [
-            'search' => 'string|max:100'
-        ],
         'store' => [
-            'title' => 'required|string|max:120',
-            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000',
-            'content' => 'required|string|max:5000'
+            'title' => 'required|string|max:150',
+            'description' => 'required|string|max:250',
+            'address' => 'required|string|max:250',
+            'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000'
         ],
         'update' => [
-            'title' => 'string|max:120',
-            'image' => 'file|mimes:png,jpg,jpeg,gif|max:10000',
-            'content' => 'string|max:5000'
+            'title' => 'string|max:150',
+            'description' => 'string|max:250',
+            'address' => 'string|max:250',
+            'image' => 'file|mimes:png,jpg,jpeg,gif|max:10000'
         ]
     ];
 
@@ -33,7 +32,7 @@ class ArticleAction extends Action
 
     public function __construct()
     {
-        $this->model = Article::class;
+        $this->model = Branch::class;
     }
 
     /**
@@ -60,49 +59,13 @@ class ArticleAction extends Action
     public function get_by_request(
         Request $request,
         array|string $validation_role = 'get_query',
-        array $query_addition = ['limit_content' => true],
+        array $query_addition = [],
         Model|Builder $eloquent = null,
         array $relations = [],
         array $order_by = ['id' => 'DESC']
     ): object
     {
         return parent::get_by_request($request, $validation_role, $query_addition, $eloquent, $relations, $order_by);
-    }
-
-    /**
-     * @param array $query
-     * @param Model|Builder|null $eloquent
-     * @param array $relations
-     * @param array $order_by
-     * @return Model|Builder|null
-     */
-    public function query_to_eloquent(
-        array $query,
-        Model|Builder $eloquent = null,
-        array $relations = [],
-        array $order_by = ['id' => 'DESC']
-    ): Model|Builder|null
-    {
-        $eloquent = parent::query_to_eloquent($query, $eloquent, $relations, $order_by);
-
-        if (isset($query['limit_content']) && $query['limit_content'])
-        {
-            $eloquent = $eloquent->selectRaw('
-                articles.*,
-                IF(
-                    LENGTH(content) > 100,
-                    CONCAT(SUBSTRING(content, 1, 100), "..."),
-                    content
-                ) AS content
-            ');
-        }
-
-        if (isset($query['search']))
-        {
-            $eloquent = $eloquent->where('title', 'LIKE', "%{$query['search']}%");
-        }
-
-        return $eloquent;
     }
 
     /**
@@ -187,8 +150,8 @@ class ArticleAction extends Action
      * @return int|bool
      * @throws CustomException
      */
-    public function update_by_request_and_id (Request $request, string $id, array|string $validation_role = 'update'): int|bool
+    public function update_by_request_and_id(Request $request, string $id, array|string $validation_role = 'update'): int|bool
     {
-        return $this->update_by_request_and_query($request, ['id' => $id], $validation_role);
+        return parent::update_by_request_and_id($request, $id, $validation_role);
     }
 }
