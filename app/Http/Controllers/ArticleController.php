@@ -2,44 +2,73 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CustomException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Actions\ArticleActions;
+use App\Actions\ArticleAction;
 
 class ArticleController extends Controller
 {
-    public function store (Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function store (Request $request): JsonResponse
     {
-        ArticleActions::store($request);
+        (new ArticleAction())->store_by_request($request);
 
         return response()->json([
             'message' => 'article added successfully'
         ]);
     }
 
-    public function get (Request $request)
-    {
-        return ArticleActions::get_with_request($request);
-    }
-
-    public function get_by_id (string $id)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get (Request $request): JsonResponse
     {
         return response()->json(
-            ArticleActions::get_by_id($id)
+            (new ArticleAction())->get_by_request($request)
         );
     }
 
-    public function delete_by_id (string $id)
+    /**
+     * @param string $id
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get_by_id (string $id): JsonResponse
     {
-        ArticleActions::delete_by_id($id);
+        return response()->json(
+            (new ArticleAction())->get_by_id($id)
+        );
+    }
+
+    /**
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function delete_by_id (string $id): JsonResponse
+    {
+        (new ArticleAction())->delete_by_id($id);
 
         return response()->json([
             'message' => 'article deleted successfully'
         ]);
     }
 
-    public function update_by_id (Request $request, $id)
+    /**
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function update_by_id (Request $request, $id): JsonResponse
     {
-        ArticleActions::update_by_id($request, $id);
+        (new ArticleAction())->update_by_request_and_id($request, $id);
 
         return response()->json([
             'message' => 'article updated successfully'

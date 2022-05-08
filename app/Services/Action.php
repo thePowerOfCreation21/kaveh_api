@@ -360,7 +360,6 @@ abstract class Action
         if (is_callable($updating))
         {
             $updating($eloquent, $update_data);
-            dd($update_data);
         }
         return $eloquent->update($update_data);
     }
@@ -395,5 +394,17 @@ abstract class Action
             $this->get_data_from_request($request, $validation_role),
             $updating
         );
+    }
+
+    /**
+     * @param Request $request
+     * @param string $id
+     * @param array|string $validation_role
+     * @return int|bool
+     * @throws CustomException
+     */
+    public function update_by_request_and_id (Request $request, string $id, array|string $validation_role = 'update'): int|bool
+    {
+        return $this->update_by_request_and_query($request, ['id' => $id], $validation_role);
     }
 }
