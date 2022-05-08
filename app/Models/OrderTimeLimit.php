@@ -83,7 +83,7 @@ class OrderTimeLimit extends KeyObjectConfig
 
         foreach ($orderTimeLimit as $group => $time_limit)
         {
-            if ($time_limit->from > $time_limit->to && ($time > $time_limit->from || $time < $time_limit->from))
+            if ($time_limit->from > $time_limit->to && ($time > $time_limit->from || $time < $time_limit->to))
             {
                 $available_groups[] = $group;
             }
