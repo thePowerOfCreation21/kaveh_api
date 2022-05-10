@@ -2,16 +2,16 @@
 
 namespace App\Actions;
 
-use App\Services\Action;
 use App\Exceptions\CustomException;
 use App\Models\License;
+use App\Services\Action;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 
 class LicenseAction extends Action
 {
-    protected $validation_roles = [
+    protected array $validation_roles = [
         'store' => [
             'title' => 'string|max:255',
             'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000'
@@ -22,6 +22,10 @@ class LicenseAction extends Action
         ]
     ];
 
+    protected array $unusual_fields = [
+        'image' => 'file'
+    ];
+
     public function __construct()
     {
         $this->model = License::class;
@@ -29,89 +33,102 @@ class LicenseAction extends Action
 
     /**
      * @param Request $request
-     * @param string|array $validation_role
+     * @param array|string $validation_role
+     * @param callable|null $storing
      * @return mixed
      * @throws CustomException
      */
-    public function store_by_request(Request $request, $validation_role = 'store')
+    public function store_by_request(Request $request, array|string $validation_role = 'store', callable $storing = null): mixed
     {
-        return parent::store_by_request($request, $validation_role);
+        return parent::store_by_request($request, $validation_role, $storing);
     }
 
     /**
      * @param Request $request
      * @param string $id
-     * @return bool|int
+     * @param array|string $validation_role
+     * @param callable|null $updating
+     * @return int|bool
      * @throws CustomException
      */
-    public function update_entity_by_request_and_id(Request $request, string $id)
+    public function update_by_request_and_id(Request $request, string $id, array|string $validation_role = 'update', callable $updating = null): int|bool
     {
-        return parent::update_entity_by_request_and_id($request, $id);
+        if (is_null($updating))
+        {
+            $updating = function($eloquent, $update_data)
+            {
+                $entity = $this->get_first_by_eloquent($eloquent);
+
+                if (isset($update_data['image']))
+                {
+                    if (is_file($entity->getAttribute('image')))
+                    {
+                        unlink($entity->getAttribute('image'));
+                    }
+                }
+            };
+        }
+        return parent::update_by_request_and_id($request, $id, $validation_role, $updating);
     }
 
     /**
      * @param Request $request
-     * @param string $query_validation_role
-     * @param null|Model|Builder $eloquent
+     * @param array|string $validation_role
+     * @param array $query_addition
+     * @param Model|Builder|null $eloquent
+     * @param array $relations
      * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    public function get_by_request(
-        Request $request,
-        $query_validation_role = 'get_query',
-        $eloquent = null,
-        array $order_by = ['id' => 'DESC']
-    ): object
+    public function get_by_request(Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
     {
-        return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+        return parent::get_by_request($request, $validation_role, $query_addition, $eloquent, $relations, $order_by);
     }
 
     /**
      * @param string $id
-     * @return Model
+     * @param array $query
+     * @param array $relations
+     * @return mixed
      * @throws CustomException
      */
-    public function get_by_id(string $id): Model
+    public function get_by_id(string $id, array $query = [], array $relations = []): mixed
     {
-        return parent::get_by_id($id);
+        return parent::get_by_id($id, $query, $relations);
     }
 
     /**
-     * @param array $data
-     * @param Request $request
-     * @param null|Model|Builder $eloquent
-     * @return array
+     * @param string $id
+     * @param array $query
+     * @param callable|null $deleting
+     * @return bool|int|null
      */
-    public function change_request_data_before_store_or_update (array $data, Request $request, $eloquent = null): array
+    public function delete_by_id(string $id, array $query = [], callable $deleting = null): bool|int|null
     {
-        if (!empty($request->file('image')))
-        {
-            $data['image'] = $request->file('image')->store('/uploads');
+        return parent::delete_by_id($id, $query, $deleting);
+    }
 
-            if (isset($eloquent->image) && is_file($eloquent->image))
+    /**
+     * @param Model|Builder $eloquent
+     * @param callable|null $deleting
+     * @return mixed
+     */
+    public function delete_by_eloquent(Model|Builder $eloquent, callable $deleting = null): mixed
+    {
+        if (is_null($deleting))
+        {
+            $deleting = function($eloquent)
             {
-                unlink($eloquent->image);
-            }
+                foreach($eloquent->get() AS $entity)
+                {
+                    if (is_file($entity->getAttribute('image')))
+                    {
+                        unlink($entity->getAttribute('image'));
+                    }
+                }
+            };
         }
-
-        return $data;
-    }
-
-    /**
-     * @param string $id
-     * @return bool|null
-     * @throws CustomException
-     */
-    public function delete_by_id(string $id)
-    {
-        $entity = $this->get_by_id($id);
-
-        if (is_file($entity->image))
-        {
-            unlink($entity->image);
-        }
-
-        return $entity->delete();
+        return parent::delete_by_eloquent($eloquent, $deleting);
     }
 }
