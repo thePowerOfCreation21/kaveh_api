@@ -2,20 +2,17 @@
 
 namespace App\Actions;
 
-use App\Services\Action;
 use App\Exceptions\CustomException;
 use App\Models\Cart;
 use App\Models\CartProduct;
-use App\Models\DiscountCode;
-use App\Models\DiscountCodeUsers;
 use App\Models\Product;
-use App\Services\PaginationService;
-use Illuminate\Http\Request;
 use App\Models\User;
+use App\Services\Action;
+use Illuminate\Http\Request;
 
 class CartAction extends Action
 {
-    protected $validation_roles = [
+    protected array $validation_roles = [
         'store_or_update_cart_product' => [
             'quantity' => 'required|integer|max:10000'
         ]
@@ -27,29 +24,13 @@ class CartAction extends Action
     }
 
     /**
-     * @param $user
-     * @return User
+     * @param Request $request
+     * @return mixed
      * @throws CustomException
-     *
      */
-    public function check_user ($user): User
+    public function empty_the_cart_by_request (Request $request): mixed
     {
-        if (empty($user))
-        {
-            throw new CustomException("could not get user from request", 100, 500);
-        }
-
-        if (!is_a($user, User::class))
-        {
-            throw new CustomException("user should be constant of ".User::class, 101, 500);
-        }
-
-        return $user;
-    }
-
-    public function empty_the_cart_by_request (Request $request)
-    {
-        $user = $this->check_user($request->user());
+        $user = $this->get_user_from_request($request);
 
         return $this->empty_the_cart(
             (new UserAction())->get_user_cart($user)
@@ -60,7 +41,7 @@ class CartAction extends Action
      * @param Cart $cart
      * @return mixed
      */
-    public function empty_the_cart (Cart $cart)
+    public function empty_the_cart (Cart $cart): mixed
     {
         return CartProduct::where('cart_id', $cart->id)
             ->delete();
@@ -69,17 +50,17 @@ class CartAction extends Action
     /**
      * @param Request $request
      * @param string $product_id
-     * @param string|array $validation_role
-     * @return CartProduct|bool|mixed|null
+     * @param array|string $validation_role
+     * @return mixed
      * @throws CustomException
      */
     public function store_or_update_cart_product_by_request_and_product_id (
-        Request $request,
-        string $product_id,
-        $validation_role = 'store_or_update_cart_product'
-    )
+        Request      $request,
+        string       $product_id,
+        array|string $validation_role = 'store_or_update_cart_product'
+    ): mixed
     {
-        $user = $this->check_user($request->user());
+        $user = $this->get_user_from_request($request);
 
         return $this->store_or_update_cart_product(
             $this->get_data_from_request($request, $validation_role),
@@ -96,11 +77,16 @@ class CartAction extends Action
     public function get_cart_products_by_request (Request $request): object
     {
         return $this->get_cart_contents_by_user(
-            $this->check_user($request->user())
+            $this->get_user_from_request($request)
         );
     }
 
-    public function get_cart_total_type_by_request (Request $request)
+    /**
+     * @param Request $request
+     * @return int
+     * @throws CustomException
+     */
+    public function get_cart_total_type_by_request (Request $request): int
     {
         return $this->get_cart_total_type_by_user(
             $this->get_user_from_request($request)
@@ -121,7 +107,7 @@ class CartAction extends Action
      * @param User $user
      * @return int
      */
-    public function get_cart_total_type_by_user (User $user)
+    public function get_cart_total_type_by_user (User $user): int
     {
         return $this->get_cart_total_type(
             (new UserAction())->get_user_cart($user)
@@ -166,7 +152,7 @@ class CartAction extends Action
      * @param Cart $cart
      * @return int
      */
-    public function get_cart_total_type (Cart $cart)
+    public function get_cart_total_type (Cart $cart): int
     {
         return $cart->products()->count();
     }
@@ -177,9 +163,9 @@ class CartAction extends Action
      * @return mixed
      * @throws CustomException
      */
-    public function delete_cart_product_by_request_and_product_id (Request $request, string $product_id)
+    public function delete_cart_product_by_request_and_product_id (Request $request, string $product_id): mixed
     {
-        $user = $this->check_user($request->user());
+        $user = $this->get_user_from_request($request);
         $cart = (new UserAction())->get_user_cart($user);
 
         return CartProduct::where('cart_id', $cart->id)
@@ -191,10 +177,10 @@ class CartAction extends Action
      * @param array $data
      * @param Product $product
      * @param Cart $cart
-     * @return CartProduct|bool|mixed|null
+     * @return mixed
      * @throws CustomException
      */
-    public function store_or_update_cart_product (array $data, Product $product, Cart $cart)
+    public function store_or_update_cart_product (array $data, Product $product, Cart $cart): mixed
     {
         $cartProduct = CartProduct::where('cart_id', $cart->id)
             ->where('product_id', $product->id)
@@ -215,7 +201,7 @@ class CartAction extends Action
      * @return CartProduct|bool|null
      * @throws CustomException
      */
-    public function update_cart_product (array $data, CartProduct $cartProduct, Product $product = null)
+    public function update_cart_product (array $data, CartProduct $cartProduct, Product $product = null): CartProduct|bool|null
     {
         if ($product === null || $product->id != $cartProduct->product_id)
         {
@@ -250,7 +236,7 @@ class CartAction extends Action
      * @return mixed
      * @throws CustomException
      */
-    public function store_cart_product (array $data, Product $product, Cart $cart)
+    public function store_cart_product (array $data, Product $product, Cart $cart): mixed
     {
         if ($data['quantity'] <= 0)
         {
