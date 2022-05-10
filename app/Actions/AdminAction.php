@@ -5,8 +5,8 @@ namespace App\Actions;
 use App\Services\Action;
 use App\Exceptions\CustomException;
 use App\Models\Admin;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\NewAccessToken;
@@ -54,19 +54,19 @@ class AdminAction extends Action
      * @param Request $request
      * @param array|string $validation_role
      * @param array $query_addition
-     * @param Model|\Illuminate\Database\Eloquent\Builder|null $eloquent
+     * @param Model|Builder|null $eloquent
      * @param array $relations
      * @param array $order_by
      * @return object
      * @throws CustomException
      */
     public function get_by_request(
-        Request $request,
-        array|string $validation_role = 'get_query',
-        array $query_addition = ['is_primary' => false],
-        Model|\Illuminate\Database\Eloquent\Builder $eloquent = null,
-        array $relations = [],
-        array $order_by = ['id' => 'DESC']
+        Request       $request,
+        array|string  $validation_role = 'get_query',
+        array         $query_addition = ['is_primary' => false],
+        Model|Builder $eloquent = null,
+        array         $relations = [],
+        array         $order_by = ['id' => 'DESC']
     ): object
     {
         return parent::get_by_request($request, $validation_role, $query_addition, $eloquent, $relations, $order_by);
@@ -124,16 +124,16 @@ class AdminAction extends Action
     }
 
     /**
-     * @param Model|\Illuminate\Database\Eloquent\Builder $eloquent
+     * @param Model|Builder $eloquent
      * @param array $update_data
      * @param callable|null $updating
      * @return bool|int
      * @throws CustomException
      */
     public function update_by_eloquent(
-        Model|\Illuminate\Database\Eloquent\Builder $eloquent,
-        array $update_data,
-        callable $updating = null
+        Model|Builder $eloquent,
+        array         $update_data,
+        callable      $updating = null
     ): bool|int
     {
         if (is_null($updating))
@@ -182,9 +182,9 @@ class AdminAction extends Action
      * @return int|bool
      * @throws CustomException
      */
-    public function update_by_request_and_id (Request $request, string $id, array|string $validation_role = 'update'): int|bool
+    public function update_by_request_and_id (Request $request, string $id, array|string $validation_role = 'update', callable $updating = null): int|bool
     {
-        return $this->update_by_request_and_query($request, ['id' => $id], $validation_role);
+        return $this->update_by_request_and_query($request, ['id' => $id], $validation_role, $updating);
     }
 
     /**
@@ -222,17 +222,17 @@ class AdminAction extends Action
 
     /**
      * @param array $query
-     * @param Model|\Illuminate\Database\Eloquent\Builder|null $eloquent
+     * @param Model|Builder|null $eloquent
      * @param array $relations
      * @param array $order_by
-     * @return Model|\Illuminate\Database\Eloquent\Builder|null
+     * @return Model|Builder|null
      */
     public function query_to_eloquent(
-        array $query,
-        Model|\Illuminate\Database\Eloquent\Builder $eloquent = null,
-        array $relations = [],
-        array $order_by = ['id' => 'DESC']
-    ): Model|\Illuminate\Database\Eloquent\Builder|null
+        array         $query,
+        Model|Builder $eloquent = null,
+        array         $relations = [],
+        array         $order_by = ['id' => 'DESC']
+    ): Model|Builder|null
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
 
