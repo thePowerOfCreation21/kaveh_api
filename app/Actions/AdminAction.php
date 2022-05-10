@@ -86,36 +86,41 @@ class AdminAction extends Action
 
     /**
      * @param Request $request
-     * @param string $validation_role
-     * @return Admin
+     * @param array|string $validation_role
+     * @param callable|null $storing
+     * @return mixed
      * @throws CustomException
      */
-    public function store_by_request(Request $request, $validation_role = 'store'): Admin
+    public function store_by_request(Request $request, array|string $validation_role = 'store', callable $storing = null): mixed
     {
-        $data = $this->get_data_from_request($request, $validation_role);
+        if (is_null($storing))
+        {
+            $storing = function(&$data)
+            {
+                $data['password'] = Hash::make($data['password']);
 
-        $data['password'] = Hash::make($data['password']);
-
-        $data['privileges'] = Admin::fix_privileges(
-            (object) (!isset($data['privileges']) ? [] : $data['privileges'])
-        );
-
-        return $this->store($data);
+                $data['privileges'] = Admin::fix_privileges(
+                    (object) (!isset($data['privileges']) ? [] : $data['privileges'])
+                );
+            };
+        }
+        return parent::store_by_request($request, $validation_role, $storing);
     }
 
     /**
      * @param array $data
-     * @return Admin
+     * @param callable|null $storing
+     * @return mixed
      * @throws CustomException
      */
-    public function store (array $data): Admin
+    public function store(array $data, callable $storing = null): mixed
     {
         if (Admin::where('user_name', $data['user_name'])->exists())
         {
             throw new CustomException('this user_name is already taken', 1, 400);
         }
 
-        return $this->model::create($data);
+        return parent::store($data, $storing);
     }
 
     /**
