@@ -2,29 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CustomException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\ContactUsMessage;
-use App\Actions\ContactUsMessageActions;
+use App\Actions\ContactUsMessageAction;
 
 class ContactUsMessageController extends Controller
 {
-    public function store (Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function store (Request $request): JsonResponse
     {
-        ContactUsMessageActions::store_with_request($request);
+        (new ContactUsMessageAction())->store_by_request($request);
 
         return response()->json([
             'message' => 'message sent successfully'
         ]);
     }
 
-    public function get_all (Request $request)
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws CustomException
+     */
+    public function get_all (Request $request): JsonResponse
     {
-        return ContactUsMessageActions::get_all_with_request($request);
+        return response()->json(
+            (new ContactUsMessageAction())->get_by_request($request)
+        );
     }
 
-    public function delete_by_id (string $id)
+    /**
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function delete_by_id (string $id): JsonResponse
     {
-        ContactUsMessage::where('id', $id)->delete();
+        (new ContactUsMessageAction())->delete_by_id($id);
 
         return response()->json([
             'message' => 'message deleted successfully'
