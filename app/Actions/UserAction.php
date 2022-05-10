@@ -38,18 +38,19 @@ class UserAction extends Action
             'last_name' => 'required|string|max:64',
             'phone_number' => 'required|string',
             'password' => 'required|string|min:6|max:100',
-            'area' => 'required|string|max:255'
+            'area' => 'required|string|max:255',
+            'card_number' => 'numeric|min:1000000000000000|max:9999999999999999'
         ],
         'update_by_admin' => [
             'name' => 'string|max:64',
             'last_name' => 'string|max:64',
             'phone_number' => 'regex:/09\d{9}/',
             'password' => 'string|min:6|max:100',
-            'area' => 'string|max:255'
+            'area' => 'string|max:255',
+            'card_number' => 'numeric|min:1000000000000000|max:9999999999999999'
         ],
         'update_by_user' => [
             'second_phone_number' => 'regex:/09\d{9}/',
-            'card_number' => 'numeric|min:1000000000000000|max:9999999999999999'
         ],
         'block_user' => [
             'reason_for_blocking' => 'required|string|max:255'
