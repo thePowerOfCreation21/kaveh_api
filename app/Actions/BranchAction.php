@@ -38,12 +38,13 @@ class BranchAction extends Action
     /**
      * @param Request $request
      * @param array|string $validation_role
+     * @param callable|null $storing
      * @return mixed
      * @throws CustomException
      */
-    public function store_by_request(Request $request, array|string $validation_role = 'store'): mixed
+    public function store_by_request(Request $request, array|string $validation_role = 'store', callable $storing = null): mixed
     {
-        return parent::store_by_request($request, $validation_role);
+        return parent::store_by_request($request, $validation_role, $storing);
     }
 
     /**
