@@ -129,22 +129,28 @@ abstract class Action
     /**
      * @param Request $request
      * @param array|string $validation_role
+     * @param callable|null $storing
      * @return Mixed|Model
      * @throws CustomException
      */
-    protected function store_by_request(Request $request, array|string $validation_role = 'store'): mixed
+    protected function store_by_request(Request $request, array|string $validation_role = 'store', callable $storing = null): mixed
     {
         $data = $this->get_data_from_request($request, $validation_role);
 
-        return $this->store($data);
+        return $this->store($data, $storing);
     }
 
     /**
      * @param array $data
+     * @param callable|null $storing
      * @return Model|Mixed
      */
-    protected function store(array $data): mixed
+    protected function store(array $data, callable $storing = null): mixed
     {
+        if (is_callable($storing))
+        {
+            $storing($data);
+        }
         return $this->model::create($data);
     }
 
