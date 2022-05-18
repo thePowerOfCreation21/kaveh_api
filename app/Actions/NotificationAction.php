@@ -2,46 +2,46 @@
 
 namespace App\Actions;
 
-use App\Services\Action;
 use App\Exceptions\CustomException;
 use App\Jobs\SendSMSToUsers;
 use App\Jobs\StoreNotificationUsers;
-use App\Models\NotificationUser;
-use App\Services\PaginationService;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Http\Request;
 use App\Models\Notification;
+use App\Models\NotificationUser;
+use App\Services\Action;
+use App\Services\PaginationService;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use function App\Helpers\convert_to_boolean;
 
 class NotificationAction extends Action
 {
-    protected $validation_roles = [
+    protected array $validation_roles = [
         'send' => [
-            'type' => 'required|in:message,toast,sms',
-            'text' => 'required|string|max:1500',
-            'users' => 'array|max:1000',
-            'users.*' => 'numeric|max:25'
+            'type' => ['required', 'in:message,toast,sms'],
+            'text' => ['required', 'string', 'max:1500'],
+            'users' => ['array', 'max:1000'],
+            'users.*' => ['numeric', 'max:25']
         ],
         'seen' => [
-            'type' => 'in:message,toast'
+            'type' => ['in:message,toast']
         ],
         'get_query' => [
-            'type' => 'in:message,toast',
-            'search' => 'string|max:100',
-            'user_id' => 'numeric|max:11'
+            'type' => ['in:message,toast'],
+            'search' => ['string', 'max:100'],
+            'user_id' => ['numeric', 'max:11']
         ],
         'get_users_query' => [
-            'is_seen' => 'in:true,false',
-            'search' => 'string|max:100'
+            'is_seen' => ['in:true,false'],
+            'search' => ['string', 'max:100']
         ],
         'get_user_notifications_query' => [
-            'type' => 'in:message,toast',
-            'is_seen' => 'in:true,false'
+            'type' => ['in:message,toast'],
+            'is_seen' => ['in:true,false']
         ]
     ];
 
-    protected $unusual_fields = [
+    protected array $unusual_fields = [
         'is_seen' => 'boolean'
     ];
 
@@ -52,39 +52,38 @@ class NotificationAction extends Action
 
     /**
      * @param Request $request
-     * @param string|array $query_validation_role
-     * @param null|Model|Builder $eloquent
+     * @param array|string $validation_role
+     * @param array $query_addition
+     * @param Model|Builder|null $eloquent
+     * @param array $relations
      * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    public function get_by_request(
-        Request $request,
-        $query_validation_role = 'get_query',
-        $eloquent = null,
-        array $order_by = ['id' => 'DESC']
-    ): object
+    public function get_by_request(Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
     {
-        return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+        return parent::get_by_request($request, $validation_role, $query_addition, $eloquent, $relations, $order_by);
     }
 
     /**
      * @param string $id
-     * @return Model
+     * @param array $query
+     * @param array $relations
+     * @return mixed
      * @throws CustomException
      */
-    public function get_by_id(string $id): Model
+    public function get_by_id(string $id, array $query = [], array $relations = []): mixed
     {
-        return parent::get_by_id($id);
+        return parent::get_by_id($id, $query, $relations);
     }
 
     /**
      * @param Request $request
-     * @param string|array $validation_role
+     * @param array|string $validation_role
      * @return array|Model
      * @throws CustomException
      */
-    public function send_by_request (Request $request, $validation_role = 'send')
+    public function send_by_request (Request $request, array|string $validation_role = 'send'): Model|array
     {
         $data = $this->get_data_from_request($request, $validation_role);
 
@@ -92,20 +91,11 @@ class NotificationAction extends Action
     }
 
     /**
-     * @param string $id
-     * @return bool|int|null
-     */
-    public function delete_by_id(string $id)
-    {
-        return parent::delete_by_id($id);
-    }
-
-    /**
      * @param array $data
      * @return array|Model
      * @throws CustomException
      */
-    public function send (array $data)
+    public function send (array $data): Model|array
     {
         $data['is_for_all_users'] = true;
 
@@ -139,15 +129,26 @@ class NotificationAction extends Action
     }
 
     /**
+     * @param string $id
      * @param array $query
-     * @param null|Model|Builder $eloquent
-     * @return Model|Builder
+     * @param callable|null $deleting
+     * @return bool|int|null
      */
-    public function query_to_eloquent(array $query, $eloquent = null)
+    public function delete_by_id(string $id, array $query = [], callable $deleting = null): bool|int|null
     {
-        $eloquent = parent::query_to_eloquent($query, $eloquent);
+        return parent::delete_by_id($id, $query, $deleting);
+    }
 
-        $eloquent = $eloquent->orderBy('id', 'DESC');
+    /**
+     * @param array $query
+     * @param Model|Builder|null $eloquent
+     * @param array $relations
+     * @param array $order_by
+     * @return Model|Builder|null
+     */
+    public function query_to_eloquent(array $query, Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): Model|Builder|null
+    {
+        $eloquent = parent::query_to_eloquent($query, $eloquent, $relations, $order_by);
 
         if (isset($query['user_id']))
         {
@@ -186,7 +187,7 @@ class NotificationAction extends Action
      * @return void
      * @throws CustomException
      */
-    public function seen_by_request (Request $request, $validation_role = 'seen')
+    public function seen_by_request (Request $request, string|array $validation_role = 'seen')
     {
         $user = $this->get_user_from_request($request);
         $notifications = $this->query_to_eloquent(
@@ -200,7 +201,7 @@ class NotificationAction extends Action
      * @param $notifications
      * @return array
      */
-    public function get_ids ($notifications)
+    public function get_ids ($notifications): array
     {
         $ids = [];
 
@@ -262,13 +263,13 @@ class NotificationAction extends Action
      * @return object
      * @throws CustomException
      */
-    public function get_user_notifications_by_request (Request $request, $validation_role = 'get_user_notifications_query'): object
+    public function get_user_notifications_by_request (Request $request, string|array $validation_role = 'get_user_notifications_query'): object
     {
         $user = $this->get_user_from_request($request);
         $query = ['user_id' => $user->id];
         $query = array_merge($query, $this->get_data_from_request($request, $validation_role));
         $eloquent = $this->query_to_eloquent($query);
-        $result = PaginationService::paginate_with_request(
+        $result = (new PaginationService())->paginate_with_request(
             $request,
             $eloquent
         );
@@ -282,7 +283,7 @@ class NotificationAction extends Action
      * @return int
      * @throws CustomException
      */
-    public function get_user_notifications_count_by_request (Request $request, $validation_role = 'get_user_notifications_query'): int
+    public function get_user_notifications_count_by_request (Request $request, string|array $validation_role = 'get_user_notifications_query'): int
     {
         $user = $this->get_user_from_request($request);
         $query = ['user_id' => $user->id];
@@ -291,8 +292,6 @@ class NotificationAction extends Action
     }
 
     /**
-     * get notification users by request and notification id
-     *
      * @param Request $request
      * @param string $id
      * @return object
@@ -309,8 +308,6 @@ class NotificationAction extends Action
     }
 
     /**
-     * get users by request
-     *
      * @param Request $request
      * @param $eloquent
      * @param string|array $query_validation_role
@@ -319,10 +316,10 @@ class NotificationAction extends Action
      * @throws CustomException
      */
     public function get_users_by_request (
-        Request $request,
-        $eloquent,
-        $query_validation_role = 'get_users_query',
-        array $order_by = ['user_id' => 'DESC']
+        Request      $request,
+                     $eloquent,
+        string|array $query_validation_role = 'get_users_query',
+        array        $order_by = ['user_id' => 'DESC']
     ): object
     {
         $eloquent = $this->users_query_to_eloquent(
@@ -332,7 +329,7 @@ class NotificationAction extends Action
 
         $eloquent = $this->add_order_to_eloquent($order_by, $eloquent);
 
-        return PaginationService::paginate_with_request(
+        return (new PaginationService())->paginate_with_request(
             $request,
             $eloquent
         );
@@ -341,19 +338,19 @@ class NotificationAction extends Action
     /**
      * @param array $query
      * @param $eloquent
-     * @return mixed
+     * @return Model|\Illuminate\Database\Query\Builder
      */
-    public function users_query_to_eloquent (array $query, $eloquent)
+    public function users_query_to_eloquent (array $query, $eloquent): Model|\Illuminate\Database\Query\Builder
     {
         return (new UserAction())->query_to_eloquent($query, $eloquent);
     }
 
     /**
      * @param array $query
-     * @param Model|Builder $eloquent
+     * @param $eloquent
      * @return mixed
      */
-    public function notification_user_query_to_eloquent (array $query, $eloquent)
+    public function notification_user_query_to_eloquent (array $query, $eloquent): mixed
     {
         if (isset($query['is_seen']))
         {
