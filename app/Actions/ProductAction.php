@@ -2,18 +2,18 @@
 
 namespace App\Actions;
 
-use App\Services\Action;
 use App\Exceptions\CustomException;
 use App\Models\OrderTimeLimit;
 use App\Models\Product;
+use App\Services\Action;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use function App\Helpers\convert_to_boolean;
 
 class ProductAction extends Action
 {
-    protected $validation_roles = [
+    protected array $validation_roles = [
         'store' => [
             'title' => 'required|string|max:128',
             'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000',
@@ -40,7 +40,7 @@ class ProductAction extends Action
         ]
     ];
 
-    protected $unusual_fields = [
+    protected array $unusual_fields = [
         'image' => 'file'
     ];
 
@@ -49,7 +49,12 @@ class ProductAction extends Action
         $this->model = Product::class;
     }
 
-    public function store(array $data)
+    /**
+     * @param array $data
+     * @param callable|null $storing
+     * @return mixed
+     */
+    public function store(array $data, callable $storing = null): mixed
     {
         $data['before_discount_price'] = $data['price'];
 
@@ -58,47 +63,47 @@ class ProductAction extends Action
             $data['price'] = $data['before_discount_price'] - (($data['before_discount_price'] / 100) * $data['discount_percentage']);
         }
 
-        return parent::store($data);
+        return parent::store($data, $storing);
     }
 
     /**
      * @param Request $request
-     * @param string|array $validation_role
-     * @return Model
+     * @param array|string $validation_role
+     * @param callable|null $storing
+     * @return mixed
      * @throws CustomException
      */
-    public function store_by_request(Request $request, $validation_role = 'store'): Model
+    public function store_by_request(Request $request, array|string $validation_role = 'store', callable $storing = null): mixed
     {
-        return parent::store_by_request($request, $validation_role);
+        return parent::store_by_request($request, $validation_role, $storing);
     }
 
     /**
      * @param Request $request
-     * @param string|array $query_validation_role
-     * @param null $eloquent
-     * @param array|string[] $order_by
+     * @param array|string $validation_role
+     * @param array $query_addition
+     * @param Model|Builder|null $eloquent
+     * @param array $relations
+     * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    public function get_by_request(
-        Request $request,
-        $query_validation_role = 'get_query',
-        $eloquent = null,
-        array $order_by = ['id' => 'DESC']
-    ): object
+    public function get_by_request(Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
     {
-        return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+        return parent::get_by_request($request, $validation_role, $query_addition, $eloquent, $relations, $order_by);
     }
 
     /**
      * @param array $query
-     * @param null $eloquent
-     * @return Model|Builder
+     * @param Model|Builder|null $eloquent
+     * @param array $relations
+     * @param array $order_by
+     * @return Model|Builder|null
      * @throws CustomException
      */
-    public function query_to_eloquent(array $query, $eloquent = null)
+    public function query_to_eloquent(array $query, Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): Model|Builder|null
     {
-        $eloquent = parent::query_to_eloquent($query, $eloquent);
+        $eloquent = parent::query_to_eloquent($query, $eloquent, $relations, $order_by);
 
         if (isset($query['search']))
         {
@@ -130,85 +135,71 @@ class ProductAction extends Action
 
     /**
      * @param string $id
-     * @return Product
+     * @param array $query
+     * @param array $relations
+     * @return mixed
      * @throws CustomException
      */
-    public function get_by_id(string $id): Product
+    public function get_by_id(string $id, array $query = [], array $relations = []): mixed
     {
-        return parent::get_by_id($id);
+        return parent::get_by_id($id, $query, $relations);
     }
 
     /**
      * @param string $id
-     * @return bool
-     * @throws CustomException
+     * @param array $query
+     * @param callable|null $deleting
+     * @return bool|int|null
      */
-    public function delete_by_id(string $id): bool
+    public function delete_by_id(string $id, array $query = [], callable $deleting = null): bool|int|null
     {
-        $product = $this->get_by_field('id', $id);
-
-        if (is_file($product->image))
-        {
-            unlink($product->image);
-        }
-
-        return $product->delete();
-    }
-
-    /**
-     * @param array $update_data
-     * @param string $id
-     * @return Model
-     * @throws CustomException
-     */
-    public function update_by_id (array $update_data, string $id): Model
-    {
-        $product = $this->get_by_field('id', $id);
-
-        if (isset($update_data['image']) && is_file($product->image))
-        {
-            unlink($product->image);
-        }
-
-        if ($product->type == 'unlimited' && isset($update_data['type']) && $update_data['type'] == 'limited')
-        {
-            $update_data['stock'] = $update_data['stock'] ?? max($product->getAttributes()['stock'], 0);
-        }
-
-        if (isset($update_data['price']))
-        {
-            $update_data['before_discount_price'] = $update_data['price'];
-        }
-
-        if (isset($update_data['discount_percentage']))
-        {
-            $update_data['before_discount_price'] = $update_data['before_discount_price'] ?? $data['before_discount_price'] ?? $product->before_discount_price;
-
-            if ($update_data['before_discount_price'] < 1)
-            {
-                $update_data['before_discount_price'] = $update_data['price'] ?? $product->price;
-            }
-
-            $update_data['price'] = $update_data['before_discount_price'] - (($update_data['before_discount_price'] / 100) * $update_data['discount_percentage']);
-        }
-
-        $product->update($update_data);
-
-        return $product;
+        return parent::delete_by_id($id, $query, $deleting);
     }
 
     /**
      * @param Request $request
      * @param string $id
-     * @param string|array $validation_role
-     * @return Model
+     * @param array|string $validation_role
+     * @param callable|null $updating
+     * @return int|bool
      * @throws CustomException
      */
-    public function update_entity_by_request_and_id(Request $request, string $id, $validation_role = 'update'): Model
+    public function update_by_request_and_id(Request $request, string $id, array|string $validation_role = 'update', callable $updating = null): int|bool
     {
-        return $this->update_by_id(
-            $this->get_data_from_request($request, $validation_role),
-            $id
-        );
+        if (is_null($updating))
+        {
+            $updating = function ($eloquent, &$update_data)
+            {
+                $product = $this->get_first_by_eloquent($eloquent);
+
+                if (isset($update_data['image']) && is_file($product->getAttribute('image')))
+                {
+                    unlink($product->getAttribute('image'));
+                }
+
+                if ($product->getAttribute('type') == 'unlimited' && isset($update_data['type']) && $update_data['type'] == 'limited')
+                {
+                    $update_data['stock'] = $update_data['stock'] ?? max($product->getAttributes()['stock'], 0);
+                }
+
+                if (isset($update_data['price']))
+                {
+                    $update_data['before_discount_price'] = $update_data['price'];
+                }
+
+                if (isset($update_data['discount_percentage']))
+                {
+                    $update_data['before_discount_price'] = $update_data['before_discount_price'] ?? $data['before_discount_price'] ?? $product->getAttribute('before_discount_price');
+
+                    if ($update_data['before_discount_price'] < 1)
+                    {
+                        $update_data['before_discount_price'] = $update_data['price'] ?? $product->getAttribute('price');
+                    }
+
+                    $update_data['price'] = $update_data['before_discount_price'] - (($update_data['before_discount_price'] / 100) * $update_data['discount_percentage']);
+                }
+            };
+        }
+        return parent::update_by_request_and_id($request, $id, $validation_role, $updating);
     }
 }
