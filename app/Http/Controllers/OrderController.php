@@ -38,6 +38,7 @@ class OrderController extends Controller
     /**
      * @param Request $request
      * @return JsonResponse
+     * @throws CustomException
      */
     public function get_todays_orders (Request $request): JsonResponse
     {

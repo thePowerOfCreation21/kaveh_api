@@ -2,62 +2,60 @@
 
 namespace App\Actions;
 
-use App\Services\Action;
 use App\Exceptions\CustomException;
 use App\Models\Cart;
 use App\Models\DiscountCode;
 use App\Models\Order;
+use App\Models\OrderContent;
 use App\Models\OrderTimeLimit;
 use App\Models\Product;
-use App\Services\PaginationService;
-use DateTime;
+use App\Services\Action;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
-use App\Models\OrderContent;
 use function App\Helpers\get_daily_time;
 use function App\Helpers\Sanitize;
 use function App\Helpers\str_to_daily_time;
 
 class OrderAction extends Action
 {
-    protected $validation_roles = [
+    protected array $validation_roles = [
         'store' => [
-            'discount_code' => 'string|max:255'
+            'discount_code' => ['string', 'max:255']
         ],
         'get_query' => [
-            'search' => 'string|min:1|max:150',
-            'created_at' => 'integer|min:1|max:9999999999',
-            'created_at_from' => 'integer|min:1|max:9999999999',
-            'created_at_to' => 'integer|min:1|max:9999999999',
-            'product_id' => 'string|max:150',
-            'user_id' => 'integer|min:1|max:99999999999',
-            'todays_orders' => 'in:true,false'
+            'search' => ['string', 'min:1', 'max:150'],
+            'created_at' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_to' => ['integer', 'min:1', 'max:9999999999'],
+            'product_id' => ['string', 'max:150'],
+            'user_id' => ['integer', 'min:1', 'max:99999999999'],
+            'todays_orders' => ['in:true,false']
         ],
         'get_todays_orders' => [
-            'search' => 'string|min:1|max:150',
-            'created_at' => 'integer|min:1|max:9999999999',
-            'created_at_from' => 'integer|min:1|max:9999999999',
-            'created_at_to' => 'integer|min:1|max:9999999999',
-            'product_id' => 'string|max:150',
-            'user_id' => 'integer|min:1|max:99999999999',
+            'search' => ['string', 'min:1', 'max:150'],
+            'created_at' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_to' => ['integer', 'min:1|max:9999999999'],
+            'product_id' => ['string', 'max:150'],
+            'user_id' => ['integer', 'min:1', 'max:99999999999'],
         ],
         'get_user_orders_query' => [
-            'search' => 'string|min:1|max:150',
-            'created_at' => 'integer|min:1|max:9999999999',
-            'created_at_from' => 'integer|min:1|max:9999999999',
-            'created_at_to' => 'integer|min:1|max:9999999999',
-            'product_id' => 'integer|min:1|max:99999999999',
+            'search' => ['string', 'min:1', 'max:150'],
+            'created_at' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_to' => ['integer', 'min:1', 'max:9999999999'],
+            'product_id' => ['integer', 'min:1', 'max:99999999999'],
         ],
         'get_user_product_stats' => [
-            'search' => 'string|min:1|max:150',
-            'created_at' => 'integer|min:1|max:9999999999',
-            'created_at_from' => 'integer|min:1|max:9999999999',
-            'created_at_to' => 'integer|min:1|max:9999999999',
+            'search' => ['string', 'min:1', 'max:150'],
+            'created_at' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_to' => ['integer', 'min:1', 'max:9999999999'],
         ],
     ];
 
-    protected $unusual_fields = [
+    protected array $unusual_fields = [
         'todays_orders' => 'boolean'
     ];
 
@@ -68,73 +66,56 @@ class OrderAction extends Action
 
     /**
      * @param string $id
-     * @return Model|mixed
+     * @param array $query
+     * @param array $relations
+     * @return mixed
      * @throws CustomException
      */
-    public function get_by_id(string $id)
+    public function get_by_id(string $id, array $query = [], array $relations = ['contents.product', 'user']): mixed
     {
-        $order = Order::where('id', $id)
-            ->with('contents.product')
-            ->with('user')
-            ->first();
-
-        if (empty($order))
-        {
-            throw new CustomException("order not found", 84, 404);
-        }
-
-        return $order;
+        return parent::get_by_id($id, $query, $relations);
     }
 
     /**
      * @param string $id
-     * @return CustomException|Model|Builder|object
+     * @return Builder|Model
      * @throws CustomException
      */
-    public function get_todays_order_by_id (string $id)
+    public function get_todays_order_by_id (string $id): Model|Builder
     {
-        $order = $this->query_to_eloquent(['todays_orders' => true])
-            ->where('id', $id)
-            ->first();
-
-        if (empty($order))
-        {
-            throw new CustomException('today\'s order with this id not found', 170, 404);
-        }
-
-        return $order;
+        return $this->get_first_by_eloquent(
+            $this->query_to_eloquent(['todays_orders' => true, 'id' => $id])
+        );
     }
 
     /**
      * @param Request $request
-     * @param string|array $query_validation_role
-     * @param $eloquent
+     * @param array|string $validation_role
+     * @param array $query_addition
+     * @param Model|Builder|null $eloquent
+     * @param array $relations
      * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    public function get_by_request(
-        Request $request,
-        $query_validation_role = 'get_query',
-        $eloquent = null,
-        array $order_by = []
-    ): object
+    public function get_by_request (Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
     {
-        return parent::get_by_request($request, $query_validation_role, $eloquent, $order_by);
+        return parent::get_by_request($request, $validation_role, $query_addition, $eloquent, $relations, $order_by);
     }
 
     /**
      * @param Request $request
-     * @param string|array $validation_role
+     * @param array|string $validation_role
+     * @param array $query_addition
+     * @param Model|Builder|null $eloquent
+     * @param array $relations
+     * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    public function get_todays_orders_by_request (Request $request, $validation_role = 'get_todays_orders')
+    public function get_todays_orders_by_request (Request $request, array|string $validation_role = 'get_todays_orders', array $query_addition = [], Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
     {
-        return PaginationService::paginate_with_request(
-            $request,
-            $this->query_to_eloquent(array_merge(['todays_orders' => true], $this->get_data_from_request($request, $validation_role)))
-        );
+        return parent::get_by_request($request, $validation_role, array_merge($query_addition, ['todays_orders' => true]), $eloquent, $relations, $order_by);
     }
 
     /**
@@ -143,7 +124,7 @@ class OrderAction extends Action
      * @return array
      * @throws CustomException
      */
-    public function get_product_stats_by_request (Request $request, $validation_role = 'get_query'): array
+    public function get_product_stats_by_request (Request $request, string|array $validation_role = 'get_query'): array
     {
         return $this->get_product_stats(
             $this->get_data_from_request($request, $validation_role)
@@ -152,19 +133,17 @@ class OrderAction extends Action
 
     /**
      * @param Request $request
-     * @param string|array $validation_role
+     * @param array|string $validation_role
+     * @param array $query_addition
+     * @param Model|Builder|null $eloquent
+     * @param array $relations
+     * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    public function get_user_orders_by_request (Request $request, $validation_role = 'get_user_orders_query'): object
+    public function get_user_orders_by_request (Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
     {
-        $user = $this->get_user_from_request($request);
-        $query['user_id'] = $user->id;
-        $query = array_merge($query, $this->get_data_from_request($request, $validation_role));
-        return PaginationService::paginate_with_request(
-            $request,
-            $this->query_to_eloquent($query)
-        );
+        return parent::get_by_request($request, $validation_role, array_merge($query_addition, ['user_id' => $this->get_user_from_request($request)->id]), $eloquent, $relations, $order_by);
     }
 
     /**
@@ -175,19 +154,12 @@ class OrderAction extends Action
      */
     public function get_user_order_by_request_and_id (Request $request, string $id): object
     {
-        $user = $this->get_user_from_request($request);
-
-        $order = $this->query_to_eloquent([
-            'user_id' => $user->id,
-            'id' => $id
-        ])->first();
-
-        if (empty($order))
-        {
-            throw new CustomException('not found', 300, 404);
-        }
-
-        return $order;
+        return $this->get_first_by_eloquent(
+            $this->query_to_eloquent([
+                'user_id' => $this->get_user_from_request($request)->id,
+                'id' => $id
+            ])
+        );
     }
 
     /**
@@ -196,7 +168,7 @@ class OrderAction extends Action
      * @return array
      * @throws CustomException
      */
-    public function get_user_product_stats_by_request (Request $request, $validation_role = 'get_user_product_stats'): array
+    public function get_user_product_stats_by_request (Request $request, string|array $validation_role = 'get_user_product_stats'): array
     {
         $user = $this->get_user_from_request($request);
         $query['user_id'] = $user->id;
@@ -252,21 +224,15 @@ class OrderAction extends Action
 
     /**
      * @param array $query
-     * @param null $eloquent
-     * @param bool $with_user
+     * @param Model|Builder|null $eloquent
+     * @param array $relations
+     * @param array $order_by
      * @return Model|Builder|null
      * @throws CustomException
      */
-    public function query_to_eloquent(array $query, $eloquent = null, bool $with_user = true)
+    public function query_to_eloquent(array $query, Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): Model|Builder|null
     {
-        $eloquent = parent::query_to_eloquent($query, $eloquent);
-
-        $eloquent = $eloquent->with('contents.product');
-
-        if ($with_user)
-        {
-            $eloquent = $eloquent->with('user');
-        }
+        $eloquent = parent::query_to_eloquent($query, $eloquent, $relations, $order_by);
 
         if (isset($query['search']))
         {
@@ -402,16 +368,17 @@ class OrderAction extends Action
             */
         }
 
-        return $eloquent->orderBy('id', 'DESC');
+        return $eloquent;
     }
 
     /**
      * @param Request $request
-     * @param string|array $validation_role
-     * @return Model|mixed
+     * @param array|string $validation_role
+     * @param callable|null $storing
+     * @return mixed
      * @throws CustomException
      */
-    public function store_by_request(Request $request, $validation_role = 'store')
+    public function store_by_request(Request $request, array|string $validation_role = 'store', callable $storing = null): mixed
     {
         $order_data = $this->get_data_from_request($request, $validation_role);
 
@@ -423,7 +390,7 @@ class OrderAction extends Action
 
         $order_data = $this->process_cart_contents($order_data);
 
-        return $this->store($order_data);
+        return $this->store($order_data, $storing);
     }
 
     /**
@@ -433,13 +400,13 @@ class OrderAction extends Action
      */
     public function apply_discount_to_order_amount (int $orderAmount, DiscountCode $discountCode): int
     {
-        if ($discountCode->type == 'percent')
+        if ($discountCode->getAttribute('type') == 'percent')
         {
-            $discountAmount = ($orderAmount / 100) * $discountCode->amount;
+            $discountAmount = ($orderAmount / 100) * $discountCode->getAttribute('amount');
         }
         else
         {
-            $discountAmount = $discountCode->amount;
+            $discountAmount = $discountCode->getAttribute('amount');
         }
 
         $orderAmount -= $discountAmount;
@@ -527,13 +494,19 @@ class OrderAction extends Action
     }
 
     /**
-     * @param array $order_data
-     * @return Model|mixed
+     * @param array $data
+     * @param callable|null $storing
+     * @return mixed
      * @throws CustomException
      */
-    public function store(array $order_data)
+    public function store(array $data, callable $storing = null): mixed
     {
-        foreach ($order_data['contents'] AS $order_content)
+        if (is_callable($storing))
+        {
+            $storing($data);
+        }
+
+        foreach ($data['contents'] AS $order_content)
         {
             if ($order_content['product']->type == 'limited')
             {
@@ -543,24 +516,24 @@ class OrderAction extends Action
             }
         }
 
-        if (isset($order_data['discount_code']))
+        if (isset($data['discount_code']))
         {
-            $order_data['discount'] = (new DiscountCodeAction())
-                ->check_if_user_can_be_discount_by_discount_code_and_user_id($order_data['discount_code'], $order_data['user_id'])
+            $data['discount'] = (new DiscountCodeAction())
+                ->check_if_user_can_be_discount_by_discount_code_and_user_id($data['discount_code'], $data['user_id'])
                 ->details->discountCode;
-            unset($order_data['discount_code']);
+            unset($data['discount_code']);
 
-            $order_data['discount']->usedByUserId($order_data['user_id']);
+            $data['discount']->usedByUserId($data['user_id']);
 
-            $order_data['amount'] = $this->apply_discount_to_order_amount($order_data['amount'], $order_data['discount']);
+            $data['amount'] = $this->apply_discount_to_order_amount($data['amount'], $data['discount']);
         }
 
-        (new CartAction())->empty_the_cart($order_data['cart']);
-        unset($order_data['cart']);
+        (new CartAction())->empty_the_cart($data['cart']);
+        unset($data['cart']);
 
-        $order = $this->model::create($order_data);
+        $order = $this->model::create($data);
 
-        $this->store_contents($order->id, $order_data['contents']);
+        $this->store_contents($order->id, $data['contents']);
 
         return $order;
     }
