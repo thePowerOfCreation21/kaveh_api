@@ -406,11 +406,10 @@ abstract class Action
      * @param Request $request
      * @param string $id
      * @param array|string $validation_role
-     * @param callable|null $updating
      * @return int|bool
      * @throws CustomException
      */
-    protected function update_by_request_and_id (Request $request, string $id, array|string $validation_role = 'update', callable $updating = null): int|bool
+    public function update_by_request_and_id (Request $request, string $id, array|string $validation_role = 'update', callable $updating = null): int|bool
     {
         return $this->update_by_request_and_query($request, ['id' => $id], $validation_role, $updating);
     }
