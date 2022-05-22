@@ -214,7 +214,8 @@ abstract class Action
                 $query_addition
             ),
             $eloquent,
-            order_by: $order_by
+            $relations,
+            $order_by
         );
 
         return (new PaginationService())->paginate_with_request(
