@@ -141,7 +141,7 @@ class OrderAction extends Action
      * @return object
      * @throws CustomException
      */
-    public function get_user_orders_by_request (Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
+    public function get_user_orders_by_request (Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = ['user'], array $order_by = ['id' => 'DESC']): object
     {
         return parent::get_by_request($request, $validation_role, array_merge($query_addition, ['user_id' => $this->get_user_from_request($request)->id]), $eloquent, $relations, $order_by);
     }
