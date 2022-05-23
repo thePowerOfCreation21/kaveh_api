@@ -98,7 +98,7 @@ class OrderAction extends Action
      * @return object
      * @throws CustomException
      */
-    public function get_by_request (Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
+    public function get_by_request (Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = ['user'], array $order_by = ['id' => 'DESC']): object
     {
         return parent::get_by_request($request, $validation_role, $query_addition, $eloquent, $relations, $order_by);
     }
@@ -113,7 +113,7 @@ class OrderAction extends Action
      * @return object
      * @throws CustomException
      */
-    public function get_todays_orders_by_request (Request $request, array|string $validation_role = 'get_todays_orders', array $query_addition = [], Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
+    public function get_todays_orders_by_request (Request $request, array|string $validation_role = 'get_todays_orders', array $query_addition = [], Model|Builder $eloquent = null, array $relations = ['user'], array $order_by = ['id' => 'DESC']): object
     {
         return parent::get_by_request($request, $validation_role, array_merge($query_addition, ['todays_orders' => true]), $eloquent, $relations, $order_by);
     }
