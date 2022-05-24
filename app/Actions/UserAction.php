@@ -554,4 +554,17 @@ class UserAction extends Action
 
         return $cart;
     }
+
+    /**
+     * @param Request $request
+     * @param string $id
+     * @param array|string $validation_role
+     * @param callable|null $updating
+     * @return int|bool
+     * @throws CustomException
+     */
+    public function update_by_request_and_id(Request $request, string $id, array|string $validation_role = 'update_by_admin', callable $updating = null): int|bool
+    {
+        return parent::update_by_request_and_id($request, $id, $validation_role, $updating);
+    }
 }
