@@ -21,7 +21,7 @@ class OrderAction extends Action
 {
     protected array $validation_roles = [
         'store' => [
-            'discount_code' => ['string', 'max:255']
+            'discount_code' => ['nullable', 'string', 'max:255']
         ],
         'get_query' => [
             'search' => ['string', 'min:1', 'max:150'],
