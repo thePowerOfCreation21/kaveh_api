@@ -155,10 +155,13 @@ class OrderAction extends Action
     public function get_user_order_by_request_and_id (Request $request, string $id): object
     {
         return $this->get_first_by_eloquent(
-            $this->query_to_eloquent([
-                'user_id' => $this->get_user_from_request($request)->id,
-                'id' => $id
-            ])
+            $this->query_to_eloquent(
+                [
+                    'user_id' => $this->get_user_from_request($request)->id,
+                    'id' => $id
+                ],
+                relations: ['contents.product', 'user']
+            )
         );
     }
 
