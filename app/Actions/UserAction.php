@@ -355,7 +355,7 @@ class UserAction extends Action
      * @return mixed
      * @throws CustomException
      */
-    public function store_by_request(Request $request, array|string $validation_role = 'store', callable $storing = null): mixed
+    public function store_by_request(Request $request, array|string $validation_role = 'register_by_admin', callable $storing = null): mixed
     {
         return parent::store_by_request($request, $validation_role, $storing);
     }
