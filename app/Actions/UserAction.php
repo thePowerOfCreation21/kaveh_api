@@ -47,7 +47,7 @@ class UserAction extends Action
             'phone_number' => 'regex:/09\d{9}/',
             'password' => 'string|min:6|max:100',
             'area' => 'string|max:255',
-            'card_number' => 'numeric|min:1000000000000000|max:9999999999999999'
+            'card_number' => 'nullable|numeric|min:1000000000000000|max:9999999999999999'
         ],
         'update_by_user' => [
             'second_phone_number' => 'regex:/09\d{9}/',
