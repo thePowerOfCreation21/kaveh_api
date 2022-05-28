@@ -55,6 +55,13 @@ abstract class Action
             )
         );
 
+        /*
+        foreach ($data AS $attribute => $value)
+        {
+            $data[$attribute] = $request->input($attribute);
+        }
+        */
+
         return $this->manage_unusual_fields($data);
     }
 

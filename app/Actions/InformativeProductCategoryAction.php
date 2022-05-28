@@ -13,14 +13,20 @@ class InformativeProductCategoryAction extends Action
 {
     protected array $validation_roles = [
         'store' => [
-            'title' => 'required|string|max:255'
+            'title' => ['required', 'string', 'max:255'],
+            'image' => ['file', 'mimes:png,jpg,jpeg,gif', 'max:10000']
         ],
         'update' => [
-            'title' => 'required|string|max:255'
+            'title' => ['string', 'max:255'],
+            'image' => ['file', 'mimes:png,jpg,jpeg,gif', 'max:10000']
         ],
         'get_query' => [
             'search' => 'string|max:255'
         ]
+    ];
+
+    protected array $unusual_fields = [
+        'image' => 'file'
     ];
 
     public function __construct()
@@ -50,6 +56,17 @@ class InformativeProductCategoryAction extends Action
      */
     public function update_by_request_and_id(Request $request, string $id, array|string $validation_role = 'update', callable $updating = null): int|bool
     {
+        if (is_null($updating))
+        {
+            $updating = function($eloquent, $update_data){
+                $entity = $this->get_first_by_eloquent($eloquent);
+
+                if (isset($update_data['image']) && is_file($entity->image))
+                {
+                    unlink($entity->image);
+                }
+            };
+        }
         return parent::update_by_request_and_id($request, $id, $validation_role, $updating);
     }
 

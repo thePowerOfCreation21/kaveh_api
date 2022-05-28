@@ -13,7 +13,8 @@ class InformativeProductCategory extends Model
     protected $table = 'informative_product_categories';
 
     protected $fillable = [
-        'title'
+        'title',
+        'image'
     ];
 
     public $timestamps = false;
