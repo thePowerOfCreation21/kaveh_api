@@ -181,10 +181,10 @@ class DiscountCodeAction extends Action
     /**
      * @param DiscountCode $discountCode
      * @param array $query
-     * @param $eloquent
-     * @return Model|\Illuminate\Database\Query\Builder
+     * @param null $eloquent
+     * @return Builder
      */
-    public function discount_users_query_to_eloquent (DiscountCode $discountCode, array $query = [], $eloquent = null): Model|\Illuminate\Database\Query\Builder
+    public function discount_users_query_to_eloquent (DiscountCode $discountCode, array $query = [], $eloquent = null): Builder
     {
         if ($eloquent === null)
         {
@@ -208,7 +208,7 @@ class DiscountCodeAction extends Action
             $eloquent = $eloquent->where('users.id', $query['user_id']);
         }
 
-        return (new UserAction())->query_to_eloquent($query, $eloquent);
+        return (new UserAction())->query_to_eloquent($query, $eloquent, order_by: []);
     }
 
     /**
