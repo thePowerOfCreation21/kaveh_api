@@ -166,6 +166,7 @@ class AdminAction extends Action
                             (object) $admin->privileges
                         )
                     );
+                    $update_data['privileges'] = (array) $update_data['privileges'];
                 }
 
                 isset($update_data['password']) && $update_data['password'] = Hash::make($update_data['password']);
@@ -179,6 +180,7 @@ class AdminAction extends Action
      * @param Request $request
      * @param string $id
      * @param array|string $validation_role
+     * @param callable|null $updating
      * @return int|bool
      * @throws CustomException
      */
