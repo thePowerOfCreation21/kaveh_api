@@ -309,7 +309,7 @@ class OrderAction extends Action
                         ->where(function ($q2) use ($order_time_limit){
                             $time = str_to_daily_time('today') + $order_time_limit->get_min_from();
                             $q2
-                                ->whereDate('created_at', '<=', date('Y-m-d', $time))
+                                ->whereDate('created_at', '=', date('Y-m-d', $time))
                                 ->whereTime('created_at', '<=', date('H:i:s', $time));
                         })
                         ->orWhere(function ($q2) use ($order_time_limit){
