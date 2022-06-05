@@ -75,13 +75,13 @@ class LicenseAction extends Action
      * @param Request $request
      * @param array|string $validation_role
      * @param array $query_addition
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    public function get_by_request(Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
+    public function get_by_request(Request $request, array|string $validation_role = 'get_query', array $query_addition = [], object $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object
     {
         return parent::get_by_request($request, $validation_role, $query_addition, $eloquent, $relations, $order_by);
     }
@@ -110,11 +110,11 @@ class LicenseAction extends Action
     }
 
     /**
-     * @param Model|Builder $eloquent
+     * @param object $eloquent
      * @param callable|null $deleting
      * @return mixed
      */
-    public function delete_by_eloquent(Model|Builder $eloquent, callable $deleting = null): mixed
+    public function delete_by_eloquent(object $eloquent, callable $deleting = null): mixed
     {
         if (is_null($deleting))
         {

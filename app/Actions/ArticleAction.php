@@ -52,7 +52,7 @@ class ArticleAction extends Action
      * @param Request $request
      * @param array|string $validation_role
      * @param array $query_addition
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
      * @return object
@@ -62,7 +62,7 @@ class ArticleAction extends Action
         Request $request,
         array|string $validation_role = 'get_query',
         array $query_addition = ['limit_content' => true],
-        Model|Builder $eloquent = null,
+        object $eloquent = null,
         array $relations = [],
         array $order_by = ['id' => 'DESC']
     ): object
@@ -72,17 +72,17 @@ class ArticleAction extends Action
 
     /**
      * @param array $query
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
-     * @return Model|Builder|null
+     * @return object|null
      */
     public function query_to_eloquent(
         array $query,
-        Model|Builder $eloquent = null,
+        object $eloquent = null,
         array $relations = [],
         array $order_by = ['id' => 'DESC']
-    ): Model|Builder|null
+    ): object|null
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent, $relations, $order_by);
 
@@ -130,11 +130,11 @@ class ArticleAction extends Action
     }
 
     /**
-     * @param Model|Builder $eloquent
+     * @param object $eloquent
      * @param callable|null $deleting
      * @return mixed
      */
-    public function delete_by_eloquent(Model|Builder $eloquent, callable $deleting = null): mixed
+    public function delete_by_eloquent(object $eloquent, callable $deleting = null): mixed
     {
         if (is_null($deleting))
         {
@@ -154,13 +154,13 @@ class ArticleAction extends Action
     }
 
     /**
-     * @param Model|Builder $eloquent
+     * @param object $eloquent
      * @param array $update_data
      * @param callable|null $updating
      * @return bool|int
      * @throws CustomException
      */
-    public function update_by_eloquent(Model|Builder $eloquent, array $update_data, callable $updating = null): bool|int
+    public function update_by_eloquent(object $eloquent, array $update_data, callable $updating = null): bool|int
     {
         if (is_null($updating))
         {

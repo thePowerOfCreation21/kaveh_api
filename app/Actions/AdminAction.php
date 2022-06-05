@@ -54,7 +54,7 @@ class AdminAction extends Action
      * @param Request $request
      * @param array|string $validation_role
      * @param array $query_addition
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
      * @return object
@@ -64,7 +64,7 @@ class AdminAction extends Action
         Request       $request,
         array|string  $validation_role = 'get_query',
         array         $query_addition = ['is_primary' => false],
-        Model|Builder $eloquent = null,
+        object $eloquent = null,
         array         $relations = [],
         array         $order_by = ['id' => 'DESC']
     ): object
@@ -124,14 +124,14 @@ class AdminAction extends Action
     }
 
     /**
-     * @param Model|Builder $eloquent
+     * @param object $eloquent
      * @param array $update_data
      * @param callable|null $updating
      * @return bool|int
      * @throws CustomException
      */
     public function update_by_eloquent(
-        Model|Builder $eloquent,
+        object $eloquent,
         array         $update_data,
         callable      $updating = null
     ): bool|int
@@ -224,17 +224,17 @@ class AdminAction extends Action
 
     /**
      * @param array $query
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
-     * @return Model|Builder|null
+     * @return object|null
      */
     public function query_to_eloquent(
         array         $query,
-        Model|Builder $eloquent = null,
+        object $eloquent = null,
         array         $relations = [],
         array         $order_by = ['id' => 'DESC']
-    ): Model|Builder|null
+    ): object|null
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent);
 

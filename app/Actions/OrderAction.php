@@ -78,10 +78,10 @@ class OrderAction extends Action
 
     /**
      * @param string $id
-     * @return Builder|Model
+     * @return object
      * @throws CustomException
      */
-    public function get_todays_order_by_id (string $id): Model|Builder
+    public function get_todays_order_by_id (string $id): object
     {
         return $this->get_first_by_eloquent(
             $this->query_to_eloquent(['todays_orders' => true, 'id' => $id])
@@ -92,13 +92,13 @@ class OrderAction extends Action
      * @param Request $request
      * @param array|string $validation_role
      * @param array $query_addition
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    public function get_by_request (Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = ['contents.product', 'user'], array $order_by = ['id' => 'DESC']): object
+    public function get_by_request (Request $request, array|string $validation_role = 'get_query', array $query_addition = [], object $eloquent = null, array $relations = ['contents.product', 'user'], array $order_by = ['id' => 'DESC']): object
     {
         return parent::get_by_request($request, $validation_role, $query_addition, $eloquent, $relations, $order_by);
     }
@@ -107,13 +107,13 @@ class OrderAction extends Action
      * @param Request $request
      * @param array|string $validation_role
      * @param array $query_addition
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    public function get_todays_orders_by_request (Request $request, array|string $validation_role = 'get_todays_orders', array $query_addition = [], Model|Builder $eloquent = null, array $relations = ['contents.product', 'user'], array $order_by = ['id' => 'DESC']): object
+    public function get_todays_orders_by_request (Request $request, array|string $validation_role = 'get_todays_orders', array $query_addition = [], object $eloquent = null, array $relations = ['contents.product', 'user'], array $order_by = ['id' => 'DESC']): object
     {
         return parent::get_by_request($request, $validation_role, array_merge($query_addition, ['todays_orders' => true]), $eloquent, $relations, $order_by);
     }
@@ -135,13 +135,13 @@ class OrderAction extends Action
      * @param Request $request
      * @param array|string $validation_role
      * @param array $query_addition
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
      * @return object
      * @throws CustomException
      */
-    public function get_user_orders_by_request (Request $request, array|string $validation_role = 'get_query', array $query_addition = [], Model|Builder $eloquent = null, array $relations = ['contents.product', 'user'], array $order_by = ['id' => 'DESC']): object
+    public function get_user_orders_by_request (Request $request, array|string $validation_role = 'get_query', array $query_addition = [], object $eloquent = null, array $relations = ['contents.product', 'user'], array $order_by = ['id' => 'DESC']): object
     {
         return parent::get_by_request($request, $validation_role, array_merge($query_addition, ['user_id' => $this->get_user_from_request($request)->id]), $eloquent, $relations, $order_by);
     }
@@ -227,13 +227,13 @@ class OrderAction extends Action
 
     /**
      * @param array $query
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
-     * @return Model|Builder|null
+     * @return object|null
      * @throws CustomException
      */
-    public function query_to_eloquent(array $query, Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): Model|Builder|null
+    public function query_to_eloquent(array $query, object $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object|null
     {
         $eloquent = parent::query_to_eloquent($query, $eloquent, $relations, $order_by);
 

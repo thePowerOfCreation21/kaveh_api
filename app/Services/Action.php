@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Exceptions\CustomException;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use function App\Helpers\convert_to_boolean;
@@ -198,7 +197,7 @@ abstract class Action
      * @param Request $request
      * @param array|string $validation_role
      * @param array $query_addition
-     * @param Builder|Model|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
      * @return object
@@ -208,7 +207,7 @@ abstract class Action
         Request       $request,
         array|string  $validation_role = 'get_query',
         array         $query_addition = [],
-        Model|Builder $eloquent = null,
+        object $eloquent = null,
         array         $relations = [],
         array         $order_by = ['id' => 'DESC']
     ): object
@@ -233,10 +232,10 @@ abstract class Action
 
     /**
      * @param array $orders
-     * @param Builder|Model $eloquent
+     * @param object $eloquent
      * @return mixed
      */
-    protected function add_order_to_eloquent(array $orders, Model|Builder $eloquent): mixed
+    protected function add_order_to_eloquent(array $orders, object $eloquent): mixed
     {
         foreach ($orders as $key => $value) {
             $eloquent = $eloquent->orderBy($key, $value);
@@ -249,12 +248,12 @@ abstract class Action
      * filters by: id
      *
      * @param array $query
-     * @param Builder|Model|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
-     * @return Model|Builder|null
+     * @return object|null
      */
-    protected function query_to_eloquent(array $query, Model|Builder $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): Model|Builder|null
+    protected function query_to_eloquent(array $query, object $eloquent = null, array $relations = [], array $order_by = ['id' => 'DESC']): object|null
     {
         if (is_null($eloquent)) {
             $eloquent = new $this->model();
@@ -285,11 +284,11 @@ abstract class Action
     }
 
     /**
-     * @param Model|Builder $eloquent
-     * @return Model|Builder
+     * @param object $eloquent
+     * @return object
      * @throws CustomException
      */
-    protected function get_first_by_eloquent(Model|Builder $eloquent): Model|Builder
+    protected function get_first_by_eloquent(object $eloquent): object
     {
         $entity = $eloquent->first();
 
@@ -339,11 +338,11 @@ abstract class Action
     }
 
     /**
-     * @param Model|Builder $eloquent
+     * @param object $eloquent
      * @param callable|null $deleting
      * @return bool|mixed|null
      */
-    protected function delete_by_eloquent(Model|Builder $eloquent, callable $deleting = null): mixed
+    protected function delete_by_eloquent(object $eloquent, callable $deleting = null): mixed
     {
         if (is_callable($deleting)) {
             $deleting($eloquent);
@@ -364,12 +363,12 @@ abstract class Action
     }
 
     /**
-     * @param Model|Builder $eloquent
+     * @param object $eloquent
      * @param array $update_data
      * @param callable|null $updating
      * @return bool|int
      */
-    protected function update_by_eloquent (Model|Builder $eloquent, array $update_data, callable $updating = null): bool|int
+    protected function update_by_eloquent (object $eloquent, array $update_data, callable $updating = null): bool|int
     {
         if (is_callable($updating))
         {

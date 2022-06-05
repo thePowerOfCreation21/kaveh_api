@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class PaginationService
 {
-    protected Model|Builder $eloquent;
+    protected object $eloquent;
 
     protected array $values = [
         'skip' => 0,
@@ -23,10 +23,10 @@ class PaginationService
 
     /**
      * @param Request $request
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @return $this
      */
-    public function paginate_with_request (Request $request, Model|Builder $eloquent = null): static
+    public function paginate_with_request (Request $request, object $eloquent = null): static
     {
         $values = $this->get_values_from_request($request);
 
@@ -49,20 +49,20 @@ class PaginationService
 
     /**
      * @param array|null $values [ArrayShape(['skip' => "int", 'limit' => "int"])]
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @return Builder
      */
-    public function get_filtered_eloquent (array $values = null, Model|Builder $eloquent = null): Builder
+    public function get_filtered_eloquent (array $values = null, object $eloquent = null): Builder
     {
         $this->set_values($values);
         return $this->set_eloquent($eloquent)->skip($this->values['skip'])->take($this->values['limit']);
     }
 
     /**
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @return Builder|Model
      */
-    public function set_eloquent (Model|Builder $eloquent = null): Model|Builder
+    public function set_eloquent (object $eloquent = null): object
     {
         return ($this->eloquent = empty($eloquent) ? $this->eloquent : $eloquent);
     }
@@ -78,10 +78,10 @@ class PaginationService
 
     /**
      * @param array $values
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @return $this
      */
-    public function paginate (array $values, Model|Builder $eloquent = null): static
+    public function paginate (array $values, object $eloquent = null): static
     {
         $this->set_eloquent($eloquent);
         $this->count = $this->eloquent->count();

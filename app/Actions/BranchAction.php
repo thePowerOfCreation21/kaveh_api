@@ -51,7 +51,7 @@ class BranchAction extends Action
      * @param Request $request
      * @param array|string $validation_role
      * @param array $query_addition
-     * @param Model|Builder|null $eloquent
+     * @param object|null $eloquent
      * @param array $relations
      * @param array $order_by
      * @return object
@@ -61,7 +61,7 @@ class BranchAction extends Action
         Request $request,
         array|string $validation_role = 'get_query',
         array $query_addition = [],
-        Model|Builder $eloquent = null,
+        object $eloquent = null,
         array $relations = [],
         array $order_by = ['id' => 'DESC']
     ): object
@@ -93,11 +93,11 @@ class BranchAction extends Action
     }
 
     /**
-     * @param Model|Builder $eloquent
+     * @param object $eloquent
      * @param callable|null $deleting
      * @return mixed
      */
-    public function delete_by_eloquent(Model|Builder $eloquent, callable $deleting = null): mixed
+    public function delete_by_eloquent(object $eloquent, callable $deleting = null): mixed
     {
         if (is_null($deleting))
         {
@@ -117,13 +117,13 @@ class BranchAction extends Action
     }
 
     /**
-     * @param Model|Builder $eloquent
+     * @param object $eloquent
      * @param array $update_data
      * @param callable|null $updating
      * @return bool|int
      * @throws CustomException
      */
-    public function update_by_eloquent(Model|Builder $eloquent, array $update_data, callable $updating = null): bool|int
+    public function update_by_eloquent(object $eloquent, array $update_data, callable $updating = null): bool|int
     {
         if (is_null($updating))
         {
