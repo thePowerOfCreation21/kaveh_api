@@ -156,7 +156,7 @@ class NotificationAction extends Action
             $eloquent = $eloquent->selectRaw("notifications.*, notification_users.is_seen")
                 ->leftJoin('notification_users', function ($join) use($userId){
                     $join->on('notifications.id', 'notification_users.notification_id');
-                    $join->on('notification_users.user_id', '=', $userId);
+                    $join->where('notification_users.user_id', $userId);
                 })
                 ->where(function($q) use ($userId){
                     $q
