@@ -335,9 +335,9 @@ class NotificationAction extends Action
     /**
      * @param array $query
      * @param $eloquent
-     * @return Model|\Illuminate\Database\Query\Builder
+     * @return object
      */
-    public function users_query_to_eloquent (array $query, $eloquent): Model|\Illuminate\Database\Query\Builder
+    public function users_query_to_eloquent (array $query, $eloquent): object
     {
         return (new UserAction())->query_to_eloquent($query, $eloquent);
     }
