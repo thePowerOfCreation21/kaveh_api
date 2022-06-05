@@ -242,7 +242,7 @@ class NotificationAction extends Action
         {
             $notificationsId = [$notifications->id];
         }
-
+        $notificationsId = array_unique($notificationsId);
         foreach ($notificationsId AS $notificationId)
         {
             NotificationUser::where('user_id', $userId)->where('notification_id', $notificationId)->delete();
