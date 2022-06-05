@@ -167,8 +167,7 @@ class NotificationAction extends Action
                                 });
                         })
                         ->orWhere(function($q3) use ($userId){
-                            $q3->where("notifications.is_for_all_users", false)
-                                ->where("notification_users.user_id", $userId);
+                            $q3->where("notification_users.user_id", $userId);
                         });
                 });
 
