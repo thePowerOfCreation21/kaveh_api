@@ -158,8 +158,14 @@ class NotificationAction extends Action
                     $join->on('notifications.id', 'notification_users.notification_id');
                 })
                 ->where(function($q) use ($userId){
-                    $q->where("notifications.is_for_all_users", true)
-                        ->where("notification_users.user_id", $userId);
+                    $q
+                        ->where(function($q2){
+                            $q2->where("notifications.is_for_all_users", true)->whereNull("notification_users.user_id");
+                        })
+                        ->orWhere(function($q3) use ($userId){
+                            $q3->where("notifications.is_for_all_users", false)
+                                ->where("notification_users.user_id", $userId);
+                        });
                 });
 
             if (isset($query['is_seen']))
