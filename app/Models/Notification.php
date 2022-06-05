@@ -48,10 +48,7 @@ class Notification extends Model
         }
         else
         {
-            $eloquent->rightJoin('users', function ($join){
-                $join->on('notification_users.user_id', 'users.id');
-                $join->where('notification_users.notification_id', $this->id);
-            });
+            $eloquent = User::query();
         }
 
         return $eloquent;
