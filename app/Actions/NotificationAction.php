@@ -162,7 +162,7 @@ class NotificationAction extends Action
                         ->where(function($q2) use($userId){
                             $q2
                                 ->where("notifications.is_for_all_users", true)
-                                ->orWhere("notification_users.user_id", $userId);
+                                ->whereNull("notification_users.user_id");
                         })
                         ->orWhere(function($q3) use ($userId){
                             $q3->where("notification_users.user_id", $userId);
