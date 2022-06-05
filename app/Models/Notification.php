@@ -48,7 +48,7 @@ class Notification extends Model
         }
         else
         {
-            $eloquent = User::query();
+            $eloquent = User::selectRaw('`id` AS `user_id`, *');
         }
 
         return $eloquent;
