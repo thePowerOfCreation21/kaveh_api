@@ -166,7 +166,7 @@ class NotificationAction extends Action
                         })
                         ->orWhere("notification_users.user_id", $userId);
                 });
-
+            dd($eloquent->get()->toArray());
             if (isset($query['is_seen']))
             {
                 $eloquent = $eloquent->where('notification_users.is_seen', $query['is_seen']);
