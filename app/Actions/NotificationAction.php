@@ -159,7 +159,7 @@ class NotificationAction extends Action
                 })
                 ->where(function($q) use ($userId){
                     $q->where("notifications.is_for_all_users", true)
-                        ->orWhere("notification_users.user_id", $userId);
+                        ->where("notification_users.user_id", $userId);
                 });
 
             if (isset($query['is_seen']))

@@ -28,6 +28,14 @@ class Notification extends Model
         'is_seen' => 'boolean'
     ];
 
+    public function custom($related, Closure $baseConstraints)
+    {
+        $instance = new $related;
+        $query = $instance->newQuery();
+
+        return new Custom($query, $this, $baseConstraints);
+    }
+
     public function users()
     {
         $eloquent = NotificationUser::selectRaw("
@@ -48,7 +56,10 @@ class Notification extends Model
         }
         else
         {
-            $eloquent = User::selectRaw('`id` AS `user_id`, *');
+            $eloquent->rightJoin('users', function ($join){
+                $join->on('notification_users.user_id', 'users.id');
+                $join->where('notification_users.notification_id', $this->id);
+            });
         }
 
         return $eloquent;
