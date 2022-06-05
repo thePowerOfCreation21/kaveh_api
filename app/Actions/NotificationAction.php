@@ -243,12 +243,9 @@ class NotificationAction extends Action
             $notificationsId = [$notifications->id];
         }
 
-        NotificationUser::where('user_id', $userId)
-            ->whereIn('notification_id', $notificationsId)
-            ->delete();
-
         foreach ($notificationsId AS $notificationId)
         {
+            NotificationUser::where('user_id', $userId)->where('notification_id', $notificationId)->delete();
             NotificationUser::create([
                 'notification_id' => $notificationId,
                 'user_id' => $userId,
