@@ -14,7 +14,7 @@ class SendSMSService
     ];
 
     private $line_numbers = [
-        "50001212124583"
+        "30005006007317"
     ];
 
     public function send ($receptor_numbers, string $message)
