@@ -6,7 +6,7 @@ use App\Services\SendHTTPRequestService;
 
 class SendSMSService
 {
-    private $api_key = "cf6bce577d2e18a6981318ff1ee91ed1694f39b773f9d49c3cb3a7466fdc2ef5";
+    private $api_key = "72ec72dd773a8bbfa09eac5affcb1b14225d09f49a4a15691c6b17bb3fe74423";
 
     protected $templates = [
         'ForgotPassword' => "شما می توانید از %param1% به عنوان رمزعبور برای ورود به پنل کاربری خود استفاده کنید
