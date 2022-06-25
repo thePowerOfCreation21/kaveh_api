@@ -14,13 +14,13 @@ class BranchAction extends Action
     protected array $validation_roles = [
         'store' => [
             'title' => 'required|string|max:150',
-            'description' => 'required|string|max:250',
+            'description' => 'required|string|max:10000',
             'address' => 'required|string|max:250',
             'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000'
         ],
         'update' => [
             'title' => 'string|max:150',
-            'description' => 'string|max:250',
+            'description' => 'string|max:10000',
             'address' => 'string|max:250',
             'image' => 'file|mimes:png,jpg,jpeg,gif|max:10000'
         ]

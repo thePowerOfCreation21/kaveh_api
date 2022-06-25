@@ -16,7 +16,7 @@ class CreateKeyValueConfigsTable extends Migration
         Schema::create('key_value_configs', function (Blueprint $table) {
             $table->id();
             $table->string('key', 50)->unique();
-            $table->string('value', 2500);
+            $table->string('value', 16000);
         });
     }
 

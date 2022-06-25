@@ -9,7 +9,7 @@ class Privacy extends KeyObjectConfig
     protected $key = 'privacy';
 
     protected $fields = [
-        'content' => 'string|max:2500'
+        'content' => 'string|max:10000'
     ];
 
     protected $default_values =  [

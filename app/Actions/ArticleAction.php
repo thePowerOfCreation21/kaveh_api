@@ -18,12 +18,12 @@ class ArticleAction extends Action
         'store' => [
             'title' => 'required|string|max:120',
             'image' => 'required|file|mimes:png,jpg,jpeg,gif|max:10000',
-            'content' => 'required|string|max:5000'
+            'content' => 'required|string|max:10000'
         ],
         'update' => [
             'title' => 'string|max:120',
             'image' => 'file|mimes:png,jpg,jpeg,gif|max:10000',
-            'content' => 'string|max:5000'
+            'content' => 'string|max:10000'
         ]
     ];
 
