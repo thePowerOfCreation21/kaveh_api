@@ -554,4 +554,31 @@ class OrderAction extends Action
             OrderContent::create($content);
         }
     }
+
+    /**
+     * @param object $eloquent
+     * @param callable|null $deleting
+     * @return mixed
+     */
+    public function delete_by_eloquent(object $eloquent, callable $deleting = null): mixed
+    {
+        $order_ids = [];
+        foreach ($eloquent->get() AS $order)
+        {
+            $order_ids[] = $order->id;
+        }
+        OrderContent::whereIn('order_id', $order_ids)->delete();
+        return parent::delete_by_eloquent($eloquent, $deleting);
+    }
+
+    /**
+     * @param string $id
+     * @param array $query
+     * @param callable|null $deleting
+     * @return bool|int|null
+     */
+    public function delete_by_id(string $id, array $query = [], callable $deleting = null): bool|int|null
+    {
+        return parent::delete_by_id($id, $query, $deleting);
+    }
 }

@@ -119,4 +119,17 @@ class OrderController extends Controller
             (new OrderAction())->get_user_product_stats_by_request($request)
         );
     }
+
+    /**
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function delete_by_id (string $id)
+    {
+        (new OrderAction())->delete_by_id($id);
+
+        return response()->json([
+            'message' => 'deleted successfully'
+        ]);
+    }
 }

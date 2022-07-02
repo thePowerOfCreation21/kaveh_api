@@ -152,6 +152,8 @@ Route::group([
 
             Route::post('/test/queue', [TestQueueController::class, 'set_value']);
             Route::get('/test/queue', [TestQueueController::class, 'get_value']);
+
+            Route::delete('/order/{id}', [OrderController::class, 'delete_by_id']);
         });
 
         Route::group([
