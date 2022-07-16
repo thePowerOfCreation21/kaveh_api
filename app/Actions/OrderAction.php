@@ -34,24 +34,24 @@ class OrderAction extends Action
         ],
         'get_todays_orders' => [
             'search' => ['string', 'min:1', 'max:150'],
-            'created_at' => ['integer', 'min:1', 'max:9999999999'],
-            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
-            'created_at_to' => ['integer', 'min:1|max:9999999999'],
+            'created_at' => ['date_format:Y/m/d'],
+            'created_at_from' => ['date_format:Y/m/d H:i:s'],
+            'created_at_to' => ['date_format:Y/m/d H:i:s'],
             'product_id' => ['string', 'max:150'],
             'user_id' => ['integer', 'min:1', 'max:99999999999'],
         ],
         'get_user_orders_query' => [
             'search' => ['string', 'min:1', 'max:150'],
-            'created_at' => ['integer', 'min:1', 'max:9999999999'],
-            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
-            'created_at_to' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at' => ['date_format:Y/m/d'],
+            'created_at_from' => ['date_format:Y/m/d H:i:s'],
+            'created_at_to' => ['date_format:Y/m/d H:i:s'],
             'product_id' => ['integer', 'min:1', 'max:99999999999'],
         ],
         'get_user_product_stats' => [
             'search' => ['string', 'min:1', 'max:150'],
-            'created_at' => ['integer', 'min:1', 'max:9999999999'],
-            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
-            'created_at_to' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at' => ['date_format:Y/m/d'],
+            'created_at_from' => ['date_format:Y/m/d H:i:s'],
+            'created_at_to' => ['date_format:Y/m/d H:i:s'],
         ],
     ];
 
