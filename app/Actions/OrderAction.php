@@ -597,8 +597,23 @@ class OrderAction extends Action
     public function delete_by_eloquent(object $eloquent, callable $deleting = null): mixed
     {
         $order_ids = [];
-        foreach ($eloquent->get() AS $order)
+        $orderTimeLimit = (new OrderTimeLimit())->get_latest_range();
+        foreach ($eloquent->with([
+            'contents' => function ($q)
+            {
+                $q->with('product');
+            }
+        ])->get() AS $order)
         {
+            foreach ($order->contents AS $orderContent)
+            {
+                if ($orderContent->product->type == 'limited' && $order->created_at->timestamp >= $orderTimeLimit['limited']['from'] && $order->created_at->timestamp <= $orderTimeLimit['limited']['to'])
+                {
+                    $orderContent->product->update([
+                        'stock' => $orderContent->product->stock + $orderContent->quantity
+                    ]);
+                }
+            }
             $order_ids[] = $order->id;
         }
         OrderContent::whereIn('order_id', $order_ids)->delete();

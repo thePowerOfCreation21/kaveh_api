@@ -161,4 +161,51 @@ class OrderTimeLimit extends KeyObjectConfig
         $orderTimeLimit = $this->get();
         return max($orderTimeLimit->limited->to, $orderTimeLimit->unlimited->to);
     }
+
+    public function get_latest_range ()
+    {
+        $result = [
+            'limited' => [
+                'from' => 0,
+                'to' => 0
+            ],
+            'unlimited' => [
+                'from' => 0,
+                'to' => 0
+            ]
+        ];
+        $orderTimeLimit = $this->get();
+
+        if ($orderTimeLimit->limited->from > $orderTimeLimit->limited->to)
+        {
+            $result['limited'] = [
+                'from' => strtotime('-1 days') + $orderTimeLimit->limited->from,
+                'to' => strtotime('today') + $orderTimeLimit->limited->to
+            ];
+        }
+        else
+        {
+            $result['limited'] = [
+                'from' => strtotime('today') + $orderTimeLimit->limited->from,
+                'to' => strtotime('today') + $orderTimeLimit->limited->to
+            ];
+        }
+
+        if ($orderTimeLimit->unlimited->from > $orderTimeLimit->unlimited->to)
+        {
+            $result['unlimited'] = [
+                'from' => strtotime('-1 days') + $orderTimeLimit->unlimited->from,
+                'to' => strtotime('today') + $orderTimeLimit->unlimited->to
+            ];
+        }
+        else
+        {
+            $result['unlimited'] = [
+                'from' => strtotime('today') + $orderTimeLimit->unlimited->from,
+                'to' => strtotime('today') + $orderTimeLimit->unlimited->to
+            ];
+        }
+
+        return $result;
+    }
 }
