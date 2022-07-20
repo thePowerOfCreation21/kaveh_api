@@ -25,33 +25,53 @@ class OrderAction extends Action
         ],
         'get_query' => [
             'search' => ['string', 'min:1', 'max:150'],
+            'created_at' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_to' => ['integer', 'min:1', 'max:9999999999'],
+            /*
             'created_at' => ['date_format:Y/m/d'],
             'created_at_from' => ['date_format:Y/m/d H:i:s'],
             'created_at_to' => ['date_format:Y/m/d H:i:s'],
+            */
             'product_id' => ['string', 'max:150'],
             'user_id' => ['integer', 'min:1', 'max:99999999999'],
             'todays_orders' => ['in:true,false']
         ],
         'get_todays_orders' => [
             'search' => ['string', 'min:1', 'max:150'],
+            'created_at' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_to' => ['integer', 'min:1', 'max:9999999999'],
+            /*
             'created_at' => ['date_format:Y/m/d'],
             'created_at_from' => ['date_format:Y/m/d H:i:s'],
             'created_at_to' => ['date_format:Y/m/d H:i:s'],
+            */
             'product_id' => ['string', 'max:150'],
             'user_id' => ['integer', 'min:1', 'max:99999999999'],
         ],
         'get_user_orders_query' => [
             'search' => ['string', 'min:1', 'max:150'],
+            'created_at' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_to' => ['integer', 'min:1', 'max:9999999999'],
+            /*
             'created_at' => ['date_format:Y/m/d'],
             'created_at_from' => ['date_format:Y/m/d H:i:s'],
             'created_at_to' => ['date_format:Y/m/d H:i:s'],
+            */
             'product_id' => ['integer', 'min:1', 'max:99999999999'],
         ],
         'get_user_product_stats' => [
             'search' => ['string', 'min:1', 'max:150'],
+            'created_at' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
+            'created_at_to' => ['integer', 'min:1', 'max:9999999999'],
+            /*
             'created_at' => ['date_format:Y/m/d'],
             'created_at_from' => ['date_format:Y/m/d H:i:s'],
             'created_at_to' => ['date_format:Y/m/d H:i:s'],
+            */
         ],
     ];
 
@@ -252,13 +272,18 @@ class OrderAction extends Action
 
         if (isset($query['created_at']))
         {
-            $eloquent = $eloquent->whereDate('created_at', '=', $query['created_at']);
+            $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d', $query['created_at']));
+            // $eloquent = $eloquent->whereDate('created_at', '=', $query['created_at']);
         }
 
         if (isset($query['created_at_from']))
         {
             if (isset($query['created_at_to']))
             {
+                $eloquent = $eloquent
+                    ->whereDate('created_at', '>=', date("Y-m-d", $query['created_at_from']))
+                    ->whereDate('created_at', '<=', date("Y-m-d", $query['created_at_to']));
+                /*
                 $query['created_at_from'] = explode(' ', $query['created_at_from']);
                 $query['created_at_to'] = explode(' ', $query['created_at_to']);
 
@@ -296,10 +321,12 @@ class OrderAction extends Action
                                 });
                         });
                 }
+                */
             }
             else
             {
-                $eloquent = $eloquent->whereDate('created_at', '=', explode(' ', $query['created_at_from'])[0]);
+                $eloquent = $eloquent->whereDate('created_at', '=', date('Y-m-d', $query['created_at_from']));
+                // $eloquent = $eloquent->whereDate('created_at', '=', explode(' ', $query['created_at_from'])[0]);
             }
         }
 
