@@ -18,6 +18,7 @@ class CreateOrdersTable extends Migration
             $table->string('user_id', 15);
             $table->bigInteger('amount');
             $table->json('discount')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
