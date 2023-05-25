@@ -153,6 +153,20 @@ class OrderAction extends Action
 
     /**
      * @param Request $request
+     * @param string $user_id
+     * @param string|array $validation_role
+     * @return array
+     * @throws CustomException
+     */
+    public function get_user_product_stats_by_request_and_id (Request $request, string $user_id, string|array $validation_role = 'get_user_product_stats_query'): array
+    {
+        return $this->get_product_stats(
+            array_merge(['user_id' => $user_id], $this->get_data_from_request($request, $validation_role))
+        );
+    }
+
+    /**
+     * @param Request $request
      * @param array|string $validation_role
      * @param array $query_addition
      * @param object|null $eloquent
