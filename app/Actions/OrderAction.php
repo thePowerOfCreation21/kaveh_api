@@ -67,6 +67,7 @@ class OrderAction extends Action
             'created_at' => ['integer', 'min:1', 'max:9999999999'],
             'created_at_from' => ['integer', 'min:1', 'max:9999999999'],
             'created_at_to' => ['integer', 'min:1', 'max:9999999999'],
+            'todays_orders' => ['in:true,false']
             /*
             'created_at' => ['date_format:Y/m/d'],
             'created_at_from' => ['date_format:Y/m/d H:i:s'],
